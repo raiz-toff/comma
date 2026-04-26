@@ -1,24 +1,47 @@
 # Macadam
 
-Named after John Loudon McAdam, the 18th-century engineer who invented the process of building roads with single-sized crushed stone. Dashers live and die by the asphalt; this app archives the data generated from grinding down those miles.
+**The Private Vault for Independent Drivers.**
 
-It is a robust, serious financial tracker for independent delivery drivers, designed to be local-first, privacy-respecting, and free from corporate buzzwords.
+Named after John Loudon McAdam, the engineer who revolutionized road construction, Macadam is a robust, serious financial tracker for dashers and delivery drivers. It is designed to be **local-first, offline-ready, and privacy-respecting**.
 
-## Features
-- **Earnings Tracking**: Log daily and weekly earnings across multiple platforms.
-- **Expense Management**: Track fuel, maintenance, and other business expenses.
-- **Visual Analytics**: Dynamic charts to visualize your performance over time.
-- **Privacy First**: All data stays on your machine (SQLite backend).
+Unlike corporate tools, Macadam stores 100% of your sensitive financial data directly in your browser's encrypted vault (IndexedDB). No cloud, no tracking, no subscription. Just you and your data.
 
-## Documentation
-See the [/docs](/docs) folder for detailed documentation.
+## ✨ Key Features
 
-## Getting Started
-1. Run `./run.sh` to start the development server.
-2. Access the app at `http://127.0.0.1:5000`.
-3. Log in with the default credentials (see `app.py`).
+- 🏛️ **Privacy First**: Your data never leaves your device. All logs are stored locally using IndexedDB via Dexie.js.
+- 📶 **Offline-First PWA**: Fully functional without an internet connection. Install it on your mobile device as a standalone app.
+- 📊 **Visual Analytics**: Dynamic, interactive charts powered by Chart.js to visualize your earnings and expenses over time.
+- 💰 **Precision Tracking**: Log daily/weekly earnings across multiple platforms and manage business expenses (fuel, maintenance, etc.).
+- 💾 **Data Portability**: Built-in backup and restore system. Export your entire vault to a JSON file at any time for safe keeping.
 
-## Tech Stack
-- **Backend**: Flask (Python)
-- **Database**: SQLAlchemy (SQLite)
-- **Frontend**: Bootstrap 5, Chart.js
+## 🛠️ Tech Stack
+
+- **Frontend**: Vanilla JavaScript (ES6+), HTML5, CSS3
+- **Styling**: Bootstrap 5 + Custom Modern UI
+- **Database**: IndexedDB (managed by [Dexie.js](https://dexie.org/))
+- **Charts**: [Chart.js](https://www.chartjs.org/)
+- **PWA**: Service Workers & Web App Manifest
+
+## 🚀 Getting Started
+
+Since Macadam is now fully serverless, you don't need to install Python or run a complex backend.
+
+### Option 1: Local Development
+1. Clone the repository.
+2. Open `index.html` in any modern web browser.
+
+### Option 2: Static Hosting
+Deploy to any static hosting provider (GitHub Pages, Netlify, Vercel, etc.) by simply uploading the files in this directory.
+
+## 📖 Documentation
+
+For a deep dive into the architecture and migration phases, see the `/docs` folder:
+- [Architecture Overview](docs/architecture.md)
+- [Getting Started Guide](docs/getting-started.md)
+- [Migration Phases (1-5)](docs/)
+
+## 🛣️ The Roadmap
+Macadam has recently transitioned from a Flask/SQLite backend to a serverless PWA. We are currently in the final phases of polishing the offline-first experience and data portability features.
+
+---
+*Dashers live and die by the asphalt; Macadam ensures you keep track of every mile.*

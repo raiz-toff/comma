@@ -9,6 +9,7 @@
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="static/style.css">
+  <link rel="stylesheet" href="static/onboarding.css">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#dc3545">
   <script>
@@ -147,6 +148,147 @@
     </div>
 </div>
 
+<!-- Onboarding & Demo Management -->
+<div class="row mt-4" id="onboardingSection">
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100 border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-stars"></i> Demo & Onboarding</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Manage demo data or re-run the onboarding wizard.</p>
+                <div id="demoActiveNotice" class="alert alert-info py-2 mb-3" style="display:none;">
+                    <i class="bi bi-info-circle"></i> Demo data is currently loaded.
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="btn btn-outline-warning" id="btnClearDemo" style="display:none;">
+                        <i class="bi bi-trash"></i> Clear Demo Data
+                    </button>
+                    <button class="btn btn-outline-secondary" id="btnRerunOnboarding">
+                        <i class="bi bi-arrow-repeat"></i> Re-run Onboarding
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Danger Zone — Clear All Data -->
+<div class="row mt-4" id="dangerZoneSection">
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100 border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle-fill"></i> Danger Zone</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Permanently delete all your data from this device. This action cannot be undone.</p>
+
+                <!-- Vault Stats -->
+                <div class="mb-3">
+                    <h6 class="fw-bold text-muted mb-2"><i class="bi bi-database"></i> Vault Contents</h6>
+                    <div class="d-flex flex-wrap gap-3 mb-3">
+                        <div class="text-center px-3 py-2 rounded" style="background: var(--bs-light, #f8f9fa); min-width: 100px;">
+                            <div class="fs-4 fw-bold" id="statWeeks">—</div>
+                            <small class="text-muted">Weeks Logged</small>
+                        </div>
+                        <div class="text-center px-3 py-2 rounded" style="background: var(--bs-light, #f8f9fa); min-width: 100px;">
+                            <div class="fs-4 fw-bold" id="statExpenses">—</div>
+                            <small class="text-muted">Expenses</small>
+                        </div>
+                        <div class="text-center px-3 py-2 rounded" style="background: var(--bs-light, #f8f9fa); min-width: 100px;">
+                            <div class="fs-4 fw-bold" id="statCategories">—</div>
+                            <small class="text-muted">Categories</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-danger py-2 mb-3">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <strong>Warning:</strong> This will erase all weekly earnings, expenses, categories, and settings.
+                    Make sure to <strong>export a backup</strong> first if you want to keep your data.
+                </div>
+
+                <button class="btn btn-danger" id="btnClearAllData">
+                    <i class="bi bi-trash3-fill"></i> Clear All Data
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        // --- Demo & Onboarding section ---
+        const isDemo = localStorage.getItem('macadam_demo_loaded') === 'true';
+        if (isDemo) {
+            document.getElementById('demoActiveNotice').style.display = 'block';
+            document.getElementById('btnClearDemo').style.display = 'inline-flex';
+        }
+
+        document.getElementById('btnClearDemo').addEventListener('click', () => {
+            if (confirm('This will remove all demo data and show the welcome screen again. Continue?')) {
+                window.macadamOnboarding.clearDemo();
+            }
+        });
+
+        document.getElementById('btnRerunOnboarding').addEventListener('click', () => {
+            if (confirm('This will reset the onboarding flag and show the welcome screen on next load. Continue?')) {
+                window.macadamOnboarding.reset();
+            }
+        });
+
+        // --- Danger Zone: vault stats ---
+        try {
+            const weekCount = await window.db.weekly_earnings.count();
+            const expCount = await window.db.expenses.count();
+            const catCount = await window.db.expense_categories.count();
+            document.getElementById('statWeeks').textContent = weekCount;
+            document.getElementById('statExpenses').textContent = expCount;
+            document.getElementById('statCategories').textContent = catCount;
+        } catch (e) {
+            console.warn('Could not load vault stats:', e);
+        }
+
+        // --- Danger Zone: clear all data ---
+        document.getElementById('btnClearAllData').addEventListener('click', async () => {
+            const firstConfirm = confirm(
+                '⚠️ DELETE ALL DATA\n\n' +
+                'This will permanently erase:\n' +
+                '• All weekly earnings\n' +
+                '• All expenses\n' +
+                '• All categories\n' +
+                '• All settings\n\n' +
+                'This CANNOT be undone. Continue?'
+            );
+            if (!firstConfirm) return;
+
+            const secondConfirm = confirm(
+                'Are you absolutely sure?\n\n' +
+                'Type OK to confirm you have exported a backup or no longer need this data.'
+            );
+            if (!secondConfirm) return;
+
+            try {
+                // Wipe all IndexedDB tables
+                await window.db.weekly_earnings.clear();
+                await window.db.expenses.clear();
+                await window.db.expense_categories.clear();
+                await window.db.settings.clear();
+
+                // Wipe localStorage flags
+                localStorage.removeItem('macadam_onboarded');
+                localStorage.removeItem('macadam_demo_loaded');
+
+                // Reload → welcome gate will appear
+                window.location.reload();
+            } catch (e) {
+                console.error('Failed to clear data:', e);
+                alert('Error clearing data: ' + e.message);
+            }
+        });
+    });
+</script>
+
 <script src="static/vault_backup.js?v=2"></script>
 
 <script>
@@ -174,6 +316,7 @@
   <script src="static/chart.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dexie@4.0.8/dist/dexie.min.js"></script>
   <script src="static/db.js"></script>
+  <script src="static/onboarding.js"></script>
   <script src="static/script.js"></script>
   <script>
     if ('serviceWorker' in navigator) {

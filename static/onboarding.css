@@ -1,0 +1,612 @@
+/* ============================================================
+   Macadam Onboarding — Welcome Gate & Setup Wizard
+   ============================================================ */
+
+/* ---------- Google Font ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ---------- Full-screen Overlay ---------- */
+#macadam-welcome-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    overflow-y: auto;
+
+    /* Glassmorphism backdrop */
+    background: rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+
+    /* Entry animation */
+    animation: gateIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes gateIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+#macadam-welcome-gate.gate-exit {
+    animation: gateOut 0.35s ease-in both;
+}
+
+@keyframes gateOut {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+/* ---------- Gate Inner Container ---------- */
+.gate-container {
+    max-width: 960px;
+    width: 100%;
+    text-align: center;
+    animation: gateSlideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+@keyframes gateSlideUp {
+    from { opacity: 0; transform: translateY(32px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Gate Header ---------- */
+.gate-header {
+    margin-bottom: 2.5rem;
+}
+
+.gate-logo {
+    font-family: 'Inter', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+}
+
+.gate-logo i {
+    color: #f43f5e;
+    margin-right: 0.5rem;
+}
+
+.gate-tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 400;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* ---------- Path Cards Grid ---------- */
+.gate-paths {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* ---------- Individual Path Card ---------- */
+.gate-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.25rem;
+    padding: 2.25rem 1.75rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    text-align: center;
+    overflow: hidden;
+}
+
+.gate-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1.25rem;
+    padding: 2px;
+    background: linear-gradient(135deg, transparent 40%, rgba(244, 63, 94, 0.35));
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: xor;
+    -webkit-mask-composite: xor;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.gate-card:hover {
+    transform: translateY(-6px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(244, 63, 94, 0.4);
+    box-shadow: 0 20px 60px rgba(244, 63, 94, 0.12),
+                0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.gate-card:hover::before {
+    opacity: 1;
+}
+
+.gate-card-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 1.25rem;
+    transition: transform 0.3s;
+}
+
+.gate-card:hover .gate-card-icon {
+    transform: scale(1.1);
+}
+
+.gate-card-icon.restore {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
+}
+
+.gate-card-icon.demo {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+}
+
+.gate-card-icon.fresh {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff;
+}
+
+.gate-card-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.gate-card-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.55;
+}
+
+.gate-card-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.25rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #f43f5e;
+    transition: gap 0.25s;
+}
+
+.gate-card:hover .gate-card-action {
+    gap: 0.7rem;
+}
+
+/* Hidden file input for restore */
+.gate-file-input {
+    display: none;
+}
+
+/* ---------- Gate Footer ---------- */
+.gate-footer {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin-top: 1rem;
+}
+
+.gate-footer i {
+    color: rgba(16, 185, 129, 0.7);
+}
+
+/* ============================================================
+   WIZARD OVERLAY (replaces gate-paths when "Start Fresh")
+   ============================================================ */
+
+.wizard-container {
+    max-width: 640px;
+    width: 100%;
+    margin: 0 auto;
+    animation: gateSlideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ---------- Progress Dots ---------- */
+.wizard-progress {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.wizard-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s;
+}
+
+.wizard-dot.active {
+    background: #f43f5e;
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.5);
+    transform: scale(1.25);
+}
+
+.wizard-dot.completed {
+    background: #10b981;
+}
+
+/* ---------- Wizard Panel ---------- */
+.wizard-panel {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.25rem;
+    padding: 2.5rem 2rem;
+    min-height: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---------- Wizard Steps (shown one at a time) ---------- */
+.wizard-step {
+    display: none;
+    width: 100%;
+    animation: stepIn 0.35s ease both;
+}
+
+.wizard-step.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@keyframes stepIn {
+    from { opacity: 0; transform: translateX(24px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.wizard-step-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.wizard-step-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.wizard-step-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.6);
+    max-width: 460px;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* ---------- Wizard Form Styling ---------- */
+.wizard-form-group {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.wizard-form-group label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.35rem;
+    display: block;
+}
+
+.wizard-form-group input,
+.wizard-form-group select {
+    width: 100%;
+    padding: 0.65rem 1rem;
+    border-radius: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.wizard-form-group input:focus,
+.wizard-form-group select:focus {
+    outline: none;
+    border-color: #f43f5e;
+    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.2);
+}
+
+.wizard-form-group select option {
+    background: #1e293b;
+    color: #fff;
+}
+
+/* ---------- Category Chips ---------- */
+.category-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 460px;
+}
+
+.category-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.category-chip:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.category-chip .chip-remove {
+    cursor: pointer;
+    opacity: 0.5;
+    font-size: 0.75rem;
+    transition: opacity 0.2s, color 0.2s;
+}
+
+.category-chip .chip-remove:hover {
+    opacity: 1;
+    color: #f43f5e;
+}
+
+.add-category-input {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.add-category-input input {
+    width: 130px;
+    padding: 0.4rem 0.75rem;
+    border-radius: 2rem;
+    border: 1px dashed rgba(255, 255, 255, 0.25);
+    background: transparent;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+}
+
+.add-category-input input:focus {
+    outline: none;
+    border-color: #f43f5e;
+}
+
+.add-category-input input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* ---------- Wizard Navigation ---------- */
+.wizard-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    width: 100%;
+    max-width: 640px;
+}
+
+.wizard-btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.65rem 1.75rem;
+    border-radius: 0.6rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.wizard-btn-back {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.wizard-btn-back:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+}
+
+.wizard-btn-next {
+    background: linear-gradient(135deg, #f43f5e, #e11d48);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(244, 63, 94, 0.3);
+}
+
+.wizard-btn-next:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(244, 63, 94, 0.4);
+}
+
+.wizard-btn-skip {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.45);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+}
+
+.wizard-btn-skip:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ---------- Success Checkmark (final step) ---------- */
+.wizard-success-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10b981, #059669);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    animation: successPop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes successPop {
+    0%   { transform: scale(0); }
+    60%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+/* Quick-links on the final step */
+.wizard-quicklinks {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.wizard-quicklink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.25rem;
+    border-radius: 0.6rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.85);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.wizard-quicklink:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    text-decoration: none;
+}
+
+/* ---------- Loading Spinner (for demo data load) ---------- */
+.gate-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.gate-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #f43f5e;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.gate-loading-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+    .gate-paths {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .gate-logo {
+        font-size: 1.75rem;
+    }
+
+    .gate-tagline {
+        font-size: 0.95rem;
+    }
+
+    .gate-card {
+        padding: 1.75rem 1.25rem;
+    }
+
+    .gate-card-icon {
+        width: 56px;
+        height: 56px;
+        font-size: 1.5rem;
+    }
+
+    .wizard-panel {
+        padding: 1.75rem 1.25rem;
+    }
+
+    .wizard-step-title {
+        font-size: 1.25rem;
+    }
+
+    .wizard-nav {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .wizard-btn {
+        flex: 1;
+        justify-content: center;
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    #macadam-welcome-gate {
+        padding: 1rem;
+    }
+
+    .gate-card-title {
+        font-size: 1.05rem;
+    }
+
+    .wizard-quicklinks {
+        flex-direction: column;
+    }
+
+    .wizard-quicklink {
+        justify-content: center;
+    }
+}

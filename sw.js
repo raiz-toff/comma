@@ -1,5 +1,5 @@
 // sw.js - Macadam Private Vault Service Worker
-const CACHE_NAME = 'macadam-vault-v2';
+const CACHE_NAME = 'macadam-vault-v3';
 
 // The core assets required to run the Vault entirely offline.
 const ASSETS_TO_CACHE = [
@@ -9,8 +9,10 @@ const ASSETS_TO_CACHE = [
     '/expenses.html',
     '/settings.html',
     '/static/style.css',
+    '/static/onboarding.css',
     '/static/script.js',
     '/static/db.js',
+    '/static/onboarding.js',
     '/static/weekly_vault.js',
     '/static/expenses_vault.js',
     '/static/vault_aggregation.js',

@@ -824,3 +824,27 @@
     border-color: #fff;
     box-shadow: 0 0 8px rgba(255,255,255,0.5);
 }
+
+
+/* CSV & Gate adjustments */
+#gateCsv {
+    display: flex !important;
+}
+
+#wizError {
+    margin-top: 1rem;
+    background: rgba(244, 63, 94, 0.1);
+    color: #f43f5e;
+    border: 1px solid #f43f5e;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Make sure avatars render correctly as icons */
+.avatar-option i {
+    pointer-events: none; /* Prevent icons from eating clicks meant for the span */
+}

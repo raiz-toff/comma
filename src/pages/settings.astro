@@ -21,10 +21,10 @@ import Layout from '../layouts/Layout.astro';
                     <div class="row g-4">
                         <div class="col-md-3 text-center border-end">
                             <label class="form-label fw-bold small text-uppercase text-muted d-block">Your Avatar</label>
-                            <div id="settings-avatar-display" class="avatar-preview mx-auto mb-3">🚗</div>
+                            <div id="settings-avatar-display" class="avatar-preview mx-auto mb-3"><i class="bi bi-car-front"></i></div>
                             <div class="avatar-selector d-flex flex-wrap gap-2 justify-content-center">
-                                {['🚗', '🚲', '⚡', '🛵', '📦'].map(a => (
-                                    <button class="btn btn-sm btn-avatar-select" data-avatar={a}>{a}</button>
+                                {['<i class="bi bi-car-front"></i>', '<i class="bi bi-bicycle"></i>', '<i class="bi bi-lightning"></i>', '<i class="bi bi-scooter"></i>', '<i class="bi bi-box"></i>'].map(a => (
+                                    <button class="btn btn-sm btn-avatar-select" data-avatar={a} set:html={a}></button>
                                 ))}
                             </div>
                         </div>
@@ -287,12 +287,12 @@ import Layout from '../layouts/Layout.astro';
         }
 
         // State
-        let currentAvatar = '🚗';
+        let currentAvatar = '<i class="bi bi-car-front"></i>';
 
         function updateAvatarDisplay(avatar: string) {
             currentAvatar = avatar;
             const display = document.getElementById('settings-avatar-display');
-            if (display) display.textContent = avatar;
+            if (display) display.innerHTML = avatar;
             
             document.querySelectorAll('.btn-avatar-select').forEach(btn => {
                 btn.classList.toggle('active', (btn as HTMLElement).dataset.avatar === avatar);
@@ -422,7 +422,7 @@ import Layout from '../layouts/Layout.astro';
             
             const vehicle = await db.getSetting('macadam_v2_vehicle_type', 'gas');
             const mpg = await db.getSetting('macadam_v2_mpg', '0');
-            currentAvatar = await db.getSetting('macadam_v2_avatar', '🚗');
+            currentAvatar = await db.getSetting('macadam_v2_avatar', '<i class="bi bi-car-front"></i>');
 
             (document.getElementById('pref-name') as HTMLInputElement).value = name;
             (document.getElementById('pref-currency') as HTMLInputElement).value = cur;
@@ -463,14 +463,14 @@ import Layout from '../layouts/Layout.astro';
             // Platforms
             document.getElementById('btnAddPlatform')?.addEventListener('click', async () => {
                 const allPlatforms = [
-                    { id: 'ubereats', name: 'Uber Eats', color: '#06C167', logo: '🥡', terms: { driver: 'Courier', task: 'Order' } },
-                    { id: 'doordash', name: 'DoorDash', color: '#FF3008', logo: '🚗', terms: { driver: 'Dasher', task: 'Delivery' } },
-                    { id: 'skip', name: 'SkipTheDishes', color: '#FF8200', logo: '🍔', terms: { driver: 'Courier', task: 'Order' } },
-                    { id: 'instacart', name: 'Instacart', color: '#43B02A', logo: '🛒', terms: { driver: 'Shopper', task: 'Batch' } },
-                    { id: 'grubhub', name: 'Grubhub', color: '#F63440', logo: '🍕', terms: { driver: 'Driver', task: 'Delivery' } },
-                    { id: 'lyft', name: 'Lyft', color: '#FF00BF', logo: '🚘', terms: { driver: 'Driver', task: 'Ride' } },
-                    { id: 'uber', name: 'Uber', color: '#000000', logo: '🖤', terms: { driver: 'Driver', task: 'Ride' } },
-                    { id: 'amazonflex', name: 'Amazon Flex', color: '#FF9900', logo: '📦', terms: { driver: 'Driver', task: 'Block' } }
+                    { id: 'ubereats', name: 'Uber Eats', color: '#06C167', logo: '<i class="bi bi-bag"></i>', terms: { driver: 'Courier', task: 'Order' } },
+                    { id: 'doordash', name: 'DoorDash', color: '#FF3008', logo: '<i class="bi bi-car-front"></i>', terms: { driver: 'Dasher', task: 'Delivery' } },
+                    { id: 'skip', name: 'SkipTheDishes', color: '#FF8200', logo: '<i class="bi bi-cup-straw"></i>', terms: { driver: 'Courier', task: 'Order' } },
+                    { id: 'instacart', name: 'Instacart', color: '#43B02A', logo: '<i class="bi bi-cart"></i>', terms: { driver: 'Shopper', task: 'Batch' } },
+                    { id: 'grubhub', name: 'Grubhub', color: '#F63440', logo: '<i class="bi bi-pie-chart"></i>', terms: { driver: 'Driver', task: 'Delivery' } },
+                    { id: 'lyft', name: 'Lyft', color: '#FF00BF', logo: '<i class="bi bi-car-front-fill"></i>', terms: { driver: 'Driver', task: 'Ride' } },
+                    { id: 'uber', name: 'Uber', color: '#000000', logo: '<i class="bi bi-heart-fill"></i>', terms: { driver: 'Driver', task: 'Ride' } },
+                    { id: 'amazonflex', name: 'Amazon Flex', color: '#FF9900', logo: '<i class="bi bi-box"></i>', terms: { driver: 'Driver', task: 'Block' } }
                 ];
 
                 const activeIds = (await db.platforms.where('active').equals(1).toArray()).map(p => p.id);

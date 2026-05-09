@@ -3,10 +3,6 @@
  * PlatformSwitcher component (Phase 2, Items 21 & 22)
  * Handles switching between active platforms and the "Global" view.
  */
-import { db } from '../lib/db';
-
-const activePlatforms = await db.platforms.where('active').equals(1).toArray();
-const switcherMode = await db.getSetting('macadam_v2_switcher_mode', 'tabs'); // tabs or dropdown
 ---
 
 <div id="platform-switcher-root"></div>

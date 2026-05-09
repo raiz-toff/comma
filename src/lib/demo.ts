@@ -20,7 +20,7 @@ export async function seedDemoData() {
     // Seed Settings
     const demoSettings = [
         { key: 'macadam_v2_user_name', value: 'Demo Pilot' },
-        { key: 'macadam_v2_avatar', value: '⚡' },
+        { key: 'macadam_v2_avatar', value: '<i class="bi bi-lightning"></i>' },
         { key: 'macadam_v2_currency', value: '$' },
         { key: 'macadam_v2_goal', value: '1200' },
         { key: 'macadam_v2_tax_percent', value: '25' },

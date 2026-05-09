@@ -163,18 +163,18 @@
                 <div class="col-md-6">
                     <label class="form-label fw-bold text-muted small uppercase">Choose an Avatar</label>
                     <div class="avatar-grid mb-3">
-                        <button class="avatar-btn active" data-avatar="😎">😎</button>
-                        <button class="avatar-btn" data-avatar="🚗">🚗</button>
-                        <button class="avatar-btn" data-avatar="🛵">🛵</button>
-                        <button class="avatar-btn" data-avatar="🚴">🚴</button>
-                        <button class="avatar-btn" data-avatar="📦">📦</button>
-                        <button class="avatar-btn" data-avatar="⚡">⚡</button>
-                        <button class="avatar-btn" data-avatar="💼">💼</button>
-                        <button class="avatar-btn" data-avatar="🍕">🍕</button>
-                        <button class="avatar-btn" data-avatar="🍔">🍔</button>
-                        <button class="avatar-btn" data-avatar="🚛">🚛</button>
-                        <button class="avatar-btn" data-avatar="🚲">🚲</button>
-                        <button class="avatar-btn" data-avatar="🏎️">🏎️</button>
+                        <button class="avatar-btn active" data-avatar="<i class=&quot;bi bi-emoji-sunglasses&quot;></i>"><i class="bi bi-emoji-sunglasses"></i></button>
+                        <button class="avatar-btn" data-avatar="<i class=&quot;bi bi-car-front&quot;></i>"><i class="bi bi-car-front"></i></button>
+                        <button class="avatar-btn" data-avatar="<i class=&quot;bi bi-scooter&quot;></i>"><i class="bi bi-scooter"></i></button>
+                        <button class="avatar-btn" data-avatar="<i class=&quot;bi bi-bicycle&quot;></i>"><i class="bi bi-bicycle"></i></button>
+                        <button class="avatar-btn" data-avatar="<i class=&quot;bi bi-box&quot;></i>"><i class="bi bi-box"></i></button>
+                        <button class="avatar-btn" data-avatar="<i class=&quot;bi bi-lightning&quot;></i>"><i class="bi bi-lightning"></i></button>
+                        <button class="avatar-btn" data-avatar="<i class=&quot;bi bi-briefcase&quot;></i>"><i class="bi bi-briefcase"></i></button>
+                        <button class="avatar-btn" data-avatar="<i class=&quot;bi bi-ticket-detailed&quot;></i>"><i class="bi bi-ticket-detailed"></i></button>
+                        <button class="avatar-btn" data-avatar="<i class=&quot;bi bi-cup-straw&quot;></i>"><i class="bi bi-cup-straw"></i></button>
+                        <button class="avatar-btn" data-avatar="<i class=&quot;bi bi-truck&quot;></i>"><i class="bi bi-truck"></i></button>
+                        <button class="avatar-btn" data-avatar="<i class=&quot;bi bi-bicycle&quot;></i>"><i class="bi bi-bicycle"></i></button>
+                        <button class="avatar-btn" data-avatar="<i class=&quot;bi bi-car-front-fill&quot;></i>"><i class="bi bi-car-front-fill"></i></button>
                     </div>
                     <div class="text-center">
                         <label for="avatar-upload" class="btn btn-sm btn-outline-secondary rounded-pill px-4">
@@ -981,7 +981,7 @@
 
             const settings = {
                 user_name: name,
-                avatar: (document.querySelector('.avatar-btn.active') as HTMLElement)?.dataset.avatar || '😎',
+                avatar: (document.querySelector('.avatar-btn.active') as HTMLElement)?.dataset.avatar || '<i class="bi bi-emoji-sunglasses"></i>',
                 region: (document.getElementById('user-region') as HTMLSelectElement).value,
                 currency: (document.getElementById('user-currency') as HTMLInputElement).value || '$',
                 decimal_separator: (document.getElementById('user-decimal') as HTMLSelectElement).value,

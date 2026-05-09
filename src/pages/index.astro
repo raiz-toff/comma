@@ -9,7 +9,7 @@ import PlatformSwitcher from '../components/PlatformSwitcher.astro';
         <!-- Page Header -->
         <header class="d-flex justify-content-between align-items-center mb-4">
             <div id="user-greeting-box" class="d-flex align-items-center gap-3">
-                <span id="user-avatar" class="avatar-large">🚗</span>
+                <span id="user-avatar" class="avatar-large"><i class="bi bi-car-front"></i></span>
                 <div>
                     <h1 class="h4 fw-800 mb-0">Hello, <span id="user-name-display" class="gradient-text">Driver</span></h1>
                     <p class="text-muted small mb-0" id="driver-status">Your local vault is ready.</p>
@@ -252,7 +252,7 @@ import PlatformSwitcher from '../components/PlatformSwitcher.astro';
             
             // User Preferences
             const name = await db.getSetting('macadam_v2_user_name', 'Driver');
-            const avatar = await db.getSetting('macadam_v2_avatar', '🚗');
+            const avatar = await db.getSetting('macadam_v2_avatar', '<i class="bi bi-car-front"></i>');
             
             // Per-Platform Goals (Feature 27)
             let goalKey = 'macadam_v2_goal_weekly';
@@ -290,8 +290,8 @@ import PlatformSwitcher from '../components/PlatformSwitcher.astro';
             });
 
             if (elName) elName.textContent = name;
-            if (elAvatar) elAvatar.textContent = avatar.length > 5 ? '' : avatar;
-            if (avatar.length > 5 && elAvatar) {
+            if (elAvatar) elAvatar.innerHTML = avatar.length > 5 && !avatar.startsWith('<i') ? '' : avatar;
+            if (avatar.length > 5 && !avatar.startsWith('<i') && elAvatar) {
                 elAvatar.innerHTML = `<img src="${avatar}" style="width:100%; height:100%; border-radius:12px; object-fit:cover;">`;
             }
             if (elGoalTarget) elGoalTarget.textContent = `${cur}${goal}`;

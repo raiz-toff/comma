@@ -109,12 +109,12 @@ export class MacadamDatabase extends Dexie {
 
     this.on('populate', async () => {
       await this.expense_categories.bulkAdd([
-        { name: 'Fuel', icon: '⛽' },
-        { name: 'Maintenance', icon: '🔧' },
-        { name: 'Supplies', icon: '🎒' },
-        { name: 'Insurance', icon: '🛡' },
-        { name: 'Phone/Data', icon: '📱' },
-        { name: 'Taxes/Fees', icon: '📊' }
+        { name: 'Fuel', icon: '<i class="bi bi-fuel-pump"></i>' },
+        { name: 'Maintenance', icon: '<i class="bi bi-wrench"></i>' },
+        { name: 'Supplies', icon: '<i class="bi bi-backpack"></i>' },
+        { name: 'Insurance', icon: '<i class="bi bi-shield"></i>' },
+        { name: 'Phone/Data', icon: '<i class="bi bi-phone"></i>' },
+        { name: 'Taxes/Fees', icon: '<i class="bi bi-bar-chart"></i>' }
       ]);
       
       await this.settings.bulkAdd([
@@ -155,4 +155,4 @@ export class MacadamDatabase extends Dexie {
   }
 }
 
-export const db = new MacadamDatabase();
+export const db = typeof window !== 'undefined' ? new MacadamDatabase() : null as unknown as MacadamDatabase;

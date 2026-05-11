@@ -73,7 +73,8 @@ export const strings = {
       placeholderBody:
         'Onboarding step copy is finalized in Phase 2 (orchestrator + steps.js). Keys exist so `t()` stays stable.',
       tryDemo: 'Try demo first',
-      demoEnabled: 'Demo mode on — sample-friendly nudges are enabled.',
+      demoEnabled:
+        'Demo vault opened — two weeks of sample shifts are in your log. Explore the app; adjust anything later in Settings.',
       resumeTitle: 'Continue setup?',
       resumeMessage: 'You started onboarding earlier this session. Continue where you left off, or start over.',
       resumeContinue: 'Continue',
@@ -884,7 +885,8 @@ export const strings = {
       placeholderBody:
         'Le texte détaillé de l’accueil arrive en phase 2 (orchestrateur + steps.js). Les clés restent stables pour `t()`.',
       tryDemo: 'Essayer la démo',
-      demoEnabled: 'Mode démo activé.',
+      demoEnabled:
+        'Coffre démo ouvert — deux semaines de quarts fictifs sont ajoutés. Explorez l’app ; modifiez tout cela plus tard dans Paramètres.',
       resumeTitle: 'Poursuivre la configuration ?',
       resumeMessage: 'Une configuration est déjà en cours pour cette session. Reprendre ou recommencer.',
       resumeContinue: 'Continuer',

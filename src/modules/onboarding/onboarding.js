@@ -372,6 +372,40 @@ export async function mountOnboarding(root) {
   const platformRows = await db.platforms.toArray();
   platformRows.sort((a, b) => (Number(a.priority) || 0) - (Number(b.priority) || 0));
 
+  /**
+   * @param {import('./steps.js').OnboardingDraft} d
+   * @param {string} displayName
+   */
+  function buildCompletedUserPatch(d, displayName) {
+    const cfg = getLocaleConfig(d.country);
+    const workSchedule = { preset: d.workSchedulePreset, label: t(`onboarding.schedule.${d.workSchedulePreset}`) };
+    return {
+      displayName,
+      avatarType: d.avatarType,
+      avatarData: d.avatarData,
+      locale: {
+        country: d.country,
+        currency: cfg.currency,
+        currencySymbol: cfg.symbol,
+        distanceUnit: d.distanceUnit,
+        dateFormat: 'YYYY-MM-DD',
+        weekStartDay: 0,
+        timeFormat: '12h',
+      },
+      homeBase: { label: d.homeBaseLabel.trim() },
+      workSchedule,
+      weeklyGoal: d.weeklyGoal,
+      monthlyGoal: d.monthlyGoal,
+      annualGoal: d.annualGoal,
+      taxWithholdingPct: d.taxWithholdingPct,
+      hstRegistered: getCountryTaxProfile(d.country).hstOnboarding ? d.hstRegistered : false,
+      theme: d.theme,
+      notificationPrefs: { ...d.notificationPrefs },
+      onboardingComplete: true,
+      onboardingStep: TOTAL_STEPS,
+    };
+  }
+
   const render = () => {
     const step = draft.step;
     const inner = renderStepInner(step, draft, platformRows);
@@ -569,8 +603,31 @@ export async function mountOnboarding(root) {
     }
 
     el.querySelector('[data-demo]')?.addEventListener('click', async () => {
-      await setAppState('demo_mode', true);
-      showToast({ type: 'info', message: t('onboarding.demoEnabled') });
+      try {
+        readFormIntoDraft(el, draft);
+        if (!draft.selectedPlatforms.length) {
+          const fallback = platformRows[0]?.id || getDefaultSamplePlatformId();
+          draft.selectedPlatforms = [fallback];
+        }
+        await applyPlatformsFromDraft(draft);
+        await clearSampleData();
+        await loadSampleData();
+        await persistVehicles(draft);
+        await persistWeeklyGoalRow(draft);
+        const displayName = draft.displayName.trim() || t('onboarding.steps.completeFallbackName');
+        await saveUser(buildCompletedUserPatch(draft, displayName));
+        clearSession();
+        await store.refresh('user');
+        await store.refresh('platforms');
+        await store.refresh('currentWeekEarnings');
+        await store.refresh('currentWeekGoal');
+        bus.emit(ONBOARDING_COMPLETE, { displayName, demo: true });
+        showToast({ type: 'info', message: t('onboarding.demoEnabled'), duration: 5000 });
+        Router.navigate('#/dashboard');
+      } catch (e) {
+        console.error(e);
+        showToast({ type: 'error', message: t('errors.generic') });
+      }
     });
 
     el.querySelector('[data-back]')?.addEventListener('click', () => {
@@ -605,38 +662,12 @@ export async function mountOnboarding(root) {
 
   async function finalizeOnboarding(container) {
     readFormIntoDraft(container, draft);
-    const cfg = getLocaleConfig(draft.country);
-    const workSchedule = { preset: draft.workSchedulePreset, label: t(`onboarding.schedule.${draft.workSchedulePreset}`) };
 
     await applyPlatformsFromDraft(draft);
     await persistVehicles(draft);
     await persistWeeklyGoalRow(draft);
 
-    await saveUser({
-      displayName: draft.displayName.trim(),
-      avatarType: draft.avatarType,
-      avatarData: draft.avatarData,
-      locale: {
-        country: draft.country,
-        currency: cfg.currency,
-        currencySymbol: cfg.symbol,
-        distanceUnit: draft.distanceUnit,
-        dateFormat: 'YYYY-MM-DD',
-        weekStartDay: 0,
-        timeFormat: '12h',
-      },
-      homeBase: { label: draft.homeBaseLabel.trim() },
-      workSchedule,
-      weeklyGoal: draft.weeklyGoal,
-      monthlyGoal: draft.monthlyGoal,
-      annualGoal: draft.annualGoal,
-      taxWithholdingPct: draft.taxWithholdingPct,
-      hstRegistered: getCountryTaxProfile(draft.country).hstOnboarding ? draft.hstRegistered : false,
-      theme: draft.theme,
-      notificationPrefs: { ...draft.notificationPrefs },
-      onboardingComplete: true,
-      onboardingStep: TOTAL_STEPS,
-    });
+    await saveUser(buildCompletedUserPatch(draft, draft.displayName.trim()));
 
     clearSession();
     await store.refresh('user');

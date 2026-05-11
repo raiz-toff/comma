@@ -6,7 +6,7 @@
 import { db, initDatabase, getAppState, purgeOldDeleted } from './core/db.js';
 import { bus } from './core/events.js';
 import { store } from './core/store.js';
-import { Router } from './core/router.js';
+import { Router, updateOnboardingFocusClass } from './core/router.js';
 import { renderAppShell } from './core/shell.js';
 import { initPlatforms } from './modules/platforms/platforms.js';
 import { runOnOpenNotificationCheck } from './modules/notifications/notifications.js';
@@ -181,6 +181,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     await store.loadFromDB();
     window.__macadam.store = store;
 
+    updateOnboardingFocusClass(!store.get('user')?.onboardingComplete);
+
     await initPlatforms();
     initExpensesModule();
     initSearchModule();
@@ -189,6 +191,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     window.__macadam.router = Router;
     Router.init();
+
+    store.subscribe('user', () => {
+      updateOnboardingFocusClass(!store.get('user')?.onboardingComplete);
+    });
   } catch (err) {
     console.error('[macadam] boot failed', err);
     app.textContent = t('errors.dbOpen');

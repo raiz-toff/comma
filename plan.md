@@ -401,8 +401,10 @@ macadam/
    - `.avatar`, `.avatar-sm`, `.avatar-lg`
    - `.stat-card` (large number + label)
    - `.trend-up`, `.trend-down` (colored trend indicators)
+   - Zen mode: `body.zen-mode` dims header, sidebar, bottom nav, FAB; **`body.macadam-onboarding-focus`** overrides so onboarding stays full-bleed (see **Onboarding full-bleed chrome** under F5)
 5. `src/css/layout.css`:
    - App shell: header (sticky), sidebar/nav, main content area, responsive breakpoints
+   - **`body.macadam-onboarding-focus`**: hide shell chrome and FAB; reset `.app-main` bottom padding for full-bleed onboarding (see **Onboarding full-bleed chrome** under F5)
    - `.bento-grid` — CSS Grid bento layout for dashboard widgets
    - `.bento-cell-1x1`, `.bento-cell-2x1`, `.bento-cell-1x2`, `.bento-cell-2x2`
    - Tab bar styles for platform switcher
@@ -607,6 +609,8 @@ This is the most important foundation task. Get the schema right and everything 
    // Router.navigate(route) — updates hash, triggers render
    // Router.init() — listens to hashchange, calls render on load
    // Route guard: if user.onboardingComplete === false → force #/onboarding
+   // Router.navigate: when !user.onboardingComplete and target !== '#/onboarding', rewrite to '#/onboarding' (defense in depth)
+   // updateOnboardingFocusClass(shouldFocus) — toggles body.macadam-onboarding-focus; call on every handleRoute exit (including redirect early-returns) — see "Onboarding full-bleed chrome"
    // Active nav link highlighting based on current hash
    // Store current route in window.__macadam.currentRoute
    ```
@@ -617,19 +621,21 @@ This is the most important foundation task. Get the schema right and everything 
    // 2. Register service worker
    // 3. Initialize Dexie db
    // 4. Initialize store (load user settings into reactive state)
-   // 5. Render app shell (nav + main container)
-   // 6. Initialize router
-   // 7. Check if onboarding complete → route accordingly
-   // 8. Set up beforeinstallprompt capture
-   // 9. Run on-open notifications check (no-op until user.onboardingComplete — see Vault-active gate)
-   // 10. Run purge old deleted records
-   // 11. Run backup overdue check
+   // 5. updateOnboardingFocusClass(!user?.onboardingComplete) — after store.loadFromDB, before shell paint (reduces chrome FOUC; same helper as router)
+   // 6. Render app shell (nav + main container)
+   // 7. Initialize router
+   // 8. Check if onboarding complete → route accordingly
+   // 9. Set up beforeinstallprompt capture
+   // 10. Run on-open notifications check (no-op until user.onboardingComplete — see Vault-active gate)
+   // 11. Run purge old deleted records
+   // 12. Run backup overdue check
    ```
 
-4. App shell HTML (rendered into `#app`):
+4. `src/core/shell.js` — App shell HTML (rendered into `#app`):
    - `<header>` — sticky top bar: avatar, platform switcher slot, date/time, offline indicator, settings icon
    - `<nav>` — bottom nav on mobile, left sidebar on desktop: icons + labels for main routes
-   - `<main id="view-container">` — where router renders each view
+   - `<main class="app-main">` — contains `#shift-timer-bar`, `#view-container` (router mount), `#toast-container`, `#modal-overlay`
+   - While **`!user.onboardingComplete`**, `body.macadam-onboarding-focus` hides header, both navs, FAB, and shift timer bar via CSS; main stays full-bleed (see **Onboarding full-bleed chrome**)
    - `<div id="shift-timer-bar">` — collapsible timer bar when shift is active (Feature 32)
    - `<div id="toast-container">` — MacadamToast renders here
    - `<div id="modal-overlay">` — MacadamModal renders here
@@ -662,6 +668,22 @@ There is **no server login**: the vault always has a local `users` row (id `1`).
 - **P13** — changelog, tips, review nudge, and wellbeing toasts are skipped until the vault is active; **`window.__macadam.debug`** may still attach so developer utilities work during onboarding if needed.
 
 The hash router already forces `#/onboarding` when incomplete; this gate prevents **parallel** notification/polish modules from firing on the same boot path.
+
+---
+
+### Onboarding full-bleed chrome (shell layout)
+
+While **`!user?.onboardingComplete`**, the app should show **only** the onboarding flow inside `#view-container`: no header (settings, platforms, clock), no sidebar or bottom nav, no **`#macadam-fab`**, no shift timer bar. Toasts and modals under `.app-main` remain visible.
+
+**Implementation:**
+
+- **`updateOnboardingFocusClass(shouldFocus)`** — exported from [`src/core/router.js`](src/core/router.js); sets or clears **`body.macadam-onboarding-focus`** where `shouldFocus === !user?.onboardingComplete` (same predicate as the route guard, so the class stays correct on redirect early-returns).
+- **`handleRoute()`** — must call `updateOnboardingFocusClass` on **every** exit path (missing `#view-container`, `#/` redirect, forced `#/onboarding`, bounce away from `#/onboarding` when complete, unknown hash, then normal render).
+- **`src/main.js`** — after `store.loadFromDB()`, call `updateOnboardingFocusClass(!store.get('user')?.onboardingComplete)` **before** `renderAppShell` so the first post-load frame does not flash full chrome.
+- **CSS** — [`src/css/layout.css`](src/css/layout.css): under `body.macadam-onboarding-focus`, `display: none !important` on `.app-header`, `.app-sidebar`, `.bottom-nav`, `#macadam-fab`, `#shift-timer-bar`; reset `.app-main` bottom padding (remove the band reserved for fixed bottom nav on mobile); full-height `.app-shell` / `.app-body` / `.app-main` with `max-width: none` and `margin: 0` so content is not capped by zen-style rules.
+- **Zen mode** — [`src/css/components.css`](src/css/components.css): `body.zen-mode` dims chrome with opacity; **`body.macadam-onboarding-focus`** (and **`body.macadam-onboarding-focus.zen-mode`**) must **fully hide** that chrome and restore full-bleed `.app-main` so onboarding and zen never fight.
+
+**Product note:** With the header hidden, there is no Settings link during onboarding; add in-flow export/help in the onboarding module if required before completion.
 
 ---
 
@@ -931,6 +953,7 @@ All components are plain JS functions that return HTML strings OR manipulate DOM
 
 #### Subtasks:
 1. `src/modules/onboarding/onboarding.js` — orchestrator:
+   - Full-bleed UX: while incomplete, global shell chrome is hidden via `body.macadam-onboarding-focus` (router + CSS — see **Onboarding full-bleed chrome** under F5); completing onboarding calls `Router.navigate('#/dashboard')`, which clears the class.
    - Check `user.onboardingComplete` → if true, skip
    - Save progress to `sessionStorage` after each step (Feature 17)
    - On partial-open: offer "Continue" or "Start Over" (Feature 17)

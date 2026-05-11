@@ -90,16 +90,32 @@ function renderErrorBoundary(root, err) {
   root.appendChild(box);
 }
 
+/**
+ * Full-bleed onboarding: hide global chrome (see `body.macadam-onboarding-focus` in CSS).
+ * Derived from `!user?.onboardingComplete` so it stays correct across redirect early-returns.
+ * @param {boolean} shouldFocus
+ */
+export function updateOnboardingFocusClass(shouldFocus) {
+  if (typeof document === 'undefined' || !document.body) return;
+  document.body.classList.toggle('macadam-onboarding-focus', Boolean(shouldFocus));
+}
+
 function handleRoute() {
+  const user = /** @type {{ onboardingComplete?: boolean } | null} */ (store.get('user'));
+  const incomplete = !user?.onboardingComplete;
+
   const viewRoot = document.getElementById('view-container');
-  if (!viewRoot) return;
+  if (!viewRoot) {
+    updateOnboardingFocusClass(incomplete);
+    return;
+  }
 
   let hash = canonicalHash();
-  const user = /** @type {{ onboardingComplete?: boolean } | null} */ (store.get('user'));
 
   if (hash === '#/') {
     const next = user?.onboardingComplete ? '#/dashboard' : '#/onboarding';
     if (window.location.hash !== next) {
+      updateOnboardingFocusClass(next === '#/onboarding');
       window.location.hash = next;
       return;
     }
@@ -108,19 +124,24 @@ function handleRoute() {
 
   if (!user?.onboardingComplete) {
     if (hash !== '#/onboarding') {
+      updateOnboardingFocusClass(true);
       window.location.hash = '#/onboarding';
       return;
     }
   } else if (hash === '#/onboarding') {
+    updateOnboardingFocusClass(false);
     window.location.hash = '#/dashboard';
     return;
   }
 
   let def = resolveRouteDef(hash);
   if (!def) {
+    updateOnboardingFocusClass(false);
     window.location.hash = '#/dashboard';
     return;
   }
+
+  updateOnboardingFocusClass(incomplete);
 
   window.__macadam = window.__macadam || {};
   window.__macadam.currentRoute = def;
@@ -144,6 +165,12 @@ export const Router = {
   /** @param {string} path e.g. `dashboard` or `#/shifts` */
   navigate(path) {
     const h = path.startsWith('#') ? path : `#/${path.replace(/^\//, '')}`;
+    const navUser = /** @type {{ onboardingComplete?: boolean } | null} */ (store.get('user'));
+    if (!navUser?.onboardingComplete && h !== '#/onboarding') {
+      if (window.location.hash !== '#/onboarding') window.location.hash = '#/onboarding';
+      else handleRoute();
+      return;
+    }
     if (window.location.hash === h) handleRoute();
     else window.location.hash = h;
   },

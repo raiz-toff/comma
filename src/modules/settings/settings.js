@@ -168,7 +168,7 @@ function mountKeyboardOverlay(host) {
   const overlay = document.createElement('div');
   overlay.className = 'settings-shortcuts-overlay';
   overlay.setAttribute('data-shortcuts-overlay', '1');
-  overlay.hidden = true;
+  overlay.setAttribute('aria-hidden', 'true');
   overlay.innerHTML = `
     <div class="card card-raised settings-shortcuts-card" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
       <h3 class="settings-section-title">Keyboard shortcuts</h3>
@@ -181,18 +181,43 @@ function mountKeyboardOverlay(host) {
     </div>
   `;
   host.appendChild(overlay);
+
+  /** @param {KeyboardEvent} ev */
+  function onEscape(ev) {
+    if (ev.key !== 'Escape') return;
+    if (!overlay.classList.contains('is-open')) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    close();
+  }
+
   const close = () => {
-    overlay.hidden = true;
+    overlay.classList.remove('is-open');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.removeEventListener('keydown', onEscape, true);
   };
+
+  const open = () => {
+    document.removeEventListener('keydown', onEscape, true);
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.addEventListener('keydown', onEscape, true);
+  };
+
   overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) close();
+    if (e.target === overlay) {
+      close();
+      return;
+    }
+    const closer = e.target instanceof Element ? e.target.closest('[data-close-shortcuts]') : null;
+    if (closer) {
+      e.preventDefault();
+      e.stopPropagation();
+      close();
+    }
   });
-  overlay.querySelector('[data-close-shortcuts]')?.addEventListener('click', close);
-  return {
-    open: () => {
-      overlay.hidden = false;
-    },
-  };
+
+  return { open, close };
 }
 
 /**

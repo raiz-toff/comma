@@ -121,14 +121,19 @@
   text-decoration: underline;
 }
 
+/* Use .is-open — author `display: grid` wins over the `[hidden]` attribute in common browsers. */
 .settings-shortcuts-overlay {
   position: fixed;
   inset: 0;
   z-index: var(--z-modal);
   background: rgba(0, 0, 0, 0.45);
-  display: grid;
+  display: none;
   place-items: center;
   padding: var(--space-4);
+}
+
+.settings-shortcuts-overlay.is-open {
+  display: grid;
 }
 
 .settings-shortcuts-card {
@@ -201,6 +206,10 @@ html[data-layout-density='compact'] {
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
 }
 
 .platform-settings-logo :is(svg) {

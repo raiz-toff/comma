@@ -8,7 +8,7 @@ import { store } from '../../core/store.js';
 import { bus, PLATFORM_CHANGED } from '../../core/events.js';
 import { t } from '../../utils/strings.js';
 import { getPlatformConfig } from '../../registry/platforms/terminology.js';
-import { showModal } from '../../ui/components.js';
+import { resolvePlatformLogoHtml, showModal } from '../../ui/components.js';
 
 const Sortable = /** @type {any} */ (SortableMod).default || SortableMod;
 
@@ -91,9 +91,13 @@ export function renderPlatformSwitcher(mode, opts) {
       const label = typeof p.name === 'string' && p.name ? p.name : id;
       const col = typeof p.color === 'string' && p.color ? p.color : getPlatformConfig(id).color;
       const sel = selectedId === id ? 'true' : 'false';
-      return `<button type="button" class="platform-tab platform-tab--draggable" draggable="false" data-platform-id="${esc(
+      const logo = resolvePlatformLogoHtml(id);
+      const inner = logo
+        ? `<span class="platform-tab-inner"><span class="platform-tab-logo" aria-hidden="true">${logo}</span><span class="platform-tab-label">${esc(label)}</span></span>`
+        : esc(label);
+      return `<button type="button" class="platform-tab platform-tab--draggable${logo ? ' platform-tab--has-logo' : ''}" draggable="false" data-platform-id="${esc(
         id,
-      )}" aria-selected="${sel}" style="--platform-color:${esc(col)}">${esc(label)}</button>`;
+      )}" aria-selected="${sel}" style="--platform-color:${esc(col)}">${inner}</button>`;
     }),
   ];
   return `<div class="platform-switcher platform-switcher--tabs" role="tablist" aria-label="${esc(

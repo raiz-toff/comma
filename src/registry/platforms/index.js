@@ -20,9 +20,12 @@ const PLATFORMS = [doordash, ubereats, foodora, skip, instacart, amazonflex, oth
 const byId = new Map(PLATFORMS.map((p) => [p.id, p]));
 
 function validatePlatformDefinition(def) {
-  const required = ['id', 'name', 'color', 'terminology'];
+  const required = ['id', 'name', 'color', 'terminology', 'logo'];
   const missing = required.filter((k) => def[k] == null);
   if (missing.length) throw new Error(`Platform definition missing: ${missing.join(', ')}`);
+  if (typeof def.logo !== 'string' || !def.logo.trim()) {
+    throw new Error(`Platform ${def.id} missing non-empty logo (inline SVG string)`);
+  }
   const t = def.terminology;
   if (!t || typeof t.driver !== 'string' || !t.driver || typeof t.delivery !== 'string' || !t.delivery) {
     throw new Error(`Platform ${def.id} missing terminology.driver or terminology.delivery`);

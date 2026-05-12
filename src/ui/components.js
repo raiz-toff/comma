@@ -1211,6 +1211,19 @@ export function getPlatformColor(platformId) {
 }
 
 /**
+ * Inline SVG from the bundled platform catalog only (trusted). Empty if missing.
+ * End users do not supply SVG in Settings — logos are defined in registry modules.
+ * @param {string} platformId
+ * @returns {string}
+ */
+export function resolvePlatformLogoHtml(platformId) {
+  const id = String(platformId || '').toLowerCase();
+  const def = PlatformRegistry.getById(id);
+  const logo = def && typeof def.logo === 'string' ? def.logo.trim() : '';
+  return logo;
+}
+
+/**
  * Render a small badge with the platform brand color.
  * @param {string} platformId
  * @param {string} [label]
@@ -1220,5 +1233,9 @@ export function renderPlatformBadge(platformId, label) {
   const id = String(platformId || '').toLowerCase();
   const color = getPlatformColor(id);
   const lbl = typeof label === 'string' && label.length > 0 ? label : id || t('app.platformAll');
-  return `<span class="badge badge-platform" style="--platform-color:${escapeAttr(color)}" data-platform-id="${escapeAttr(id)}">${escapeHtml(lbl)}</span>`;
+  const logo = resolvePlatformLogoHtml(id);
+  if (!logo) {
+    return `<span class="badge badge-platform" style="--platform-color:${escapeAttr(color)}" data-platform-id="${escapeAttr(id)}">${escapeHtml(lbl)}</span>`;
+  }
+  return `<span class="badge badge-platform badge-platform--has-logo" role="img" aria-label="${escapeAttr(lbl)}" style="--platform-color:${escapeAttr(color)}" data-platform-id="${escapeAttr(id)}"><span class="badge-platform-logo" aria-hidden="true">${logo}</span><span class="badge-platform-label">${escapeHtml(lbl)}</span></span>`;
 }

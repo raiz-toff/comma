@@ -218,6 +218,10 @@ html[data-layout-density='compact'] {
   display: block;
 }
 
+.platform-settings-card[data-platform-id='ubereats'] .platform-settings-logo {
+  color: var(--color-text-primary);
+}
+
 .platform-settings-name {
   margin: 0;
   font-size: var(--text-md);

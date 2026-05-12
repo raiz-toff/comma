@@ -125,6 +125,39 @@
   border-radius: var(--radius-md);
 }
 
+.badge-platform--has-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 100%;
+}
+
+.badge-platform-logo {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--platform-color);
+}
+
+.badge-platform-logo :is(svg) {
+  display: block;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* Uber Eats: stroke-only mark — platform green on tinted badge fights contrast in light/dark */
+.badge-platform[data-platform-id='ubereats'] .badge-platform-logo {
+  color: var(--color-text-primary);
+}
+
+.badge-platform-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Form controls */
 .input-label {
   display: block;

@@ -232,6 +232,45 @@ samp {
   box-shadow: var(--shadow-sm);
 }
 
+.platform-tab--has-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 100%;
+}
+
+.platform-tab-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.platform-tab-logo {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--platform-color, var(--color-brand));
+}
+
+.platform-tab-logo :is(svg) {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+}
+
+.platform-tab[data-platform-id='ubereats'] .platform-tab-logo {
+  color: var(--color-text-primary);
+}
+
+.platform-tab-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .platform-tab--draggable {
   border-left: 3px solid var(--platform-color, var(--color-brand));
 }

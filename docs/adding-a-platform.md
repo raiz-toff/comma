@@ -17,6 +17,12 @@ For broader registry philosophy, see [`Registry_arch.md`](Registry_arch.md) in t
 
 ---
 
+## Settings vs catalog logos
+
+End users **never** upload or paste SVG in **Settings → Platforms**. Activation only picks from the catalog rows already in IndexedDB; **Other** stays **name + color** only. Every bundled platform must ship a non-empty `logo` string in code (see [Logos](#logos)); the app shows that SVG in the header switcher (tabs), onboarding platform grid, and `renderPlatformBadge`—there is no per-user logo override in the database.
+
+---
+
 ## Definition file
 
 **Path:** `src/registry/platforms/{id}.platform.js`  
@@ -24,7 +30,7 @@ For broader registry philosophy, see [`Registry_arch.md`](Registry_arch.md) in t
 
 ### Required fields
 
-These are enforced by `validatePlatformDefinition` in [`src/registry/platforms/index.js`](../src/registry/platforms/index.js):
+These are enforced by `validatePlatformDefinition` in [`src/registry/platforms/index.js`](../src/registry/platforms/index.js) (including a **non-empty `logo`** string):
 
 | Field | Notes |
 |--------|--------|
@@ -32,7 +38,7 @@ These are enforced by `validatePlatformDefinition` in [`src/registry/platforms/i
 | `name` | Human-readable label (e.g. `SkipTheDishes`). |
 | `color` | CSS hex for badges, charts, tabs (e.g. `#ED5A1F`). |
 | `terminology` | Object with at least **`driver`** and **`delivery`** non-empty strings. Optional: `bonus`, `surge` (used in copy and live labels). |
-| `logo` | SVG string (typically imported from `_logos.js`). |
+| `logo` | **Required** non-empty inline SVG string (typically imported from `_logos.js`). Used in the UI switcher and badges; not editable in Settings. |
 | `relevantFields` | Array of string keys for metrics/UI hints; may be `[]`. |
 | `helpUrl` | Support URL string; use `''` if none. |
 

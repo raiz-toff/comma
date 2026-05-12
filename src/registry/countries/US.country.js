@@ -28,4 +28,6 @@ export default {
     footnote: 'us',
     defaultRegionCode: 'CA',
   },
+  /** US gig catalog default when no `*.province.js` exists for that state. */
+  defaultAvailablePlatforms: ['doordash', 'ubereats', 'instacart', 'amazonflex', 'other'],
 };

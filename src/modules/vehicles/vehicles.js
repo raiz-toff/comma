@@ -31,6 +31,22 @@ function num(v, fallback = 0) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+/** Province / region id for auto-created vehicle expenses (align with user market). */
+function provinceIdForExpenseFromUser() {
+  const u = store.get('user');
+  if (!u || typeof u !== 'object') return 'ON';
+  const rec = /** @type {Record<string, unknown>} */ (u);
+  const cid =
+    typeof rec.countryId === 'string' && rec.countryId
+      ? String(rec.countryId).toUpperCase()
+      : typeof /** @type {{ country?: unknown }} */ (rec.locale)?.country === 'string'
+        ? String(rec.locale.country).toUpperCase()
+        : 'CA';
+  const rawPid = typeof rec.provinceId === 'string' ? rec.provinceId.trim().toUpperCase() : '';
+  if (cid === 'CA') return rawPid || 'ON';
+  return rawPid;
+}
+
 function money(v) {
   const sym = store.get('user')?.locale?.currencySymbol || '$';
   return `${sym}${num(v).toFixed(2)}`;
@@ -145,7 +161,7 @@ async function syncRecurringExpense(vehicleId, kind, date, amount) {
     recurringInterval: 'annual',
     recurringNextDate: date,
     hstPaid: 0,
-    provinceId: 'ON',
+    provinceId: provinceIdForExpenseFromUser(),
     deletedAt: null,
     createdAt: nowIso(),
     updatedAt: nowIso(),

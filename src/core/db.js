@@ -79,7 +79,7 @@ export const DEFAULT_USER = {
   weeklyGoal: 0,
   monthlyGoal: 0,
   annualGoal: 0,
-  taxWithholdingPct: 27,
+  taxWithholdingPct: 29,
   hstRegistered: false,
   workSchedule: 'sidehustle',
   notificationPrefs: {},
@@ -196,10 +196,20 @@ class MacadamDatabase extends Dexie {
       .stores(STORES_V3)
       .upgrade(async (tx) => {
         const usersTbl = tx.table('users');
-        /** @type {{ provinceId?: string; locale?: { country?: string } } | undefined} */
+        /** @type {{ provinceId?: string; countryId?: string; locale?: { country?: string } } | undefined} */
         const user = await usersTbl.get(1);
+        const locCountry =
+          typeof user?.locale?.country === 'string' ? String(user.locale.country).toUpperCase() : '';
+        const countryId =
+          typeof user?.countryId === 'string' && user.countryId
+            ? String(user.countryId).toUpperCase()
+            : locCountry || 'CA';
         const provinceId =
-          typeof user?.provinceId === 'string' && user.provinceId ? user.provinceId : 'ON';
+          typeof user?.provinceId === 'string' && user.provinceId
+            ? user.provinceId
+            : countryId === 'CA'
+              ? 'ON'
+              : '';
 
         const shiftsTbl = tx.table('shifts');
         await shiftsTbl.toCollection().modify((raw) => {
@@ -243,7 +253,7 @@ const logicalMigrations = [
     const countryFromLocale = typeof loc.country === 'string' ? String(loc.country).toUpperCase() : '';
     const next = { ...prev };
     if (!next.countryId) next.countryId = countryFromLocale === 'US' ? 'US' : 'CA';
-    if (!next.provinceId) next.provinceId = next.countryId === 'CA' ? 'ON' : 'ON';
+    if (!next.provinceId) next.provinceId = next.countryId === 'CA' ? 'ON' : '';
     delete next.homeBase;
     if (next.locale && typeof next.locale === 'object') {
       const L = /** @type {Record<string, unknown>} */ ({ .../** @type {object} */ (next.locale) });

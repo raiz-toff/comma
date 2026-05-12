@@ -89,10 +89,13 @@ export function buildOnboardingSetupExport(draft, user) {
   const country = String(draft.country || 'CA').toUpperCase();
   const cfg = getLocaleConfig(country);
   const du = draft.distanceUnit === 'km' || draft.distanceUnit === 'mi' ? draft.distanceUnit : cfg.distanceUnit;
+  const provinceId = String(draft.taxRegion || '').trim().toUpperCase();
   return {
     exportKind: 'macadam_setup',
     version: 1,
     exportedAt: nowIso(),
+    countryId: country,
+    provinceId,
     displayName: draft.displayName,
     avatarType: draft.avatarType,
     avatarData: draft.avatarType === 'custom' ? (draft.avatarData ? '[base64 omitted]' : null) : draft.avatarData,

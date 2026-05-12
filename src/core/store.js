@@ -26,6 +26,7 @@ import {
 } from './events.js';
 import { t } from '../utils/strings.js';
 import { getCountryDef, resolveProvinceDef } from '../utils/locale.js';
+import { getMarketContext } from '../registry/market/resolve.js';
 import { syncPlatformTerminologyFromRows } from '../registry/platforms/terminology.js';
 
 const THEME_KEY = 'macadam-theme';
@@ -37,6 +38,7 @@ const STATE_KEYS = [
   'user',
   'countryDef',
   'provinceDef',
+  'marketContext',
   'activePlatformId',
   'platforms',
   'activeShiftTimer',
@@ -56,6 +58,7 @@ const state = {
   user: null,
   countryDef: null,
   provinceDef: null,
+  marketContext: null,
   activePlatformId: 'all',
   platforms: [],
   /** @type {ActiveShiftTimer} */
@@ -153,18 +156,21 @@ function syncLocaleDefsFromUser(user) {
   if (!user || typeof user !== 'object') {
     state.countryDef = null;
     state.provinceDef = null;
+    state.marketContext = null;
     return;
   }
   const u = /** @type {Record<string, unknown>} */ (user);
   const countryId =
     typeof u.countryId === 'string' && u.countryId
-      ? u.countryId
+      ? String(u.countryId).toUpperCase()
       : typeof /** @type {{ country?: unknown }} */ (u.locale)?.country === 'string'
-        ? String(u.locale.country)
+        ? String(u.locale.country).toUpperCase()
         : 'CA';
-  const provinceId = typeof u.provinceId === 'string' && u.provinceId ? u.provinceId : 'ON';
+  let provinceId = typeof u.provinceId === 'string' && u.provinceId.trim() ? String(u.provinceId).trim().toUpperCase() : '';
+  if (!provinceId && countryId === 'CA') provinceId = 'ON';
   state.countryDef = getCountryDef(countryId);
   state.provinceDef = resolveProvinceDef(countryId, provinceId);
+  state.marketContext = getMarketContext(countryId, provinceId);
 }
 
 /**
@@ -303,11 +309,15 @@ export const store = {
   set(key, value) {
     if (!(key in state)) return;
     const old = state[key];
+    /** @type {unknown} */
+    let prevMarketContext = null;
     if (key === 'user') {
+      prevMarketContext = state.marketContext;
       state.user = /** @type {typeof state.user} */ (value);
       if (!state.user) {
         state.countryDef = null;
         state.provinceDef = null;
+        state.marketContext = null;
         state.theme = 'auto';
         applyUserTheme('auto');
       } else {
@@ -336,6 +346,7 @@ export const store = {
     if (key === 'user') {
       notify('countryDef', state.countryDef, old);
       notify('provinceDef', state.provinceDef, old);
+      notify('marketContext', state.marketContext, prevMarketContext);
     }
     notify(key, state[key], old);
   },

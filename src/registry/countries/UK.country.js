@@ -25,4 +25,5 @@ export default {
     footnote: 'generic',
     defaultRegionCode: '',
   },
+  defaultAvailablePlatforms: ['doordash', 'ubereats', 'instacart', 'amazonflex', 'other'],
 };

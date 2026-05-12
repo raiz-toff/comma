@@ -2,6 +2,8 @@
 
 Provinces (and, by the same pattern, **states / regions**) are **static catalog data** in `src/registry/provinces/`. The app resolves `user.provinceId` through **`ProvinceRegistry`** and exposes the active row as **`store` → `provinceDef`** for tax hints, expense categories, and platform allow-lists.
 
+**Country-first overrides:** when a province row exists, its **`availablePlatforms`** (and future per-province keys) win over the country’s **`defaultAvailablePlatforms`** — see [`market_resolution.md`](market_resolution.md). If no province row matches `(countryId, provinceId)`, `store.provinceDef` may be **`null`**; features should tolerate that.
+
 For registry philosophy, see [`docs/Registry_arch.md`](Registry_arch.md). For plan-level intent (Ontario-first v3), see [`docs/planv3.md`](planv3.md).
 
 ---

@@ -124,6 +124,16 @@ Ontario (and other provinces) expose **`availablePlatforms`**: an array of platf
 
 If you skip this step, the catalog still loads, but onboarding and province-driven UX may not surface the platform where you expect.
 
+For **country-level** defaults when no province row exists (e.g. many US states), add **`defaultAvailablePlatforms`** on the country definition; resolution order is in [`market_resolution.md`](market_resolution.md).
+
+---
+
+## Exports and stable ids
+
+- **Onboarding setup JSON** uses `exportKind: 'macadam_setup'`, a numeric **`version`**, and arrays of platform ids in the same **lowercase** form as the registry. **`countryId`** and **`provinceId`** (or tax region code) travel with the export for portable imports.
+- Treat **`id`** as immutable once users have data; renaming requires a Dexie migration mapping old → new ids.
+- Full rules: [market_resolution.md](market_resolution.md) (exports and portability).
+
 ---
 
 ## Terminology overrides (Dexie)

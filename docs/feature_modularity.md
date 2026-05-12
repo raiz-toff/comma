@@ -52,6 +52,8 @@ src/registry/
   reports/          ← NEW — report section registry
 ```
 
+**Market resolution** (country + province merge, platform allow-lists, shared withholding presets, store `marketContext`) is documented in [`market_resolution.md`](market_resolution.md). Use it when adding markets or wiring tax and onboarding.
+
 ---
 
 ## REGISTRY 1 — WIDGET REGISTRY

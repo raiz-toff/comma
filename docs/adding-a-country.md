@@ -17,7 +17,8 @@ For registry background, see [`docs/Registry_arch.md`](Registry_arch.md). After 
 7. Optional top-level flags merged into locale-style config via [`countryDefToLocaleConfig`](../src/registry/countries/index.js): e.g. **`hasCPP`**, **`hasHST`**, **`hasSETax`** (see [`CA.country.js`](../src/registry/countries/CA.country.js)). Omit legacy keys you do not use (the template still mentions `mileageRateSource`; current CA omits it — align with how existing countries are written).
 8. Register in [`src/registry/countries/index.js`](../src/registry/countries/index.js): `import` + add to **`COUNTRIES`**.
 9. If this country has subdivisions in the app, add matching [**province**](../src/registry/provinces/) defs with the same **`countryId`**.
-10. Run `node build.js --prod` and confirm boot passes **`assertCountryRegistryValid()`** ([`main.js`](../src/main.js)).
+10. Optional **`defaultAvailablePlatforms`**: array of `PlatformRegistry` ids used when **no** province row applies yet (see [`market_resolution.md`](market_resolution.md)). Stripped from locale config via [`countryDefToLocaleConfig`](../src/registry/countries/index.js) so it never leaks into `Intl` / currency helpers.
+11. Run `node build.js --prod` and confirm boot passes **`assertCountryRegistryValid()`** ([`main.js`](../src/main.js)).
 
 ---
 
@@ -30,6 +31,7 @@ For registry background, see [`docs/Registry_arch.md`](Registry_arch.md). After 
 | `intlLocaleTag` | BCP-47 tag for `Intl.NumberFormat` when formatting with a country code ([`formatters.js`](../src/utils/formatters.js)). |
 | `hstOnboarding` | Whether GST/HST-style onboarding / expense HST UI applies (`true` for Canada). |
 | `regionPresetType` | Drives preset behaviour in onboarding / tax copy (`'CA'`, `'US'`, or `null`). |
+| Withholding preset tables | CA/US per-region **set-aside %** hints live in [`src/registry/tax/withholding-presets.js`](../src/registry/tax/withholding-presets.js) — do not duplicate maps in country files or modules. |
 | `regionLabel` | `'province'` vs `'state'` (wording in onboarding). |
 | `defaultWithholdingPct` | Suggested set-aside percentage. |
 | `fallbackCurrency` | Same idea as top-level `currency` for tax-specific fallbacks. |
@@ -54,7 +56,7 @@ For registry background, see [`docs/Registry_arch.md`](Registry_arch.md). After 
 |------|--------|
 | **User / DB defaults** | [`DEFAULT_USER` / migrations](../src/core/db.js) — set `countryId` and `locale.country` / currency consistently when this country should be a default. |
 | **`countryDef` in store** | [`store`](../src/core/store.js) resolves `countryDef` from `user.countryId` (and related locale fields). No extra hook is needed if only the catalog row was added. |
-| **Onboarding** | Pickers and flows use `CountryRegistry.getAll()` where multi-country UI exists; v3 onboarding may still assume **CA** in places — search for hardcoded `'CA'` when you add a **primary** new market. |
+| **Onboarding** | Uses [`resolveAvailablePlatformIds`](../src/registry/market/resolve.js) and shared withholding presets — see [`market_resolution.md`](market_resolution.md). |
 | **Provinces** | `ProvinceRegistry.getByCountry('XX')` is empty until you add at least one province with `countryId: 'XX'`. |
 
 ---

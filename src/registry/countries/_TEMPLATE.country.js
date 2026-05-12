@@ -26,4 +26,6 @@ export default {
     footnote: 'generic',
     defaultRegionCode: '',
   },
+  /** Optional: platform ids when no province modules exist yet; see docs/market_resolution.md */
+  // defaultAvailablePlatforms: ['doordash', 'ubereats', 'instacart', 'amazonflex', 'other'],
 };

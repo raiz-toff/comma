@@ -27,4 +27,6 @@ export default {
     footnote: 'canada',
     defaultRegionCode: 'ON',
   },
+  /** Default platform picker ids when no province row applies (inherit before union). @see docs/market_resolution.md */
+  defaultAvailablePlatforms: ['doordash', 'ubereats', 'skip', 'foodora', 'instacart', 'amazonflex'],
 };

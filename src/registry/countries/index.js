@@ -26,10 +26,11 @@ function validateCountryDefinition(def) {
  * @param {typeof CA} def
  */
 export function countryDefToLocaleConfig(def) {
-  const { id, labelKey, tax, ...rest } = def;
+  const { id, labelKey, tax, defaultAvailablePlatforms, ...rest } = def;
   void id;
   void labelKey;
   void tax;
+  void defaultAvailablePlatforms;
   return { ...rest };
 }
 

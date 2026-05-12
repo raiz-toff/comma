@@ -29,40 +29,16 @@
  */
 
 import { t } from '../../utils/strings.js';
-import { getLocaleConfig, getProvinceDef, resolveProvinceDef } from '../../utils/locale.js';
+import { getLocaleConfig, getProvinceDef } from '../../utils/locale.js';
 import { CountryRegistry, getCountryTaxProfile } from '../../registry/countries/index.js';
 import { ProvinceRegistry } from '../../registry/provinces/index.js';
-import { PlatformRegistry } from '../../registry/platforms/index.js';
+import { getWithholdingPresetPct, listUsWithholdingRegionCodes } from '../../registry/tax/withholding-presets.js';
+import { resolveAvailablePlatformIds } from '../../registry/market/resolve.js';
 import { getPlatformColor, renderPlatformBadge } from '../../ui/components.js';
 
 export const TOTAL_STEPS = 11;
 
 const VEHICLE_TYPES = ['gas', 'hybrid', 'ev', 'motorcycle', 'bicycle', 'ebike', 'scooter', 'walking'];
-
-const TAX_PRESET_CA = {
-  ON: 30,
-  QC: 30,
-  BC: 25,
-  AB: 25,
-  MB: 28,
-  SK: 28,
-  NS: 32,
-  NB: 30,
-  PE: 30,
-  NL: 32,
-  NT: 25,
-  YT: 25,
-  NU: 25,
-};
-
-const TAX_PRESET_US = {
-  CA: 32,
-  NY: 35,
-  NJ: 33,
-  TX: 25,
-  FL: 25,
-  default: 25,
-};
 
 /** @param {unknown} s */
 function esc(s) {
@@ -98,8 +74,8 @@ export function defaultDraftFromUser(user) {
   if (provs.length) {
     if (!taxRegion || !provs.some((p) => p.id === taxRegion)) taxRegion = provs[0].id;
   } else if (taxProf.regionPresetType === 'US') {
-    const keys = Object.keys(TAX_PRESET_US).filter((k) => k !== 'default');
-    if (!keys.includes(taxRegion)) taxRegion = String(taxProf.defaultRegionCode || keys[0] || 'NY').toUpperCase();
+    const keys = listUsWithholdingRegionCodes();
+    if (!keys.includes(taxRegion)) taxRegion = String(taxProf.defaultRegionCode || 'CA').toUpperCase();
   } else {
     taxRegion = String(taxProf.defaultRegionCode || '').toUpperCase();
   }
@@ -161,7 +137,7 @@ export function normalizeTaxRegionForCountry(draft) {
   }
   const tax = getCountryTaxProfile(country);
   if (tax.regionPresetType === 'US') {
-    const keys = Object.keys(TAX_PRESET_US).filter((k) => k !== 'default');
+    const keys = listUsWithholdingRegionCodes();
     const r = String(draft.taxRegion || '').toUpperCase();
     draft.taxRegion = keys.includes(r) ? r : '';
     return;
@@ -177,25 +153,8 @@ export function normalizeTaxRegionForCountry(draft) {
 export function filterPlatformRowsForOnboarding(draft, platformRows) {
   const country = String(draft.country || 'CA').toUpperCase();
   const region = String(draft.taxRegion || '').trim().toUpperCase();
-  const provDef = resolveProvinceDef(country, region);
-  const fromIds = (/** @type {readonly string[] | undefined} */ ids) => {
-    if (!Array.isArray(ids) || ids.length === 0) return null;
-    const set = new Set(ids.map((id) => String(id).toLowerCase()));
-    const out = platformRows.filter((row) => set.has(String(row.id).toLowerCase()));
-    return out.length ? out : null;
-  };
-  const exact = fromIds(provDef?.availablePlatforms);
-  if (exact) return exact;
-  const provinces = ProvinceRegistry.getByCountry(country);
-  if (provinces.length) {
-    const set = new Set();
-    for (const p of provinces) {
-      for (const id of p.availablePlatforms || []) set.add(String(id).toLowerCase());
-    }
-    if (set.size) return platformRows.filter((row) => set.has(String(row.id).toLowerCase()));
-  }
-  const catalogIds = new Set(PlatformRegistry.getAll().map((p) => String(p.id).toLowerCase()));
-  return platformRows.filter((row) => catalogIds.has(String(row.id).toLowerCase()));
+  const allow = new Set(resolveAvailablePlatformIds(country, region));
+  return platformRows.filter((row) => allow.has(String(row.id).toLowerCase()));
 }
 
 /**
@@ -261,7 +220,7 @@ export function renderStepInner(step, draft, platformRows) {
             .join('')}
         </select>`;
       } else if (tax.regionPresetType === 'US') {
-        const keys = Object.keys(TAX_PRESET_US).filter((k) => k !== 'default');
+        const keys = listUsWithholdingRegionCodes();
         const cur = String(draft.taxRegion || '').toUpperCase();
         control = `<select id="ob-region-input" class="input" data-field="taxRegion" aria-label="${esc(regionLabel)}">
           <option value="">${esc(t('onboarding.steps.taxRegionPlaceholder'))}</option>
@@ -483,7 +442,7 @@ export function validateStep(step, draft, platformRows = []) {
       }
       const tax = getCountryTaxProfile(country);
       if (tax.regionPresetType === 'US') {
-        const keys = Object.keys(TAX_PRESET_US).filter((k) => k !== 'default');
+        const keys = listUsWithholdingRegionCodes();
         const r = String(draft.taxRegion || '').toUpperCase();
         return keys.includes(r) ? null : 'onboarding.validation.region';
       }
@@ -519,7 +478,8 @@ export function applyTaxPreset(draft) {
   const r = String(draft.taxRegion || '').trim().toUpperCase();
   if (!r || r === '—') return draft.taxWithholdingPct;
   const tax = getCountryTaxProfile(draft.country);
-  if (tax.regionPresetType === 'CA' && TAX_PRESET_CA[r] != null) return TAX_PRESET_CA[r];
-  if (tax.regionPresetType === 'US') return TAX_PRESET_US[r] ?? TAX_PRESET_US.default;
+  const v = getWithholdingPresetPct(tax.regionPresetType, r);
+  if (v != null) return v;
+  if (tax.regionPresetType === 'US') return Number(tax.defaultWithholdingPct) >= 0 ? Number(tax.defaultWithholdingPct) : draft.taxWithholdingPct;
   return draft.taxWithholdingPct;
 }

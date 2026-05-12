@@ -12,5 +12,6 @@ All project specification and architecture docs live in this folder.
 | [`adding-a-country.md`](adding-a-country.md) | How to add a country (registry, tax profile, strings). |
 | [`adding-a-province.md`](adding-a-province.md) | How to add a province / territory (registry + wiring). |
 | [`adding-a-platform.md`](adding-a-platform.md) | How to add a new platform definition. |
+| [`market_resolution.md`](market_resolution.md) | Country-first / province-override resolution, presets, identity, money boundaries. |
 
 Source code `@see` comments use paths like `docs/plan.md` relative to the **repository root**.

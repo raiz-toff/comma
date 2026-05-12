@@ -17,6 +17,14 @@ export {
 } from './countries/index.js';
 export { ProvinceRegistry, assertProvinceRegistryValid } from './provinces/index.js';
 
+export {
+  WITHHOLDING_PRESETS_CA,
+  WITHHOLDING_PRESETS_US,
+  getWithholdingPresetPct,
+  listUsWithholdingRegionCodes,
+} from './tax/withholding-presets.js';
+export { getMarketContext, resolveAvailablePlatformIds } from './market/resolve.js';
+
 export { WidgetRegistry, assertWidgetRegistryValid } from './widgets/index.js';
 export { NotificationRegistry, assertNotificationRegistryValid } from './notifications/index.js';
 export { BadgeRegistry, assertBadgeRegistryValid } from './badges/index.js';

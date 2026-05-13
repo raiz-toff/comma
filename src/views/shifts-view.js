@@ -4,6 +4,7 @@ import { bus, PLATFORM_CHANGED, SHIFT_DELETED, SHIFT_SAVED } from '../core/event
 import { store } from '../core/store.js';
 import { t } from '../utils/strings.js';
 import { showDrawer, showModal, showToast, renderEmptyState } from '../ui/components.js';
+import { getIcon } from '../ui/icons.js';
 import { getPlatformConfig } from '../registry/platforms/terminology.js';
 import { renderShiftForm } from '../modules/shifts/shift-form.js';
 import {
@@ -400,14 +401,14 @@ export async function render(root, ctx) {
       pagerSlot.hidden = false;
       pagerSlot.innerHTML = `
         <nav class="shifts-pager" role="navigation" aria-label="${escapeHtml(t('shifts.pagerAria'))}">
-          <button type="button" class="btn btn-secondary btn-sm" data-shifts-page="prev"${pageIdx === 0 ? ' disabled' : ''}>${escapeHtml(t('shifts.pagePrev'))}</button>
-          <div class="shifts-pager-center">
-            <span class="shifts-pager-status">${escapeHtml(t('shifts.pageStatus').replace('{current}', String(pageIdx + 1)).replace('{total}', String(totalPages)))}</span>
+          <div class="shifts-pager-controls">
+            <button type="button" class="shifts-pager-btn" data-shifts-page="prev" aria-label="${escapeAttr(t('shifts.pagePrev'))}"${pageIdx === 0 ? ' disabled' : ''}>${getIcon('chevron-left', 20)}</button>
             <div class="shifts-pager-numbers">
               ${renderPagerNumbers(pageIdx, totalPages)}
             </div>
+            <button type="button" class="shifts-pager-btn" data-shifts-page="next" aria-label="${escapeAttr(t('shifts.pageNext'))}"${pageIdx >= totalPages - 1 ? ' disabled' : ''}>${getIcon('chevron-right', 20)}</button>
           </div>
-          <button type="button" class="btn btn-secondary btn-sm" data-shifts-page="next"${pageIdx >= totalPages - 1 ? ' disabled' : ''}>${escapeHtml(t('shifts.pageNext'))}</button>
+          <span class="shifts-pager-status">${escapeHtml(t('shifts.pageStatus').replace('{current}', String(pageIdx + 1)).replace('{total}', String(totalPages)))}</span>
         </nav>`;
     }
   };

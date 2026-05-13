@@ -289,22 +289,53 @@
 
 .shifts-pager {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-2) 0;
-}
-
-.shifts-pager-center {
-  display: flex;
   flex-direction: column;
   align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  /* Add plenty of bottom padding to clear the FAB (80px bottom + 56px height + gap) */
+  padding-bottom: calc(var(--space-16) + 88px + env(safe-area-inset-bottom, 0));
+}
+
+.shifts-pager-controls {
+  display: inline-flex;
+  align-items: center;
   gap: var(--space-2);
+  background: var(--color-surface);
+  padding: var(--space-1);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.shifts-pager-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.shifts-pager-btn:hover:not(:disabled) {
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+
+.shifts-pager-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 .shifts-pager-numbers {
   display: flex;
   gap: var(--space-1);
+  padding: 0 var(--space-1);
 }
 
 .shifts-pager-number {
@@ -316,11 +347,12 @@
   padding: 0 var(--space-2);
   font-size: var(--text-sm);
   font-weight: 600;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   border: 1px solid transparent;
   background: transparent;
   color: var(--color-text-secondary);
   transition: all var(--transition-base);
+  cursor: pointer;
 }
 
 .shifts-pager-number:hover:not(.is-active) {
@@ -328,9 +360,9 @@
 }
 
 .shifts-pager-number.is-active {
-  background: var(--color-surface-raised);
-  border-color: var(--color-border);
-  color: var(--color-text-primary);
+  background: var(--color-brand);
+  border-color: var(--color-brand-dark);
+  color: #1a1916;
   box-shadow: var(--shadow-sm);
 }
 

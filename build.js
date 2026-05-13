@@ -161,6 +161,18 @@ async function buildWatch() {
     ],
   });
   await ctx.watch();
+  
+  fs.watch(CSS_DIR, { recursive: true }, async (eventType, filename) => {
+    if (filename && filename.endsWith('.css')) {
+      console.log(`[macadam] CSS changed: ${filename}`);
+      try {
+        await concatCss();
+      } catch (err) {
+        console.error('[macadam] CSS concat failed:', err);
+      }
+    }
+  });
+
   console.log('[macadam] watching for changes…');
 }
 

@@ -59,6 +59,8 @@ const ICON_INNER = {
   dollar: '<line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
   percent:
     '<line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',
+  'chevron-left': '<polyline points="15 18 9 12 15 6"/>',
+  'chevron-right': '<polyline points="9 18 15 12 9 6"/>',
   ...NAV_ICON_INNER,
 };
 

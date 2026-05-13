@@ -182,18 +182,12 @@ export function renderShiftForm(opts = {}) {
           <div class="shifts-advanced-grid">
             <label class="field">
               <span class="field-label">${escapeHtml(t('shifts.tips'))}</span>
-              <div class="field-inline">
-                <input class="input" name="tips" inputmode="decimal" placeholder="0.00" />
-                <button type="button" class="btn btn-ghost" data-keypad="tips">${escapeHtml(t('ui.keypad.open'))}</button>
-              </div>
+              <input class="input" name="tips" inputmode="decimal" placeholder="0.00" />
             </label>
 
             <label class="field">
               <span class="field-label" data-bonus-label>${escapeHtml(t('shifts.bonus'))}</span>
-              <div class="field-inline">
-                <input class="input" name="bonus" inputmode="decimal" placeholder="0.00" />
-                <button type="button" class="btn btn-ghost" data-keypad="bonus">${escapeHtml(t('ui.keypad.open'))}</button>
-              </div>
+              <input class="input" name="bonus" inputmode="decimal" placeholder="0.00" />
             </label>
 
             <label class="field">
@@ -457,8 +451,6 @@ export function renderShiftForm(opts = {}) {
   }
 
   wireKeypad('gross', grossEl);
-  wireKeypad('tips', tipsEl);
-  wireKeypad('bonus', bonusEl);
 
   const onInput = () => {
     if (allowWeeklyEntry && dateEl && weekAnchorEl) {

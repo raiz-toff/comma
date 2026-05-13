@@ -197,9 +197,9 @@ function shiftCardHtml(s) {
         ${shiftCardMetricsHtml(s)}
       </div>
       <div class="shift-card-actions">
-        <button type="button" class="btn btn-ghost" data-action="edit">${escapeHtml(t('common.edit'))}</button>
-        <button type="button" class="btn btn-ghost" data-action="duplicate">${escapeHtml(t('shifts.duplicateShift'))}</button>
-        <button type="button" class="btn btn-ghost btn-danger" data-action="delete">${escapeHtml(t('common.delete'))}</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="edit">${escapeHtml(t('common.edit'))}</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="duplicate">${escapeHtml(t('shifts.duplicateShift'))}</button>
+        <button type="button" class="btn btn-danger btn-sm" data-action="delete">${escapeHtml(t('common.delete'))}</button>
       </div>
     </article>
   `;
@@ -278,6 +278,22 @@ async function openShiftFormModal({ initial, onSaved, title, mode = 'full', subm
       if (id != null) handle.close();
     });
   }
+}
+
+function renderPagerNumbers(current, total) {
+  const windowSize = 5;
+  let start = Math.max(0, current - Math.floor(windowSize / 2));
+  let end = Math.min(total - 1, start + windowSize - 1);
+  if (end - start + 1 < windowSize) {
+    start = Math.max(0, end - windowSize + 1);
+  }
+
+  let html = '';
+  for (let i = start; i <= end; i++) {
+    const isActive = i === current;
+    html += `<button type="button" class="shifts-pager-number${isActive ? ' is-active' : ''}" data-shifts-page="${i}">${i + 1}</button>`;
+  }
+  return html;
 }
 
 /** @param {HTMLElement} root @param {Record<string, unknown>} ctx */
@@ -385,7 +401,12 @@ export async function render(root, ctx) {
       pagerSlot.innerHTML = `
         <nav class="shifts-pager" role="navigation" aria-label="${escapeHtml(t('shifts.pagerAria'))}">
           <button type="button" class="btn btn-secondary btn-sm" data-shifts-page="prev"${pageIdx === 0 ? ' disabled' : ''}>${escapeHtml(t('shifts.pagePrev'))}</button>
-          <span class="shifts-pager-status">${escapeHtml(t('shifts.pageStatus').replace('{current}', String(pageIdx + 1)).replace('{total}', String(totalPages)))}</span>
+          <div class="shifts-pager-center">
+            <span class="shifts-pager-status">${escapeHtml(t('shifts.pageStatus').replace('{current}', String(pageIdx + 1)).replace('{total}', String(totalPages)))}</span>
+            <div class="shifts-pager-numbers">
+              ${renderPagerNumbers(pageIdx, totalPages)}
+            </div>
+          </div>
           <button type="button" class="btn btn-secondary btn-sm" data-shifts-page="next"${pageIdx >= totalPages - 1 ? ' disabled' : ''}>${escapeHtml(t('shifts.pageNext'))}</button>
         </nav>`;
     }
@@ -454,8 +475,8 @@ export async function render(root, ctx) {
         return;
       }
       const pageNav = navEl.getAttribute('data-shifts-page');
-      if (pageNav === 'prev' || pageNav === 'next') {
-        if (/** @type {HTMLButtonElement} */ (navEl).disabled) return;
+      if (pageNav != null) {
+        if (navEl.hasAttribute('disabled')) return;
         const user = store.get('user');
         const wsd = Number(user?.locale?.weekStartDay ?? 0);
         const range = loadShiftsRange(wsd);
@@ -465,8 +486,16 @@ export async function render(root, ctx) {
         const totalPages = Math.max(1, Math.ceil(filtered.length / SHIFTS_PER_PAGE));
         let page = filtered.length > SHIFTS_PER_PAGE ? loadShiftsPageIdx(range.start, range.end, range.preset) : 0;
         if (page >= totalPages) page = Math.max(0, totalPages - 1);
-        if (pageNav === 'prev') page = Math.max(0, page - 1);
-        else page = Math.min(totalPages - 1, page + 1);
+
+        if (pageNav === 'prev') {
+          page = Math.max(0, page - 1);
+        } else if (pageNav === 'next') {
+          page = Math.min(totalPages - 1, page + 1);
+        } else {
+          const n = parseInt(pageNav, 10);
+          if (!isNaN(n)) page = n;
+        }
+
         saveShiftsPageIdx(range.start, range.end, range.preset, page);
         await paint();
         return;

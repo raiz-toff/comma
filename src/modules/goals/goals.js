@@ -466,6 +466,33 @@ export async function listChallenges() {
   return db.challenges.toArray();
 }
 
+export async function getActiveGoalsWithProgress() {
+  const activeGoals = await db.goals.filter((g) => g.active === true).toArray();
+  const now = new Date();
+  const results = [];
+  for (const goal of activeGoals) {
+    let periodStart;
+    let periodEnd;
+    if (goal.scope === 'daily') {
+      periodStart = now;
+      periodEnd = now;
+    } else if (goal.scope === 'weekly') {
+      periodStart = startOfWeek(now);
+      periodEnd = endOfWeek(now);
+    } else if (goal.scope === 'monthly') {
+      periodStart = startOfMonth(now);
+      periodEnd = endOfMonth(now);
+    } else {
+      results.push({ ...goal, current: 0, progress: 0 });
+      continue;
+    }
+    const current = await sumShiftMetric(periodStart, periodEnd, goal.type);
+    const progress = goal.target > 0 ? Math.min(1, current / goal.target) : 0;
+    results.push({ ...goal, current, progress });
+  }
+  return results;
+}
+
 export async function getEarningsThermometer() {
   const weeklyGoal = await db.goals
     .filter((g) => g.active === true && g.scope === 'weekly' && g.type === 'earnings')
@@ -478,7 +505,7 @@ export async function getEarningsThermometer() {
 
 export async function getGoalDashboardData() {
   const [goals, badges, challenges, history, thermometer] = await Promise.all([
-    listGoals(),
+    getActiveGoalsWithProgress(),
     listBadges(),
     listChallenges(),
     listGoalHistory(10),

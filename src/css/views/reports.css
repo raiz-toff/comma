@@ -1,0 +1,190 @@
+.reports-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-bottom: var(--space-12);
+}
+
+.reports-config-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 768px) {
+  .reports-config-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.reports-period-selector {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding: var(--space-2);
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-pill);
+}
+
+.reports-period-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  transition: all 0.2s ease;
+}
+
+.reports-period-btn.is-active {
+  background: var(--color-brand);
+  color: var(--color-white);
+}
+
+.reports-period-btn:not(.is-active):hover {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+/* Template Builder */
+.reports-template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.template-check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.template-check:hover {
+  border-color: var(--color-brand);
+  background: color-mix(in srgb, var(--color-brand) 5%, transparent);
+}
+
+.template-check input {
+  width: 16px;
+  height: 16px;
+}
+
+/* Report Card Metrics */
+.reports-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.report-metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent);
+}
+
+.report-metric-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+.report-metric-value {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  font-family: var(--font-mono);
+}
+
+/* Visual Assets (QR & YIR) */
+.reports-visuals-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 768px) {
+  .reports-visuals-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  border: 4px solid var(--color-brand);
+}
+
+.yir-card {
+  background: linear-gradient(135deg, var(--color-brand) 0%, #f7931e 100%);
+  color: var(--color-white);
+  padding: var(--space-6);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  position: relative;
+  overflow: hidden;
+}
+
+.yir-card::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 200px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.yir-card h3 {
+  font-size: var(--text-xl);
+  font-weight: 800;
+  margin: 0;
+}
+
+/* Actions Section */
+.reports-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-3);
+}
+
+.export-btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.import-section {
+  background: var(--color-surface-raised);
+  border: 2px dashed var(--color-border);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+}

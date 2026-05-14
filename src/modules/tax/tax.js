@@ -12,6 +12,7 @@ import { WITHHOLDING_PRESETS_CA, WITHHOLDING_PRESETS_US } from '../../registry/t
 import { ProvinceRegistry } from '../../registry/provinces/index.js';
 import { t } from '../../utils/strings.js';
 import { renderProgressRing, showToast } from '../../ui/components.js';
+import { getIcon } from '../../ui/icons.js';
 
 const DEFAULT_CA_REGION = 'ON';
 const DEFAULT_US_REGION = 'CA';
@@ -184,7 +185,7 @@ async function loadTaxSummary(year) {
 /**
  * @param {ReturnType<typeof getCountryTaxProfile>} taxProfile
  */
-function renderTaxHelpers(taxProfile) {
+function renderTaxHelpersClean(taxProfile) {
   const t2125Rows = [
     t('tax.t2125.grossIncome'),
     t('tax.t2125.advertising'),
@@ -192,7 +193,6 @@ function renderTaxHelpers(taxProfile) {
     t('tax.t2125.motorVehicle'),
     t('tax.t2125.supplies'),
     t('tax.t2125.other'),
-    t('tax.t2125.netIncome'),
   ];
   const scheduleCRows = [
     t('tax.scheduleC.partIIncome'),
@@ -201,46 +201,42 @@ function renderTaxHelpers(taxProfile) {
     t('tax.scheduleC.depreciation'),
     t('tax.scheduleC.homeOffice'),
     t('tax.scheduleC.other'),
-    t('tax.scheduleC.netProfit'),
   ];
+
   return `
     <div class="bento-grid" style="margin-top: var(--space-4);">
       <article class="card bento-cell-1x1">
-        <h3>${esc(t('tax.t2125.title'))}</h3>
-        <ol style="padding-left: var(--space-4); margin: var(--space-3) 0 0;">
-          ${t2125Rows.map((row) => `<li>${esc(row)}</li>`).join('')}
-        </ol>
-      </article>
-      <article class="card bento-cell-1x1">
-        <h3>${esc(t('tax.scheduleC.title'))}</h3>
-        <ol style="padding-left: var(--space-4); margin: var(--space-3) 0 0;">
-          ${scheduleCRows.map((row) => `<li>${esc(row)}</li>`).join('')}
-        </ol>
-      </article>
-      <article class="card bento-cell-1x1">
-        <h3>${esc(t('tax.referenceLinks'))}</h3>
-        <ul style="padding-left: var(--space-4); margin: var(--space-3) 0 0;">
-          <li><a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/sole-proprietorships-partnerships/report-business-income-expenses.html" target="_blank" rel="noopener noreferrer">CRA — ${esc(
-            t('tax.links.businessIncomeGuide'),
-          )}</a></li>
-          <li><a href="https://www.irs.gov/forms-pubs/about-schedule-c-form-1040" target="_blank" rel="noopener noreferrer">IRS — ${esc(
-            t('tax.links.scheduleCGuide'),
-          )}</a></li>
-          <li><a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses.html" target="_blank" rel="noopener noreferrer">CRA — ${esc(
-            t('tax.links.hstGuide'),
-          )}</a></li>
-          <li><a href="https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes" target="_blank" rel="noopener noreferrer">IRS — ${esc(
-            t('tax.links.estimatedTaxes'),
-          )}</a></li>
+        <div style="display: flex; gap: var(--space-2); align-items: center; margin-bottom: var(--space-4);">
+          ${getIcon('receipt', 18, 'text-brand')}
+          <h3>${esc(t('tax.t2125.title'))}</h3>
+        </div>
+        <ul class="tax-helper-list">
+          ${t2125Rows.map((row) => `<li class="tax-helper-item">${esc(row)}</li>`).join('')}
         </ul>
-        <p style="margin-top: var(--space-3); color: var(--color-text-secondary);">
-          ${esc(
-            taxProfile.footnote === 'canada'
-              ? t('tax.footnoteCanada')
-              : taxProfile.footnote === 'us'
-                ? t('tax.footnoteUs')
-                : t('tax.footnoteGeneric'),
-          )}
+      </article>
+      
+      <article class="card bento-cell-1x1">
+        <div style="display: flex; gap: var(--space-2); align-items: center; margin-bottom: var(--space-4);">
+          ${getIcon('flag', 18, 'text-success')}
+          <h3>${esc(t('tax.scheduleC.title'))}</h3>
+        </div>
+        <ul class="tax-helper-list">
+          ${scheduleCRows.map((row) => `<li class="tax-helper-item">${esc(row)}</li>`).join('')}
+        </ul>
+      </article>
+
+      <article class="card bento-cell-1x1">
+        <div style="display: flex; gap: var(--space-2); align-items: center; margin-bottom: var(--space-4);">
+          ${getIcon('info', 18, 'text-muted')}
+          <h3>${esc(t('tax.referenceLinks'))}</h3>
+        </div>
+        <ul class="tax-helper-list">
+          <li><a href="https://www.canada.ca/en/revenue-agency.html" target="_blank" rel="noopener noreferrer" style="color: var(--color-brand); font-size: var(--text-sm);">CRA — ${esc(t('tax.links.businessIncomeGuide'))}</a></li>
+          <li><a href="https://www.irs.gov/forms-pubs/about-schedule-c-form-1040" target="_blank" rel="noopener noreferrer" style="color: var(--color-brand); font-size: var(--text-sm);">IRS — ${esc(t('tax.links.scheduleCGuide'))}</a></li>
+          <li><a href="https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes" target="_blank" rel="noopener noreferrer" style="color: var(--color-brand); font-size: var(--text-sm);">IRS — ${esc(t('tax.links.estimatedTaxes'))}</a></li>
+        </ul>
+        <p style="margin-top: var(--space-4); color: var(--color-text-secondary); font-size: var(--text-xs); line-height: 1.4;">
+          ${esc(taxProfile.footnote === 'canada' ? t('tax.footnoteCanada') : taxProfile.footnote === 'us' ? t('tax.footnoteUs') : t('tax.footnoteGeneric'))}
         </p>
       </article>
     </div>
@@ -331,32 +327,39 @@ function renderSecondaryEstimatorArticle(summary) {
   const tp = summary.taxProfile;
   const loc = summary.localeTag;
   const cur = summary.currency;
+  let title = t('tax.genericEstimatorTitle');
+  let value = 0;
+  let note = t('tax.genericEstimatorNote');
+  let icon = 'info';
+
   if (tp.secondaryEstimator === 'cpp') {
-    return `
-        <article class="card bento-cell-1x1">
-          <h2>${esc(t('tax.cppEstimator'))}</h2>
-          <p>${esc(t('tax.estimatedValue'))}: <strong>${esc(
-            formatCurrency(summary.cppEstimate, loc, { currency: cur }),
-          )}</strong></p>
-          <p style="color:var(--color-text-secondary);">${esc(t('tax.cppNote'))}</p>
-        </article>`;
+    title = t('tax.cppEstimator');
+    value = summary.cppEstimate;
+    note = t('tax.cppNote');
+    icon = 'bolt';
+  } else if (tp.secondaryEstimator === 'se') {
+    title = t('tax.seTaxEstimator');
+    value = summary.seTaxEstimate;
+    note = t('tax.seTaxNote');
+    icon = 'trending-up';
   }
-  if (tp.secondaryEstimator === 'se') {
-    return `
-        <article class="card bento-cell-1x1">
-          <h2>${esc(t('tax.seTaxEstimator'))}</h2>
-          <p>${esc(t('tax.estimatedValue'))}: <strong>${esc(
-            formatCurrency(summary.seTaxEstimate, loc, { currency: cur }),
-          )}</strong></p>
-          <p style="color:var(--color-text-secondary);">${esc(t('tax.seTaxNote'))}</p>
-        </article>`;
-  }
+
   return `
-        <article class="card bento-cell-1x1">
-          <h2>${esc(t('tax.genericEstimatorTitle'))}</h2>
-          <p>${esc(t('tax.estimatedValue'))}: <strong>${esc(formatCurrency(0, loc, { currency: cur }))}</strong></p>
-          <p style="color:var(--color-text-secondary);">${esc(t('tax.genericEstimatorNote'))}</p>
-        </article>`;
+    <article class="card bento-cell-1x1">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <h2>${esc(title)}</h2>
+        ${getIcon(icon, 20, 'text-muted')}
+      </div>
+      <div class="tax-metric-row">
+        <div class="tax-metric-item">
+          <span class="tax-metric-label">${esc(t('tax.estimatedValue'))}</span>
+          <span class="tax-metric-value" style="font-size: var(--text-lg);">${esc(formatCurrency(value, loc, { currency: cur }))}</span>
+        </div>
+      </div>
+      <p style="color:var(--color-text-secondary); font-size: var(--text-xs); margin-top: var(--space-4); line-height: 1.4;">
+        ${esc(note)}
+      </p>
+    </article>`;
 }
 
 export async function renderTaxDashboard(root, ctx = {}) {
@@ -397,15 +400,15 @@ export async function renderTaxDashboard(root, ctx = {}) {
 
   root.innerHTML = `
     <section class="tax-view">
-      <header class="card card-raised">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);flex-wrap:wrap;">
-          <div>
-            <h1>${esc(t('tax.title'))}</h1>
-            <p style="margin-top:var(--space-2);color:var(--color-text-secondary);">${esc(t('tax.subtitle'))}</p>
-          </div>
-          <label class="input-group" style="max-width:180px;">
+      <header class="card card-raised tax-header">
+        <div class="tax-header-title">
+          <h1>${esc(t('tax.title'))}</h1>
+          <p>${esc(t('tax.subtitle'))}</p>
+        </div>
+        <div style="display: flex; gap: var(--space-3); align-items: center;">
+          <label class="input-group" style="margin: 0;">
             <span class="input-label">${esc(t('tax.taxYear'))}</span>
-            <select class="select" data-tax-year>
+            <select class="select" data-tax-year style="padding-top: 0; padding-bottom: 0; height: 36px;">
               ${[0, 1, 2].map((delta) => {
                 const y = new Date().getFullYear() - delta;
                 return `<option value="${y}" ${y === selectedYear ? 'selected' : ''}>${y}</option>`;
@@ -415,105 +418,195 @@ export async function renderTaxDashboard(root, ctx = {}) {
         </div>
       </header>
 
-      <section class="bento-grid" style="margin-top: var(--space-4);">
+      <section class="bento-grid">
+        <!-- Virtual Jar -->
         <article class="card bento-cell-1x1">
-          <h2>${esc(t('tax.virtualJar'))}</h2>
-          <div style="display:flex;gap:var(--space-3);align-items:center;margin-top:var(--space-3);">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h2>${esc(t('tax.virtualJar'))}</h2>
+            ${getIcon('bolt', 20, 'text-brand')}
+          </div>
+          <div style="display:flex; flex-direction: column; align-items: center; margin-top: var(--space-6);">
             ${renderProgressRing({
               value: summary.virtualJar,
               max: Math.max(summary.taxSetAside, calcTaxSetAside(summary.gross, selectedRegionRate), 1),
-              size: 84,
-              strokeWidth: 7,
+              size: 120,
+              strokeWidth: 10,
               label: formatPercent(summary.setAsideCoveragePct, 0),
             })}
-            <div>
-              <p>${esc(t('tax.targetSetAside'))}: <strong>${esc(
-                formatCurrency(calcTaxSetAside(summary.gross, selectedRegionRate), summary.localeTag, { currency: summary.currency }),
-              )}</strong></p>
-              <p>${esc(t('tax.currentSetAside'))}: <strong>${esc(
-                formatCurrency(summary.virtualJar, summary.localeTag, { currency: summary.currency }),
-              )}</strong></p>
+            
+            <div class="tax-metric-row" style="width: 100%; margin-top: var(--space-6);">
+              <div class="tax-metric-item">
+                <span class="tax-metric-label">${esc(t('tax.targetSetAside'))}</span>
+                <span class="tax-metric-value">${esc(formatCurrency(calcTaxSetAside(summary.gross, selectedRegionRate), summary.localeTag, { currency: summary.currency }))}</span>
+              </div>
+              <div class="tax-metric-item">
+                <span class="tax-metric-label">${esc(t('tax.currentSetAside'))}</span>
+                <span class="tax-metric-value is-positive">${esc(formatCurrency(summary.virtualJar, summary.localeTag, { currency: summary.currency }))}</span>
+              </div>
+            </div>
+
+            <div class="tax-jar-controls">
+              <button class="tax-jar-btn" type="button" data-jar-adjust="-25">-25</button>
+              <button class="tax-jar-btn" type="button" data-jar-adjust="-10">-10</button>
+              <button class="tax-jar-btn" type="button" data-jar-adjust="10">+10</button>
+              <button class="tax-jar-btn" type="button" data-jar-adjust="25">+25</button>
             </div>
           </div>
-          <div style="display:flex;gap:var(--space-2);margin-top:var(--space-3);">
-            <button class="btn btn-secondary btn-sm" type="button" data-jar-adjust="-25">-25</button>
-            <button class="btn btn-secondary btn-sm" type="button" data-jar-adjust="-10">-10</button>
-            <button class="btn btn-secondary btn-sm" type="button" data-jar-adjust="10">+10</button>
-            <button class="btn btn-secondary btn-sm" type="button" data-jar-adjust="25">+25</button>
+        </article>
+
+        <!-- Income Snapshot -->
+        <article class="card bento-cell-1x1">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h2>${esc(t('tax.incomeSnapshot'))}</h2>
+            ${getIcon('trending-up', 20, 'text-success')}
+          </div>
+          <div class="tax-metric-row">
+            <div class="tax-metric-item">
+              <span class="tax-metric-label">${esc(t('tax.grossIncome'))}</span>
+              <span class="tax-metric-value">${esc(formatCurrency(summary.gross, summary.localeTag, { currency: summary.currency }))}</span>
+            </div>
+            <div class="tax-metric-item">
+              <span class="tax-metric-label">${esc(t('tax.businessExpenses'))}</span>
+              <span class="tax-metric-value is-negative">${esc(formatCurrency(summary.businessExpenses, summary.localeTag, { currency: summary.currency }))}</span>
+            </div>
+            <div class="tax-metric-item">
+              <span class="tax-metric-label">${esc(t('tax.netIncome'))}</span>
+              <span class="tax-metric-value" style="font-size: var(--text-lg);">${esc(formatCurrency(summary.netIncome, summary.localeTag, { currency: summary.currency }))}</span>
+            </div>
+            <div class="tax-metric-item">
+              <span class="tax-metric-label">${esc(t('tax.netAfterSetAside'))}</span>
+              <span class="tax-metric-value" style="opacity: 0.7;">${esc(formatCurrency(netAfterSetAside, summary.localeTag, { currency: summary.currency }))}</span>
+            </div>
+          </div>
+          <p style="margin-top: var(--space-4); color: var(--color-text-secondary); font-size: var(--text-xs); line-height: 1.4;">
+            ${esc(t('tax.netIncomeNote'))}
+          </p>
+        </article>
+
+        <!-- Region & Rate -->
+        <article class="card bento-cell-1x1">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h2>${esc(t('tax.withholdingSettings'))}</h2>
+            ${getIcon('settings', 20, 'text-muted')}
+          </div>
+          ${regionOptions.length > 0 ? `
+            <div style="margin-top: var(--space-4);">
+              <label class="input-group">
+                <span class="input-label">${esc(regionLabel)}</span>
+                <select class="select" data-tax-region>
+                  ${regionOptions.map((row) => `<option value="${row.code}" ${row.code === selectedRegion ? 'selected' : ''}>${row.code} (${row.rate}%)</option>`).join('')}
+                </select>
+              </label>
+              <button class="btn btn-primary btn-block" type="button" data-apply-rate style="margin-top: var(--space-4);">
+                ${esc(t('tax.applyPreset'))}
+              </button>
+            </div>
+          ` : ''}
+          <div class="tax-metric-row" style="margin-top: var(--space-6);">
+            <div class="tax-metric-item">
+              <span class="tax-metric-label">${esc(t('tax.currentRate'))}</span>
+              <span class="tax-metric-value">${esc(formatPercent(summary.taxRatePct))}</span>
+            </div>
+            <div class="tax-metric-item">
+              <span class="tax-metric-label">${esc(t('tax.country'))}</span>
+              <span class="tax-metric-value">${esc(summary.country)}</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="bento-grid">
+        <!-- HST / Sales Tax -->
+        <article class="card bento-cell-1x1">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h2>${esc(t('tax.hstCollectedTracker'))}</h2>
+            ${getIcon('receipt', 20, 'text-brand')}
+          </div>
+          <div class="tax-metric-row">
+            <div class="tax-metric-item">
+              <span class="tax-metric-label">${esc(t('tax.collected'))}</span>
+              <span class="tax-metric-value">${esc(formatCurrency(summary.hstCollected, summary.localeTag, { currency: summary.currency }))}</span>
+            </div>
+            <div class="tax-metric-item">
+              <span class="tax-metric-label">${esc(t('tax.itcTracker'))}</span>
+              <span class="tax-metric-value is-negative">${esc(formatCurrency(summary.itcTotal, summary.localeTag, { currency: summary.currency }))}</span>
+            </div>
+            <div class="tax-metric-item">
+              <span class="tax-metric-label">${esc(t('tax.remittable'))}</span>
+              <span class="tax-metric-value" style="font-size: var(--text-lg);">${esc(formatCurrency(summary.hstRemittable, summary.localeTag, { currency: summary.currency }))}</span>
+            </div>
           </div>
         </article>
 
-        <article class="card bento-cell-1x1">
-          <h2>${esc(t('tax.hstCollectedTracker'))}</h2>
-          <p>${esc(t('tax.collected'))}: <strong>${esc(
-            formatCurrency(summary.hstCollected, summary.localeTag, { currency: summary.currency }),
-          )}</strong></p>
-          <p>${esc(t('tax.itcTracker'))}: <strong>${esc(
-            formatCurrency(summary.itcTotal, summary.localeTag, { currency: summary.currency }),
-          )}</strong></p>
-          <p>${esc(t('tax.remittable'))}: <strong>${esc(
-            formatCurrency(summary.hstRemittable, summary.localeTag, { currency: summary.currency }),
-          )}</strong></p>
-        </article>
-
-        <article class="card bento-cell-1x1">
-          <h2>${esc(t('tax.incomeSnapshot'))}</h2>
-          <p>${esc(t('tax.grossIncome'))}: <strong>${esc(
-            formatCurrency(summary.gross, summary.localeTag, { currency: summary.currency }),
-          )}</strong></p>
-          <p>${esc(t('tax.businessExpenses'))}: <strong>${esc(
-            formatCurrency(summary.businessExpenses, summary.localeTag, { currency: summary.currency }),
-          )}</strong></p>
-          <p>${esc(t('tax.netIncome'))}: <strong>${esc(
-            formatCurrency(summary.netIncome, summary.localeTag, { currency: summary.currency }),
-          )}</strong></p>
-          <p>${esc(t('tax.netAfterSetAside'))}: <strong>${esc(
-            formatCurrency(netAfterSetAside, summary.localeTag, { currency: summary.currency }),
-          )}</strong></p>
-        </article>
-
-        ${regionPresetCard}
-      </section>
-
-      <section class="bento-grid" style="margin-top: var(--space-4);">
-        <article class="card bento-cell-1x1">
-          <h2>${esc(t('tax.vehicleActualCosts'))}</h2>
-          <p>${esc(t('tax.totalDistance'))}: <strong>${esc(
-            `${formatLargeNumber(summary.distanceUnit === 'mi' ? summary.totalMiles : summary.distanceKm)} ${mileageUnitLabel}`,
-          )}</strong></p>
-          <p>${esc(t('tax.actualCost'))}: <strong>${esc(
-            formatCurrency(summary.actualCostDeduction, summary.localeTag, { currency: summary.currency }),
-          )}</strong></p>
-          <p style="color:var(--color-text-secondary);">${esc(t('tax.actualCostsNote'))}</p>
-        </article>
-
+        <!-- Secondary Estimator -->
         ${renderSecondaryEstimatorArticle(summary)}
 
+        <!-- Deadlines -->
         <article class="card bento-cell-1x1">
-          <h2>${esc(t('tax.installmentDeadlines'))}</h2>
-          <ul style="padding-left:var(--space-4);margin:var(--space-3) 0 0;">
-            ${summary.deadlines
-              .map(
-                (row) =>
-                  `<li>${esc(
-                    `${toYmd(row.date)} · ${row.label} (${row.daysUntil >= 0 ? `${row.daysUntil}d` : t('tax.overdue')})`,
-                  )}</li>`,
-              )
-              .join('')}
-          </ul>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h2>${esc(t('tax.installmentDeadlines'))}</h2>
+            ${getIcon('clock', 20, 'text-muted')}
+          </div>
+          <div class="tax-deadline-list">
+            ${summary.deadlines.map(row => {
+              const dt = row.date;
+              const urgent = row.daysUntil >= 0 && row.daysUntil <= 14;
+              const overdue = row.daysUntil < 0;
+              return `
+                <div class="tax-deadline-item">
+                  <div class="tax-deadline-date">
+                    <span class="tax-deadline-day">${dt.getDate()}</span>
+                    <span class="tax-deadline-month">${dt.toLocaleDateString(undefined, { month: 'short' })}</span>
+                  </div>
+                  <div class="tax-deadline-info">
+                    <div class="tax-deadline-label">${esc(row.label)}</div>
+                    <div class="tax-deadline-status ${urgent || overdue ? 'is-urgent' : ''}">
+                      ${overdue ? esc(t('tax.overdue')) : `${row.daysUntil}d remaining`}
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
         </article>
       </section>
 
-      ${renderTaxHelpers(summary.taxProfile)}
+      <!-- Mileage & Deductions -->
+      <section class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2>${esc(t('tax.vehicleActualCosts'))}</h2>
+          ${getIcon('parking', 24, 'text-muted')}
+        </div>
+        <div class="bento-grid" style="margin-top: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+          <div class="tax-metric-item">
+            <span class="tax-metric-label">${esc(t('tax.totalDistance'))}</span>
+            <span class="tax-metric-value">${esc(`${formatLargeNumber(summary.distanceUnit === 'mi' ? summary.totalMiles : summary.distanceKm)} ${mileageUnitLabel}`)}</span>
+          </div>
+          <div class="tax-metric-item">
+            <span class="tax-metric-label">${esc(t('tax.actualCost'))}</span>
+            <span class="tax-metric-value">${esc(formatCurrency(summary.actualCostDeduction, summary.localeTag, { currency: summary.currency }))}</span>
+          </div>
+        </div>
+        <p style="color:var(--color-text-secondary); font-size: var(--text-sm); margin-top: var(--space-3); border-top: 1px solid var(--color-border); padding-top: var(--space-3);">
+          ${esc(t('tax.actualCostsNote'))}
+        </p>
+      </section>
 
-      <section class="card" style="margin-top: var(--space-4);">
-        <h3>${esc(t('tax.exportSummary'))}</h3>
-        <p style="color:var(--color-text-secondary);">${esc(t('tax.exportHint'))}</p>
-        <div style="display:flex;gap:var(--space-2);margin-top:var(--space-3);">
+      <!-- Tax Helpers (T2125 / Schedule C) -->
+      ${renderTaxHelpersClean(summary.taxProfile)}
+
+      <!-- Export -->
+      <footer class="card">
+        <div style="display: flex; align-items: center; gap: var(--space-3);">
+          ${getIcon('download', 20)}
+          <h2>${esc(t('tax.exportSummary'))}</h2>
+        </div>
+        <p style="color:var(--color-text-secondary); font-size: var(--text-sm); margin-top: var(--space-1);">${esc(t('tax.exportHint'))}</p>
+        <div class="tax-export-group">
           <button class="btn btn-secondary" type="button" data-export-tax="json">${esc(t('tax.exportJson'))}</button>
           <button class="btn btn-secondary" type="button" data-export-tax="csv">${esc(t('tax.exportCsv'))}</button>
         </div>
-      </section>
+      </footer>
     </section>
   `;
 

@@ -8,6 +8,10 @@ function esc(v) {
 
 /** @param {HTMLElement} root @param {Record<string, unknown>} ctx */
 export function render(root, ctx) {
+  const container = document.createElement('div');
+  container.className = 'print-view-container';
+  root.appendChild(container);
+
   void ctx;
   let payload = null;
   try {
@@ -17,7 +21,7 @@ export function render(root, ctx) {
   }
 
   if (!payload?.report) {
-    root.innerHTML = `
+    container.innerHTML = `
       <section class="card card-raised">
         <h1>Print report</h1>
         <p style="margin-top:var(--space-2);color:var(--color-text-secondary);">
@@ -31,7 +35,7 @@ export function render(root, ctx) {
   const template = payload.template?.sections || {};
   const report = payload.report;
   const summary = report.summary || {};
-  root.innerHTML = `
+  container.innerHTML = `
     <section class="print-view">
       <header class="card card-raised">
         <h1>Printable report</h1>
@@ -56,22 +60,31 @@ export function render(root, ctx) {
             </section>`
           : ''
       }
-      <section class="card" style="margin-top:var(--space-3);">
-        <button class="btn btn-primary" type="button" data-action="print">Print now</button>
-        <button class="btn btn-secondary" type="button" data-action="back">Back to reports</button>
+      <section class="card print-controls" style="margin-top:var(--space-3); border: 2px solid var(--color-brand); background: var(--color-bg-secondary);">
+        <h2 style="margin-top:0;">Ready to print</h2>
+        <p style="font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-4);">The print dialog should open automatically. If not, click the button below.</p>
+        <div style="display:flex; gap: var(--space-2);">
+          <button class="btn btn-primary" type="button" data-action="print">Print now</button>
+          <button class="btn btn-secondary" type="button" data-action="close">Close window</button>
+        </div>
       </section>
     </section>
   `;
 
-  root.addEventListener('click', (e) => {
+  container.addEventListener('click', (e) => {
     const target = e.target instanceof HTMLElement ? e.target.closest('[data-action]') : null;
     if (!target) return;
     const action = target.getAttribute('data-action');
     if (action === 'print') {
       window.print();
     }
-    if (action === 'back') {
-      window.location.hash = '#/reports';
+    if (action === 'close') {
+      window.close();
     }
   });
+
+  // Auto-trigger print after render
+  setTimeout(() => {
+    window.print();
+  }, 500);
 }

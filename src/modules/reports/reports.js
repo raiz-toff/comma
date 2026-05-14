@@ -66,22 +66,29 @@ async function listExpenses(startDate, endDate) {
 }
 
 function summarize(shifts, expenses) {
-  let gross = 0;
-  let tips = 0;
-  let bonus = 0;
+  let grossCents = 0;
+  let tipsCents = 0;
+  let bonusCents = 0;
   let orders = 0;
   let minutes = 0;
   let distanceKm = 0;
   for (const s of shifts) {
-    gross += num(s.grossEarnings ?? s.gross);
-    tips += num(s.tips);
-    bonus += num(s.bonusEarnings ?? s.bonus);
+    grossCents += num(s.grossEarnings ?? s.gross);
+    tipsCents += num(s.tips);
+    bonusCents += num(s.bonusEarnings ?? s.bonus);
     orders += num(s.deliveryCount ?? s.orders);
     minutes += num(s.durationMinutes ?? s.activeMinutes ?? s.onlineMinutes);
     distanceKm += num(s.distanceKm);
   }
-  const expenseTotal = expenses.reduce((sum, e) => sum + num(e.amount) * (num(e.businessPct, 100) / 100), 0);
+  const expenseTotalCents = expenses.reduce((sum, e) => sum + num(e.amount) * (num(e.businessPct, 100) / 100), 0);
   const hours = minutes > 0 ? minutes / 60 : 0;
+  
+  const gross = grossCents / 100;
+  const tips = tipsCents / 100;
+  const bonus = bonusCents / 100;
+  const expenseTotal = expenseTotalCents / 100;
+  const net = gross - expenseTotal;
+
   return {
     shiftCount: shifts.length,
     expenseCount: expenses.length,
@@ -93,9 +100,9 @@ function summarize(shifts, expenses) {
     hours,
     distanceKm,
     expenseTotal,
-    net: gross - expenseTotal,
-    hourly: minutes > 0 ? gross / (minutes / 60) : 0,
-    netHourly: minutes > 0 ? (gross - expenseTotal) / (minutes / 60) : 0,
+    net,
+    hourly: hours > 0 ? gross / hours : 0,
+    netHourly: hours > 0 ? net / hours : 0,
   };
 }
 

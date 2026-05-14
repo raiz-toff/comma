@@ -343,6 +343,7 @@ export function renderStepInner(step, draft, platformRows) {
           <div class="input-group" data-custom-avatar-wrap ${draft.avatarType === 'custom' ? '' : 'hidden'}>
             <label class="input-label" for="ob-avatar-file">${esc(t('onboarding.steps.avatarUpload'))}</label>
             <input id="ob-avatar-file" type="file" accept="image/*" class="input" data-avatar-file />
+            <p class="onboarding-hint">${esc(t("onboarding.steps.avatarUploadHint"))}</p>
           </div>
         </fieldset>`;
 

@@ -610,6 +610,7 @@ export async function mountOnboarding(root) {
         if (em) {
           draft.avatarType = 'emoji';
           draft.avatarData = em;
+          readFormIntoDraft(el, draft);
           persistSession(draft);
           render();
         }
@@ -621,6 +622,7 @@ export async function mountOnboarding(root) {
         if (radio instanceof HTMLInputElement && radio.checked) {
           draft.avatarType = /** @type {'initials'|'custom'} */ (radio.value);
           if (draft.avatarType === 'initials') draft.avatarData = null;
+          readFormIntoDraft(el, draft);
           persistSession(draft);
           render();
         }
@@ -636,6 +638,7 @@ export async function mountOnboarding(root) {
         reader.onload = () => {
           draft.avatarType = 'custom';
           draft.avatarData = typeof reader.result === 'string' ? reader.result : null;
+          readFormIntoDraft(el, draft);
           persistSession(draft);
           render();
         };
@@ -648,6 +651,7 @@ export async function mountOnboarding(root) {
         const p = btn.getAttribute('data-schedule');
         if (p) {
           draft.workSchedulePreset = p;
+          readFormIntoDraft(el, draft);
           persistSession(draft);
           render();
         }
@@ -659,6 +663,7 @@ export async function mountOnboarding(root) {
         const d = btn.getAttribute('data-distance');
         if (d === 'km' || d === 'mi') {
           draft.distanceUnit = d;
+          readFormIntoDraft(el, draft);
           persistSession(draft);
           render();
         }
@@ -670,6 +675,7 @@ export async function mountOnboarding(root) {
         const th = btn.getAttribute('data-theme');
         if (th === 'light' || th === 'dark' || th === 'auto') {
           draft.theme = th;
+          readFormIntoDraft(el, draft);
           persistSession(draft);
           await saveUser({ theme: th });
           await store.refresh('user');

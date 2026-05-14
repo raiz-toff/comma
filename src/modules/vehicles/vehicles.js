@@ -4,6 +4,7 @@ import { store } from '../../core/store.js';
 import { calcDepreciation, calcVehicleCostPerKm } from '../../utils/calculations.js';
 import { t } from '../../utils/strings.js';
 import { renderEmptyState, showModal, showToast } from '../../ui/components.js';
+import { getIcon } from '../../ui/icons.js';
 
 const APP_STATE_ODOMETER_KEY = 'vehicle_odometer_logs';
 
@@ -273,47 +274,85 @@ async function addMaintenanceLog(vehicleId, defaults = {}) {
 }
 
 async function addOdometerEntry(vehicleId) {
-  const val = window.prompt('Current odometer (km):', '');
-  if (val == null) return false;
-  const km = Math.max(0, num(val));
-  const all = await getOdometerLog();
-  all.push({ vehicleId: Number(vehicleId), km, date: ymd(), createdAt: nowIso() });
-  await putOdometerLog(all.slice(-1000));
-  await db.vehicles.update(Number(vehicleId), { totalKmLogged: km, updatedAt: nowIso() });
-  return true;
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div style="padding: var(--space-2) 0;">
+      <p style="margin-bottom: var(--space-4); color: var(--color-text-secondary); font-size: var(--text-sm);">
+        Enter the current odometer reading for your vehicle. This will update the total mileage and cost-per-km estimates.
+      </p>
+      <form class="vehicles-form-simple">
+        <label class="field">
+          <span class="field-label">Current Odometer (km)</span>
+          <input class="input" type="number" name="km" step="1" autofocus required />
+        </label>
+      </form>
+    </div>
+  `;
+  const form = /** @type {HTMLFormElement} */ (wrap.querySelector('form'));
+  
+  return new Promise((resolve) => {
+    showModal({
+      title: t('vehicles.mileage'),
+      content: wrap,
+      size: 'sm',
+      actions: [
+        { label: t('common.cancel'), class: 'btn btn-ghost', onClick: () => resolve(false) },
+        {
+          label: t('common.save'),
+          class: 'btn btn-primary',
+          onClick: async () => {
+            const fd = new FormData(form);
+            const km = Math.max(0, num(fd.get('km')));
+            const all = await getOdometerLog();
+            all.push({ vehicleId: Number(vehicleId), km, date: ymd(), createdAt: nowIso() });
+            await putOdometerLog(all.slice(-1000));
+            await db.vehicles.update(Number(vehicleId), { totalKmLogged: km, updatedAt: nowIso() });
+            resolve(true);
+          },
+        },
+      ],
+      onClose: () => resolve(false),
+    });
+  });
 }
 
 /** @param {HTMLElement} root */
 export async function renderVehiclesView(root) {
   root.innerHTML = `
     <section class="vehicles-view">
-      <header class="expenses-view-header">
-        <div>
-          <h1 class="expenses-view-title">${esc(t('vehicles.title'))}</h1>
-          <p class="expenses-view-subtitle">Vehicle profiles, mileage logs, upkeep reminders, and per-km economics.</p>
+      <header class="card card-raised tax-header" style="padding: var(--space-4);">
+        <div class="tax-header-title">
+          <h1>${esc(t('vehicles.title'))}</h1>
+          <p>${esc(t('vehicles.subtitle'))}</p>
         </div>
         <div class="expenses-view-header-actions">
-          <button type="button" class="btn btn-primary" data-action="add-vehicle">${esc(t('vehicles.add'))}</button>
+          <button type="button" class="btn btn-primary" data-action="add-vehicle">
+            ${getIcon('plus', 18)}
+            ${esc(t('vehicles.add'))}
+          </button>
         </div>
       </header>
-      <div data-slot="cards"></div>
-      <section class="card" data-slot="compare"></section>
+      
+      <div class="vehicles-grid" data-slot="cards"></div>
+      
+      <section class="card vehicle-comparison" data-slot="compare"></section>
     </section>
   `;
 
-  const cards = /** @type {HTMLElement | null} */ (root.querySelector('[data-slot="cards"]'));
-  const compare = /** @type {HTMLElement | null} */ (root.querySelector('[data-slot="compare"]'));
+  const cardsSlot = /** @type {HTMLElement | null} */ (root.querySelector('[data-slot="cards"]'));
+  const compareSlot = /** @type {HTMLElement | null} */ (root.querySelector('[data-slot="compare"]'));
 
   const refresh = async () => {
     const vehicles = await listVehicles();
     const today = ymd();
-    if (!cards) return;
+    if (!cardsSlot) return;
+
     if (!vehicles.length) {
-      cards.innerHTML = renderEmptyState({
-        title: 'No vehicles yet',
-        message: 'Add your first vehicle to unlock mileage and cost tracking.',
+      cardsSlot.innerHTML = renderEmptyState({
+        title: t('vehicles.emptyTitle'),
+        message: t('vehicles.emptyMessage'),
       });
-      if (compare) compare.innerHTML = '';
+      if (compareSlot) compareSlot.innerHTML = '';
       return;
     }
 
@@ -323,7 +362,7 @@ export async function renderVehiclesView(root) {
 
     const statsRows = [];
 
-    cards.innerHTML = (
+    cardsSlot.innerHTML = (
       await Promise.all(
         vehicles.map(async (v) => {
           const vMaintenance = maintenance.filter((m) => Number(m.vehicleId) === Number(v.id));
@@ -337,39 +376,73 @@ export async function renderVehiclesView(root) {
           const treadAlert = num(v.tireTreadMm, 0) <= num(v.tireTreadMinMm, 3);
           const insuranceDue = v.insuranceRenewalDate && String(v.insuranceRenewalDate) <= today;
           const registrationDue = v.registrationRenewalDate && String(v.registrationRenewalDate) <= today;
-          const reminders = [
-            oilRemaining <= 0 ? 'Oil change due' : '',
-            treadAlert ? 'Tire tread below threshold' : '',
-            insuranceDue ? 'Insurance renewal due' : '',
-            registrationDue ? 'Registration renewal due' : '',
-          ].filter(Boolean);
+
+          const alerts = [];
+          if (oilRemaining <= 0) alerts.push({ label: 'Oil Change', icon: 'warning' });
+          if (treadAlert) alerts.push({ label: 'Low Tread', icon: 'warning' });
+          if (insuranceDue) alerts.push({ label: 'Insurance', icon: 'clock' });
+          if (registrationDue) alerts.push({ label: 'Registration', icon: 'clock' });
 
           const maintenanceRecent = vMaintenance
             .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))
-            .slice(0, 3)
-            .map((m) => `${esc(m.date)} · ${esc(m.serviceType || 'Service')} · ${esc(money(m.cost || 0))}`)
-            .join('<br/>');
+            .slice(0, 2);
+
+          const typeIcon = v.type === 'ev' ? 'bolt' : v.type === 'bicycle' ? 'parking' : 'car';
 
           return `
             <article class="card vehicle-card" data-vehicle-id="${esc(v.id)}">
-              <div class="shift-card-top">
-                <h3>${esc(vehicleLabel(v))}</h3>
-                <span class="badge">${esc(String(v.type || 'vehicle').toUpperCase())}</span>
+              <div class="vehicle-card-header">
+                <div class="vehicle-card-identity">
+                  <h3>${esc(vehicleLabel(v))}</h3>
+                  <span class="type-badge">${esc(v.type)}</span>
+                </div>
+                ${getIcon(typeIcon, 24, 'text-muted')}
               </div>
-              <p class="text-sm">Efficiency: ${esc(
-                String(v.type) === 'ev' ? `${num(v.kwPer100km)} kWh/100km` : `${num(v.fuelEfficiency)} L/100km`,
-              )}</p>
-              <p class="text-sm">Odometer: ${esc(num(v.totalKmLogged))} km</p>
-              <p class="text-sm">Cost per km: ${esc(money(stats.costPerKm))}</p>
-              <p class="text-sm">Depreciation estimate: ${esc(money(stats.depreciation))}</p>
-              <p class="text-sm">Maintenance (latest): ${maintenanceRecent || 'None yet'}</p>
-              <p class="text-sm">Reminders: ${reminders.length ? esc(reminders.join(' · ')) : 'All clear'}</p>
-              <div class="shift-card-actions">
-                <button type="button" class="btn btn-ghost btn-sm" data-action="edit">${esc(t('common.edit'))}</button>
-                <button type="button" class="btn btn-ghost btn-sm" data-action="odometer">${esc(t('vehicles.mileage'))}</button>
-                <button type="button" class="btn btn-ghost btn-sm" data-action="maintenance">${esc(t('vehicles.maintenance'))}</button>
-                <button type="button" class="btn btn-ghost btn-sm" data-action="efficiency">${esc(t('vehicles.efficiency'))}</button>
-                <button type="button" class="btn btn-ghost btn-sm btn-danger" data-action="archive">${esc(t('common.delete'))}</button>
+
+              <div class="vehicle-alerts">
+                ${alerts.length > 0 
+                  ? alerts.map(a => `<span class="vehicle-alert-pill">${getIcon(a.icon, 12)} ${esc(a.label)}</span>`).join('')
+                  : `<span class="vehicle-alert-pill is-ok">${getIcon('check', 12)} All Clear</span>`
+                }
+              </div>
+
+              <div class="vehicle-stats-grid">
+                <div class="vehicle-stat-item">
+                  <span class="vehicle-stat-label">Cost / km</span>
+                  <span class="vehicle-stat-value">${esc(money(stats.costPerKm))}</span>
+                </div>
+                <div class="vehicle-stat-item">
+                  <span class="vehicle-stat-label">Odometer</span>
+                  <span class="vehicle-stat-value">${esc(num(v.totalKmLogged))} km</span>
+                </div>
+                <div class="vehicle-stat-item">
+                  <span class="vehicle-stat-label">Efficiency</span>
+                  <span class="vehicle-stat-value">${esc(v.type === 'ev' ? `${num(v.kwPer100km)} kWh` : `${num(v.fuelEfficiency)} L`)}</span>
+                </div>
+                <div class="vehicle-stat-item">
+                  <span class="vehicle-stat-label">Depreciation</span>
+                  <span class="vehicle-stat-value">${esc(money(stats.depreciation))}</span>
+                </div>
+              </div>
+
+              <div class="vehicle-maintenance-summary">
+                <span class="vehicle-maintenance-title">Latest Maintenance</span>
+                ${maintenanceRecent.length > 0 
+                  ? maintenanceRecent.map(m => `
+                      <div class="vehicle-maintenance-row">
+                        <span class="vehicle-maintenance-service">${esc(m.serviceType)}</span>
+                        <span class="vehicle-maintenance-date">${esc(m.date)}</span>
+                      </div>
+                    `).join('')
+                  : '<p class="text-xs text-muted">No records found</p>'
+                }
+              </div>
+
+              <div class="vehicle-actions">
+                <button type="button" class="btn btn-secondary btn-sm" data-action="odometer">${getIcon('trending-up', 14)} Mileage</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-action="maintenance">${getIcon('tool', 14)} Upkeep</button>
+                <button type="button" class="btn btn-ghost btn-sm" data-action="edit">${getIcon('edit', 14)}</button>
+                <button type="button" class="btn btn-ghost btn-sm btn-danger" data-action="archive">${getIcon('trash', 14)}</button>
               </div>
             </article>
           `;
@@ -377,19 +450,38 @@ export async function renderVehiclesView(root) {
       )
     ).join('');
 
-    if (compare) {
+    if (compareSlot && vehicles.length > 1) {
       statsRows.sort((a, b) => a.costPerKm - b.costPerKm);
-      compare.innerHTML = `
-        <h3>Multi-vehicle comparison</h3>
-        <div class="text-sm">${statsRows
-          .map(
-            (s, idx) =>
-              `${idx + 1}. ${esc(s.label)} — ${esc(money(s.costPerKm))}/km · ${esc(
-                money(s.annualExpenses),
-              )} annual costs · ${esc(fixed(s.shiftCount ? s.shiftKm / Math.max(1, s.shiftCount) : 0, 1))} km/shift`,
-          )
-          .join('<br/>')}</div>
+      compareSlot.innerHTML = `
+        <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-4);">
+          ${getIcon('trending-up', 20, 'text-brand')}
+          <h2>Fleet Efficiency Comparison</h2>
+        </div>
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Vehicle</th>
+              <th>Cost / km</th>
+              <th>Annual Costs</th>
+              <th>km / Shift</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${statsRows.map((s, idx) => `
+              <tr>
+                <td class="comparison-rank">#${idx + 1}</td>
+                <td style="font-weight: 600;">${esc(s.label)}</td>
+                <td class="${idx === 0 ? 'comparison-best' : ''}">${esc(money(s.costPerKm))}</td>
+                <td>${esc(money(s.annualExpenses))}</td>
+                <td>${esc(fixed(s.shiftCount ? s.shiftKm / Math.max(1, s.shiftCount) : 0, 1))} km</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
       `;
+    } else if (compareSlot) {
+      compareSlot.innerHTML = '';
     }
   };
 
@@ -455,13 +547,45 @@ export async function renderVehiclesView(root) {
     }
 
     if (action === 'efficiency') {
-      const nextVal = window.prompt('Enter updated efficiency (L/100km or kWh/100km):', '');
-      if (nextVal == null) return;
-      const n = Math.max(0, num(nextVal));
-      if (String(row.type) === 'ev') await db.vehicles.update(id, { kwPer100km: n, updatedAt: nowIso() });
-      else await db.vehicles.update(id, { fuelEfficiency: n, updatedAt: nowIso() });
-      showToast({ type: 'success', message: 'Efficiency updated', duration: 1800 });
-      await refresh();
+      const wrap = document.createElement('div');
+      const unit = String(row.type) === 'ev' ? 'kWh/100km' : 'L/100km';
+      const currentVal = String(row.type) === 'ev' ? row.kwPer100km : row.fuelEfficiency;
+      
+      wrap.innerHTML = `
+        <div style="padding: var(--space-2) 0;">
+          <p style="margin-bottom: var(--space-4); color: var(--color-text-secondary); font-size: var(--text-sm);">
+            Update the rated fuel or electricity efficiency for this vehicle (${unit}).
+          </p>
+          <form class="vehicles-form-simple">
+            <label class="field">
+              <span class="field-label">Efficiency (${unit})</span>
+              <input class="input" type="number" name="efficiency" step="0.1" value="${esc(currentVal)}" autofocus required />
+            </label>
+          </form>
+        </div>
+      `;
+      const form = /** @type {HTMLFormElement} */ (wrap.querySelector('form'));
+
+      showModal({
+        title: t('vehicles.efficiency'),
+        content: wrap,
+        size: 'sm',
+        actions: [
+          { label: t('common.cancel'), class: 'btn btn-ghost' },
+          {
+            label: t('common.save'),
+            class: 'btn btn-primary',
+            onClick: async () => {
+              const fd = new FormData(form);
+              const n = Math.max(0, num(fd.get('efficiency')));
+              if (String(row.type) === 'ev') await db.vehicles.update(id, { kwPer100km: n, updatedAt: nowIso() });
+              else await db.vehicles.update(id, { fuelEfficiency: n, updatedAt: nowIso() });
+              showToast({ type: 'success', message: 'Efficiency updated', duration: 1800 });
+              await refresh();
+            },
+          },
+        ],
+      });
       return;
     }
 

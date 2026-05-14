@@ -156,15 +156,23 @@ samp {
 }
 
 .header-btn {
-  padding: 0 !important;
-  width: 34px !important;
-  height: 34px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  border-radius: 50% !important;
-  min-width: 0 !important;
-  flex-shrink: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-width: 34px;
+  height: 34px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  transition: all 0.2s ease;
+}
+
+@media (max-width: 1199px) {
+  .header-btn {
+    padding: 0;
+    width: 34px;
+    border-radius: 50%;
+  }
 }
 
 .app-body {

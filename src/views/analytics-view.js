@@ -1,5 +1,5 @@
 import { buildWidgetDataContext } from '../modules/analytics/widget-data.js';
-import { WidgetRegistry } from '../registry/widgets/index.js';
+import { WidgetRegistry, getOrderedDashboardWidgetIds } from '../registry/widgets/index.js';
 import { afterRenderWidgets } from '../registry/widgets/after-render.js';
 import { bus } from '../core/events.js';
 import { store } from '../core/store.js';
@@ -42,7 +42,7 @@ async function paintAnalytics(root, _ctx) {
 
 
   const widgetCtx = await buildWidgetDataContext(range, platformFilter, weekStartDay);
-  const currentWidgets = Array.isArray(user?.dashboardWidgets) ? user.dashboardWidgets : [];
+  const currentWidgets = getOrderedDashboardWidgetIds(user, widgetCtx);
 
   // Helper: Render "Add to Dashboard" 1-Click Tiles
   const renderWidgetControls = (id, current) => {
@@ -114,8 +114,8 @@ async function paintAnalytics(root, _ctx) {
         <div class="active-widgets-ribbon">
           ${currentWidgets.map(wObj => {
             const id = typeof wObj === 'string' ? wObj : wObj?.id;
-            const size = typeof wObj === 'string' ? '1x1' : wObj?.size || '1x1';
             const def = WidgetRegistry.getById(id);
+            const size = (typeof wObj === 'string' ? null : wObj?.size) || def?.defaultSize || '1x1';
             if (!def) return '';
             
             // Map profile to color variable (Financial, Growth, etc)
@@ -148,7 +148,7 @@ async function paintAnalytics(root, _ctx) {
 
       <!-- 2. AVAILABLE PERFORMANCE MODULES -->
       ${await (async () => {
-        const perfIds = ['rollingTrend', 'scatter', 'bestDay', 'bestHour', 'deadMiles'];
+        const perfIds = ['rollingTrend', 'scatter', 'bestDay', 'bestHour', 'deadMiles', 'streak', 'weekCompare'];
         const available = perfIds.filter(id => !currentWidgets.find(w => (typeof w === 'string' ? w : w.id) === id));
         if (available.length === 0) return '';
         return `
@@ -156,7 +156,7 @@ async function paintAnalytics(root, _ctx) {
             <h3>${esc(t('analytics.performanceModules'))}</h3>
             <span class="section-divider"></span>
           </div>
-          <section class="bento-grid" style="margin-top: var(--space-2); margin-bottom: var(--space-8);">
+          <section class="bento-grid bento-layout-${user?.bentoLayout || 'balanced'}" style="margin-top: var(--space-2); margin-bottom: var(--space-8);">
             ${(await Promise.all(available.map(async (id) => {
               const w = WidgetRegistry.getById(id);
               if (!w) return '';
@@ -177,7 +177,7 @@ async function paintAnalytics(root, _ctx) {
 
       <!-- 3. AVAILABLE DEEP INSIGHTS -->
       ${await (async () => {
-        const deepIds = ['platformActivity', 'incomeBreakdown', 'weeklyProjection', 'stabilityScore'];
+        const deepIds = ['platformActivity', 'incomeBreakdown', 'weeklyProjection', 'stabilityScore', 'taxJar', 'recentShifts', 'schedule'];
         const available = deepIds.filter(id => !currentWidgets.find(w => (typeof w === 'string' ? w : w.id) === id));
         if (available.length === 0) return '';
         return `
@@ -185,7 +185,7 @@ async function paintAnalytics(root, _ctx) {
             <h3>${esc(t('analytics.deepInsights'))}</h3>
             <span class="section-divider"></span>
           </div>
-          <section class="bento-grid" style="margin-top: var(--space-2); margin-bottom: var(--space-8);">
+          <section class="bento-grid bento-layout-${user?.bentoLayout || 'balanced'}" style="margin-top: var(--space-2); margin-bottom: var(--space-8);">
             ${(await Promise.all(available.map(async (id) => {
               const w = WidgetRegistry.getById(id);
               if (!w) return '';
@@ -206,7 +206,7 @@ async function paintAnalytics(root, _ctx) {
 
       <!-- 4. AVAILABLE SUMMARY STATS -->
       ${await (async () => {
-        const statIds = ['earnings', 'weeklyGoal', 'hourlyRate', 'netIncome', 'totalHours', 'deliveries', 'tipsTotal', 'totalExpenses', 'avgRate', 'effectiveRate', 'zeroDays'];
+        const statIds = ['earnings', 'netIncome', 'totalHours', 'deliveries', 'tipsTotal', 'expenses', 'avgRate', 'effectiveRate', 'zeroDays', 'monthGross', 'monthHourly', 'monthOrders', 'outOfPocket', 'perDelivery'];
         const available = statIds.filter(id => !currentWidgets.find(w => (typeof w === 'string' ? w : w.id) === id));
         if (available.length === 0) return '';
         return `
@@ -214,7 +214,7 @@ async function paintAnalytics(root, _ctx) {
             <h3>${esc(t('analytics.statModules'))}</h3>
             <span class="section-divider"></span>
           </div>
-          <section class="bento-grid" style="margin-top: var(--space-2);">
+          <section class="bento-grid bento-layout-${user?.bentoLayout || 'balanced'}" style="margin-top: var(--space-2);">
             ${(await Promise.all(available.map(async (id) => {
               const w = WidgetRegistry.getById(id);
               if (!w) return '';
@@ -248,10 +248,16 @@ export async function render(root, ctx) {
   const user = store.get('user');
   let disposed = false;
   let syncTimeout = null;
-  let localWidgets = Array.isArray(user?.dashboardWidgets) ? [...user.dashboardWidgets] : [];
+  let localWidgets = user?.dashboardWidgets == null
+    ? getOrderedDashboardWidgetIds(user)
+    : (Array.isArray(user.dashboardWidgets) ? [...user.dashboardWidgets] : []);
 
   const rerender = () => {
     if (disposed) return;
+    const freshUser = store.get('user');
+    localWidgets = freshUser?.dashboardWidgets == null
+      ? getOrderedDashboardWidgetIds(freshUser)
+      : (Array.isArray(freshUser.dashboardWidgets) ? [...freshUser.dashboardWidgets] : []);
     void paintAnalytics(root, ctx);
   };
 

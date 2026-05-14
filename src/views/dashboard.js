@@ -110,13 +110,18 @@ async function paintDashboard(root, ctx) {
   widgetCtx.data.financial = fin; // Inject pre-fetched financial data
 
   // 2. Render Widgets from Registry
-  const rawWidgets = Array.isArray(user?.dashboardWidgets) ? user.dashboardWidgets : [];
-  const widgetCells = await Promise.all(rawWidgets.map(async (wObj) => {
+  const widgetIds = getOrderedDashboardWidgetIds(user, widgetCtx);
+  const widgetCells = await Promise.all(widgetIds.map(async (id) => {
     try {
-      const id = typeof wObj === 'string' ? wObj : wObj?.id;
-      const size = typeof wObj === 'string' ? '1x1' : wObj?.size || '1x1';
       const def = WidgetRegistry.getById(id);
       if (!def) return null;
+
+      // Find custom size if it exists in user settings
+      const config = Array.isArray(user?.dashboardWidgets)
+        ? user.dashboardWidgets.find((w) => (typeof w === 'string' ? w : w?.id) === id)
+        : null;
+      const size = (typeof config === 'object' ? config?.size : null) || def.defaultSize || '1x1';
+
       return { id, size, html: await def.render(widgetCtx) };
     } catch (err) {
       console.error('Widget render failed:', err);
@@ -272,9 +277,20 @@ async function paintDashboard(root, ctx) {
         </div>
       </div>
 
-      <div class="bento-grid" style="margin-bottom: var(--space-6);">
-        ${widgetCardsHtml}
-      </div>
+      ${widgetCardsHtml ? `
+        <div class="bento-grid bento-layout-${user?.bentoLayout || 'balanced'}" style="margin-bottom: var(--space-6);">
+          ${widgetCardsHtml}
+        </div>
+      ` : `
+        <div class="dashboard-empty-state">
+          <div class="empty-state-icon">${getIcon('layout-grid', 48)}</div>
+          <h3>Your dashboard is empty</h3>
+          <p>Add some insights from the analytics page to start tracking your performance.</p>
+          <a href="#/analytics" class="btn btn-primary btn-sm">
+            ${getIcon('trending-up', 18)} Browse Analytics
+          </a>
+        </div>
+      `}
 
       <div class="dashboard-explore-minimal">
         <a href="#/analytics" class="minimal-cta">

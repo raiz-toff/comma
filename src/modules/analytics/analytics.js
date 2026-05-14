@@ -519,9 +519,13 @@ export async function getAnnualSummary(year, activePlatformId = 'all') {
 
 /**
  * @param {string} [activePlatformId='all']
+ * @param {{ anchorDate?: Date | string | null }} [options]
  */
-export async function getRolling30DayTrend(activePlatformId = 'all') {
-  const today = new Date();
+export async function getRolling30DayTrend(activePlatformId = 'all', options = {}) {
+  const raw = options.anchorDate;
+  const today = raw instanceof Date && !Number.isNaN(raw.getTime())
+    ? new Date(raw.getTime())
+    : (typeof raw === 'string' && raw ? new Date(`${raw}T12:00:00`) : new Date());
   const start = new Date(today);
   start.setDate(start.getDate() - 29);
   const shifts = filterShiftsByActivePlatform(

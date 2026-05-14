@@ -8,7 +8,7 @@ import { BadgeRegistry } from '../registry/badges/index.js';
 import { PlatformRegistry } from '../registry/platforms/index.js';
 
 /** Logical data schema version (appState.schema_version). Non-destructive migrations only. */
-export const CURRENT_LOGICAL_SCHEMA_VERSION = 2;
+export const CURRENT_LOGICAL_SCHEMA_VERSION = 3;
 
 const DB_NAME = 'MacadamVault';
 
@@ -87,8 +87,8 @@ export const DEFAULT_USER = {
   accentColor: null,
   fontSize: 'medium',
   layoutDensity: 'comfortable',
-  dashboardWidgets: [],
-  heroStats: [],
+  dashboardWidgets: null,
+
   /** @type {'tabs'|'dropdown'} */
   platformSwitcherMode: 'tabs',
   onboardingComplete: false,
@@ -266,6 +266,14 @@ const logicalMigrations = [
     }
     next.updatedAt = new Date().toISOString();
     await db.users.put(/** @type {any} */ ({ ...next, id: 1 }));
+  },
+  async () => {
+    // 2 → 3: Convert empty dashboardWidgets to null to distinguish "default" from "explicitly empty".
+    const u = await db.users.get(1);
+    if (!u || typeof u !== 'object') return;
+    if (Array.isArray(u.dashboardWidgets) && u.dashboardWidgets.length === 0) {
+      await db.users.update(1, { dashboardWidgets: null, updatedAt: new Date().toISOString() });
+    }
   },
 ];
 

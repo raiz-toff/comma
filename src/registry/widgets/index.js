@@ -6,15 +6,13 @@
 
 import earnings from './earnings.widget.js';
 import expenses from './expenses.widget.js';
-import hourlyRate from './hourly-rate.widget.js';
-import orders from './orders.widget.js';
 import placeholder from './placeholder.widget.js';
 import recentShifts from './recent-shifts.widget.js';
 import schedule from './schedule.widget.js';
 import streak from './streak.widget.js';
 import taxJar from './tax-jar.widget.js';
 import weekCompare from './week-compare.widget.js';
-import weeklyGoal from './weekly-goal.widget.js';
+
 import incomeBreakdown from './income-breakdown.widget.js';
 import weeklyProjection from './weekly-projection.widget.js';
 import avgRate from './avg-rate.widget.js';
@@ -34,12 +32,11 @@ import rollingTrend from './rolling-trend.widget.js';
 import scatter from './scatter.widget.js';
 import stabilityScore from './stability-score.widget.js';
 import tipsTotal from './tips-total.widget.js';
-import totalExpenses from './total-expenses.widget.js';
 import totalHours from './total-hours.widget.js';
 import zeroDays from './zero-days.widget.js';
 
 /** First bento stat strip — matches legacy `views/dashboard.js` layout. */
-export const DASHBOARD_STAT_STRIP_IDS = ['earnings', 'weeklyGoal', 'orders', 'weekCompare'];
+export const DASHBOARD_STAT_STRIP_IDS = ['earnings', 'weeklyProjection', 'deliveries', 'weekCompare'];
 
 /** Preferred ids for the top stat strip when user `dashboardWidgets` is set. */
 export const DASHBOARD_STRIP_SLOT_ID_SET = new Set(DASHBOARD_STAT_STRIP_IDS);
@@ -47,9 +44,9 @@ export const DASHBOARD_STRIP_SLOT_ID_SET = new Set(DASHBOARD_STAT_STRIP_IDS);
 /** Default order when `user.dashboardWidgets` is unset (aligned with settings `WIDGET_CHOICES`). */
 export const DEFAULT_DASHBOARD_WIDGET_ORDER = [
   'earnings',
-  'weeklyGoal',
+  'weeklyProjection',
   'streak',
-  'hourlyRate',
+  'avgRate',
   'taxJar',
   'expenses',
   'schedule',
@@ -63,11 +60,7 @@ export const DEFAULT_DASHBOARD_WIDGET_ORDER = [
 /** @type {WidgetDefinition[]} */
 const WIDGETS = [
   earnings,
-  weeklyGoal,
-  orders,
-  weekCompare,
-  streak,
-  hourlyRate,
+
   taxJar,
   expenses,
   schedule,
@@ -91,8 +84,9 @@ const WIDGETS = [
   rollingTrend,
   scatter,
   stabilityScore,
+  weekCompare,
+  streak,
   tipsTotal,
-  totalExpenses,
   totalHours,
   zeroDays,
 ];
@@ -124,10 +118,11 @@ function validateWidgetDefinition(def) {
  */
 export function getOrderedDashboardWidgetIds(user, ctx) {
   const u = /** @type {{ dashboardWidgets?: unknown }} */ (user);
-  const raw =
-    Array.isArray(u?.dashboardWidgets) && u.dashboardWidgets.length
-      ? u.dashboardWidgets.map((x) => String(x))
-      : [...DEFAULT_DASHBOARD_WIDGET_ORDER];
+  const raw = u?.dashboardWidgets == null
+    ? [...DEFAULT_DASHBOARD_WIDGET_ORDER]
+    : Array.isArray(u.dashboardWidgets)
+      ? u.dashboardWidgets.map((x) => (typeof x === 'string' ? x : x?.id))
+      : [];
   const out = [];
   const seen = new Set();
   for (const id of raw) {

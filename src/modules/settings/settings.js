@@ -34,7 +34,7 @@ const PRESET_ACCENTS = [
   '#6B7280',
 ];
 const WIDGET_CHOICES = getAllSelectableWidgetIds();
-const HERO_STAT_CHOICES = ['gross', 'net', 'hours', 'orders', 'tips', 'expenses', 'distance'];
+
 
 const WORK_SCHEDULE_PRESETS = ['flexible', 'weekdays', 'evenings', 'weekends'];
 
@@ -267,8 +267,7 @@ export async function mountSettings(root, ctx = {}) {
   root.textContent = '';
   const user = (await getUser()) || {};
   const notificationPrefs = defaultNotificationPrefs(user.notificationPrefs);
-  const widgets = Array.isArray(user.dashboardWidgets) && user.dashboardWidgets.length ? [...user.dashboardWidgets] : [...WIDGET_CHOICES];
-  const heroStats = Array.isArray(user.heroStats) && user.heroStats.length ? [...user.heroStats] : ['gross', 'hours', 'orders'];
+  const widgets = user.dashboardWidgets == null ? getOrderedDashboardWidgetIds(user) : (Array.isArray(user.dashboardWidgets) ? [...user.dashboardWidgets] : []);
   let debugTapCount = 0;
   let debugTapStartedAt = 0;
   let exportedThisSession = false;
@@ -522,8 +521,8 @@ export async function mountSettings(root, ctx = {}) {
         ${widgets
           .map((wObj) => {
             const id = typeof wObj === 'string' ? wObj : wObj?.id;
-            const size = typeof wObj === 'string' ? '1x1' : wObj?.size || '1x1';
             const def = WidgetRegistry.getById(id);
+            const size = (typeof wObj === 'string' ? null : wObj?.size) || def?.defaultSize || '1x1';
             const label = def ? def.label : id;
             return `<li class="settings-sortable-item" data-widget-id="${esc(id)}" data-widget-size="${esc(size)}">
               <span class="settings-widget-label">${esc(label)} <small style="opacity:0.5">(${esc(size)})</small></span>
@@ -532,9 +531,7 @@ export async function mountSettings(root, ctx = {}) {
           })
           .join('')}
       </ul>
-      <div class="settings-grid settings-tight-grid">
-        ${HERO_STAT_CHOICES.map((s) => `<label class="settings-check"><input type="checkbox" data-hero-stat="${esc(s)}" ${heroStats.includes(s) ? 'checked' : ''} /> ${esc(s)}</label>`).join('')}
-      </div>
+
       <label class="input-group">
         <span class="input-label">Bento layout preset</span>
         <select class="input" data-setting-bento>
@@ -643,6 +640,14 @@ export async function mountSettings(root, ctx = {}) {
   const widgetSort = /** @type {HTMLElement | null} */ (root.querySelector('[data-widget-sort]'));
   if (widgetSort) {
     Sortable.create(widgetSort, { animation: 150, ghostClass: 'sortable-ghost' });
+    widgetSort.addEventListener('click', (ev) => {
+      const btn = ev.target instanceof Element ? ev.target.closest('[data-remove-widget]') : null;
+      if (btn) {
+        ev.preventDefault();
+        btn.closest('.settings-sortable-item')?.remove();
+        showToast({ type: 'info', message: 'Widget removed. Save to apply.', duration: 2000 });
+      }
+    });
   }
 
   function replaceSettingsTabHash(tab) {
@@ -788,9 +793,9 @@ export async function mountSettings(root, ctx = {}) {
       size: String(el.getAttribute('data-widget-size') || '1x1'),
       visible: true
     }));
-    const selectedHero = [...root.querySelectorAll('[data-hero-stat]:checked')].map((el) => String(el.getAttribute('data-hero-stat'))).slice(0, 3);
+
     const bentoLayout = /** @type {HTMLSelectElement | null} */ (root.querySelector('[data-setting-bento]'))?.value || 'balanced';
-    await saveUser({ dashboardWidgets: order, heroStats: selectedHero, bentoLayout });
+    await saveUser({ dashboardWidgets: order, bentoLayout });
     await store.refresh('user');
     bus.emit('dashboard:updated');
     showToast({ type: 'success', message: 'Dashboard personalization saved.' });

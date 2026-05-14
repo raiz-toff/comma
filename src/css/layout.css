@@ -278,7 +278,7 @@ samp {
   -ms-overflow-style: none; /* IE/Edge */
   overscroll-behavior-x: contain;
   background: var(--color-surface-raised);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-pill);
   border: 1px solid var(--color-border);
 }
 
@@ -298,12 +298,12 @@ samp {
 /* ── Sliding pill: collapsed base state ── */
 .platform-switcher--tabs {
   display: inline-flex;
-  gap: 4px;
+  gap: 2px;
   background: var(--color-surface-raised);
-  border-radius: var(--radius-md);
-  padding: 4px;
+  border-radius: var(--radius-pill);
+  padding: 3px;
   overflow: hidden;
-  max-width: 36px; /* Fits 28px tab + 2 * 4px padding */
+  max-width: 32px; /* Fits 26px tab + 2 * 3px padding */
   transition: max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   box-shadow: var(--shadow-sm);
@@ -312,11 +312,11 @@ samp {
 
 .platform-tab {
   flex: 0 0 auto;
-  height: 28px;
-  padding: 0 12px;
+  height: 26px;
+  padding: 0 10px;
   font-size: 11px;
   font-weight: 700;
-  border-radius: calc(var(--radius-md) - 2px);
+  border-radius: var(--radius-pill);
   border: none;
   color: var(--color-text-main);
   display: inline-flex;
@@ -330,7 +330,7 @@ samp {
 /* Collapsed active tab perfectly frames the logo */
 .platform-switcher--tabs:not(.is-expanded) .platform-tab[aria-selected='true'] {
   padding: 0;
-  width: 28px;
+  width: 26px;
   justify-content: center;
 }
 
@@ -439,6 +439,14 @@ samp {
   gap: var(--space-3);
 }
 
+.bento-grid.bento-layout-compact {
+  gap: var(--space-1);
+}
+
+.bento-grid.bento-layout-loose {
+  gap: var(--space-6);
+}
+
 .bento-cell-1x1 {
   grid-column: span 1;
   grid-row: span 1;
@@ -459,6 +467,18 @@ samp {
 
 .bento-cell-2x2 {
   grid-column: span 2;
+  grid-row: span 2;
+  min-height: 220px;
+}
+
+.bento-cell-4x1 {
+  grid-column: span 2; /* Cap at 2 columns on mobile */
+  grid-row: span 1;
+  min-height: 120px;
+}
+
+.bento-cell-4x2 {
+  grid-column: span 2; /* Cap at 2 columns on mobile */
   grid-row: span 2;
   min-height: 220px;
 }
@@ -543,6 +563,37 @@ samp {
 
   .bento-cell-2x2 {
     grid-column: span 2;
+    grid-row: span 2;
+  }
+  
+  .bento-cell-4x1 {
+    grid-column: span 2;
+  }
+
+  .bento-cell-4x2 {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+}
+
+@media (min-width: 960px) {
+  .bento-cell-4x1 {
+    grid-column: span 3; /* Cap at 3 columns when 3 columns exist */
+  }
+
+  .bento-cell-4x2 {
+    grid-column: span 3;
+    grid-row: span 2;
+  }
+}
+
+@media (min-width: 1200px) {
+  .bento-cell-4x1 {
+    grid-column: span 4; /* Full 4 columns on large desktop */
+  }
+
+  .bento-cell-4x2 {
+    grid-column: span 4;
     grid-row: span 2;
   }
 }

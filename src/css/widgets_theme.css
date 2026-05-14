@@ -1,127 +1,434 @@
 /*
   ╔══════════════════════════════════════════════════════════════╗
-  ║   MACADAM BENTO V2 — WIDGET THEME SYSTEM                     ║
-  ║   Color-coded profiles, Hover Glows, & Responsive Grid       ║
+  ║   MACADAM BENTO — WIDGET THEME v2                            ║
+  ║   Production-grade design system for all 31 bento widgets    ║
   ╚══════════════════════════════════════════════════════════════╝
 */
 
 :root {
-  /* Profiles */
-  --wp-financial-a: #10b981;
-  --wp-financial-r: 16, 185, 129;
+  /* Core Status Colors */
+  --color-pos: #10b981;
+  --color-neg: #f43f5e;
+  --color-warn: #f59e0b;
+  --color-neu: var(--color-text-muted, #64748b);
   
-  --wp-growth-a: #8b5cf6;
-  --wp-growth-r: 139, 92, 246;
-  
-  --wp-activity-a: #3b82f6;
-  --wp-activity-r: 59, 130, 246;
-  
-  --wp-intelligence-a: #f59e0b;
-  --wp-intelligence-r: 245, 158, 11;
-  
-  --wp-critical-a: #f43f5e;
-  --wp-critical-r: 244, 63, 94;
+  /* Shared RGB equivalents for opacity manipulation */
+  --rgb-pos: 16, 185, 129;
+  --rgb-neg: 244, 63, 94;
+  --rgb-warn: 245, 158, 11;
+  --rgb-neu: 100, 116, 139;
 }
 
-/* Bento Grid System */
-.bento-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-4);
+/* ══════════════════════════════════════════════════════════════
+   1. COLOR PROFILES
+   ══════════════════════════════════════════════════════════════ */
+
+/* Financial — Blue */
+[data-widget-id="earnings"], [data-widget-id="netIncome"], [data-widget-id="avgRate"],
+[data-widget-id="totalHours"], [data-widget-id="deliveries"], [data-widget-id="tipsTotal"],
+[data-widget-id="effectiveRate"], [data-widget-id="perDelivery"], [data-widget-id="hourlyRate"] {
+  --wa: #3b82f6;
+  --war: 59, 130, 246;
 }
 
-.bento-cell-1x1 { grid-column: span 1; grid-row: span 1; }
-.bento-cell-2x1 { grid-column: span 2; grid-row: span 1; }
-.bento-cell-1x2 { grid-column: span 1; grid-row: span 2; }
-.bento-cell-2x2 { grid-column: span 2; grid-row: span 2; }
-.bento-cell-4x1 { grid-column: span 4; grid-row: span 1; }
-.bento-cell-4x2 { grid-column: span 4; grid-row: span 2; }
-
-@media (min-width: 768px) {
-  .bento-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  
-  /* Analytics view stays vertical/dual-column for better browsing */
-  .analytics-view .bento-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+/* Growth — Amber */
+[data-widget-id="weeklyGoal"], [data-widget-id="streak"], 
+[data-widget-id="weeklyProjection"], [data-widget-id="monthGross"] {
+  --wa: var(--color-warn);
+  --war: var(--rgb-warn);
 }
 
-/* Widget Card Refinements */
+/* Activity — Emerald */
+[data-widget-id="orders"], [data-widget-id="platformActivity"], 
+[data-widget-id="recentShifts"], [data-widget-id="monthOrders"], [data-widget-id="schedule"] {
+  --wa: var(--color-pos);
+  --war: var(--rgb-pos);
+}
+
+/* Intelligence — Violet */
+[data-widget-id="rollingTrend"], [data-widget-id="scatter"], [data-widget-id="stabilityScore"],
+[data-widget-id="bestDay"], [data-widget-id="bestHour"], [data-widget-id="monthHourly"],
+[data-widget-id="weekCompare"], [data-widget-id="incomeBreakdown"] {
+  --wa: #8b5cf6;
+  --war: 139, 92, 246;
+}
+
+/* Critical — Rose */
+[data-widget-id="deadMiles"], [data-widget-id="taxJar"], [data-widget-id="expenses"],
+[data-widget-id="outOfPocket"], [data-widget-id="totalExpenses"], [data-widget-id="zeroDays"] {
+  --wa: var(--color-neg);
+  --war: var(--rgb-neg);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   2. BASE CARD
+   ══════════════════════════════════════════════════════════════ */
+
 .card[data-widget-id] {
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
   position: relative;
+  overflow: hidden;
+  will-change: transform, box-shadow;
+  transform: translateZ(0); /* Hardware acceleration trigger */
+}
+
+.card[data-widget-id]:hover,
+.card[data-widget-id]:focus-within {
+  box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.1);
+  transform: translateY(-0.125rem);
+}
+
+
+
+/* ══════════════════════════════════════════════════════════════
+   3. WIDGET LAYOUT PRIMITIVES
+   ══════════════════════════════════════════════════════════════ */
+
+.wr {
   display: flex;
   flex-direction: column;
-  padding: var(--space-4);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+  gap: 0.3125rem;
+  position: relative;
+  z-index: 1;
 }
 
-.card[data-widget-id]:hover {
-  overflow: visible !important;
-  z-index: 50;
-  transform: translateY(-2px);
-  border-color: rgba(var(--war, var(--wp-activity-r)), 0.4);
-  box-shadow: 
-    0 12px 24px -8px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(var(--war, var(--wp-activity-r)), 0.1);
+.wh {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
 }
 
-/* Profiles Mapping */
-.card[data-widget-id="earnings"],
-.card[data-widget-id="netIncome"],
-.card[data-widget-id="totalExpenses"],
-.card[data-widget-id="monthGross"] { --wa: var(--wp-financial-a); --war: var(--wp-financial-r); }
-
-.card[data-widget-id="weeklyGoal"],
-.card[data-widget-id="weeklyProjection"],
-.card[data-widget-id="streak"] { --wa: var(--wp-growth-a); --war: var(--wp-growth-r); }
-
-.card[data-widget-id="orders"],
-.card[data-widget-id="deliveries"],
-.card[data-widget-id="totalHours"] { --wa: var(--wp-activity-a); --war: var(--wp-activity-r); }
-
-.card[data-widget-id="bestDay"],
-.card[data-widget-id="bestHour"],
-.card[data-widget-id="rollingTrend"],
-.card[data-widget-id="scatter"] { --wa: var(--wp-intelligence-a); --war: var(--wp-intelligence-r); }
-
-/* Hover Reveal Controls */
-.analytics-card-header {
-  opacity: 0;
-  transform: translateY(-4px);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: none;
-  margin-bottom: var(--space-2);
+.wi {
+  width: 1.625rem;
+  height: 1.625rem;
+  border-radius: 0.4375rem;
+  background: rgba(var(--war, 0, 0, 0), 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--wa);
 }
 
-.card:hover .analytics-card-header {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+.wi svg {
+  width: 0.8125rem;
+  height: 0.8125rem;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-/* Stat Typography for Bento */
-.card .stat-label {
-  font-size: var(--text-xs);
+.wl {
+  font-size: 0.625rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-secondary);
-  margin-bottom: 4px;
+  letter-spacing: 0.07em;
+  color: var(--wa);
+  opacity: 0.75;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.card .stat-value {
-  font-size: var(--text-2xl);
+.wb {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  padding: 0.125rem 0.4375rem;
+  border-radius: 9999px;
+  background: rgba(var(--war, 0, 0, 0), 0.1);
+  color: var(--wa);
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  line-height: 1.6;
+}
+
+.wb.pos { background: rgba(var(--rgb-pos), 0.12); color: var(--color-pos); }
+.wb.neg { background: rgba(var(--rgb-neg), 0.12); color: var(--color-neg); }
+.wb.neu { background: rgba(var(--rgb-neu), 0.10); color: var(--color-neu); }
+.wb.warn{ background: rgba(var(--rgb-warn), 0.12); color: var(--color-warn); }
+
+.wv {
+  font-size: clamp(1.25rem, 3.8vw, 1.875rem);
   font-weight: 800;
-  color: var(--color-text-main);
-  line-height: 1.1;
+  line-height: 1.05;
+  color: var(--color-text-primary, #f1f5f9);
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
 }
 
-/* 2x2 Custom Content Scaling */
-.bento-cell-2x2 .stat-value {
-  font-size: var(--text-4xl);
+.wv .cur {
+  font-size: 0.52em;
+  font-weight: 700;
+  opacity: 0.5;
+  vertical-align: super;
+  margin-right: 0.0625rem;
+}
+
+.wv .unit {
+  font-size: 0.42em;
+  font-weight: 600;
+  opacity: 0.5;
+  margin-left: 0.1875rem;
+}
+
+.ws {
+  font-size: 0.6875rem;
+  color: var(--color-text-muted, #64748b);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.ws svg {
+  width: 0.6875rem;
+  height: 0.6875rem;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.wt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.wt svg {
+  width: 0.6875rem;
+  height: 0.6875rem;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.wt.up  { color: var(--color-pos); }
+.wt.dn  { color: var(--color-neg); }
+.wt.neu { color: var(--color-neu); }
+
+.wd {
+  height: 1px;
+  background: rgba(var(--war, 0, 0, 0), 0.08);
+  flex-shrink: 0;
+  margin: 0.0625rem 0;
+}
+
+.wf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   4. PROGRESS BAR
+   ══════════════════════════════════════════════════════════════ */
+
+.wpb {
+  width: 100%;
+  height: 0.3125rem;
+  background: rgba(var(--war, 0, 0, 0), 0.1);
+  border-radius: 9999px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.wpf {
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--wa);
+  position: relative;
+  transition: width 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 100%;
+}
+
+.wpf::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 0.625rem;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 9999px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   5. STAT STRIP
+   ══════════════════════════════════════════════════════════════ */
+
+.wss {
+  display: flex;
+  gap: 0.3125rem;
+  flex-shrink: 0;
+}
+
+.wsc {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.0625rem;
+  padding: 0.3125rem 0.5rem;
+  background: rgba(var(--war, 0, 0, 0), 0.07);
+  border-radius: 0.5rem;
+}
+
+.wscl {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted, #64748b);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wscv {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #f1f5f9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wscv.pos { color: var(--color-pos); }
+.wscv.neg { color: var(--color-neg); }
+.wscv.acc { color: var(--wa); }
+
+/* ══════════════════════════════════════════════════════════════
+   6. DAY-OF-WEEK BAR
+   ══════════════════════════════════════════════════════════════ */
+
+.wdow {
+  display: flex;
+  gap: 0.1875rem;
+  align-items: flex-end;
+  flex: 1;
+  min-height: 0;
+}
+
+.wdow-d {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1875rem;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.wdow-b {
+  width: 100%;
+  border-radius: 0.1875rem 0.1875rem 0.125rem 0.125rem;
+  background: rgba(var(--war, 0, 0, 0), 0.12);
+  transition: background 0.2s, height 0.3s ease;
+  min-height: 0.25rem;
+}
+
+.wdow-b.act {
+  background: var(--wa);
+  box-shadow: 0 0.125rem 0.5rem rgba(var(--war, 0, 0, 0), 0.35);
+}
+
+.wdow-l {
+  font-size: 0.46875rem;
+  font-weight: 700;
+  color: var(--color-text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.wdow-l.act { color: var(--wa); }
+
+/* ══════════════════════════════════════════════════════════════
+   7. HOUR STRIP
+   ══════════════════════════════════════════════════════════════ */
+
+.who {
+  display: flex;
+  gap: 0.125rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+}
+
+.who-p {
+  flex: 1;
+  border-radius: 0.125rem;
+  background: rgba(var(--war, 0, 0, 0), 0.1);
+  transition: background 0.2s;
+}
+
+.who-p.pk { background: var(--wa); box-shadow: 0 0.0625rem 0.375rem rgba(var(--war, 0, 0, 0), 0.4); }
+.who-p.nr { background: rgba(var(--war, 0, 0, 0), 0.35); }
+
+/* ══════════════════════════════════════════════════════════════
+   8. CALENDAR DOTS
+   ══════════════════════════════════════════════════════════════ */
+
+.wcg {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.1875rem;
+  flex: 1;
+}
+
+.wcd {
+  aspect-ratio: 1;
+  border-radius: 0.1875rem;
+  background: rgba(var(--war, 0, 0, 0), 0.1);
+  transition: background 0.15s;
+}
+
+.wcd.z  { background: var(--wa); }
+.wcd.nt { background: rgba(var(--rgb-pos), 0.25); }  
+.wcd.ft { opacity: 0.25; }                           
+
+/* ══════════════════════════════════════════════════════════════
+   9. MISC & RESPONSIVE
+   ══════════════════════════════════════════════════════════════ */
+
+.wch { flex: 1; min-height: 0; position: relative; }
+.wch canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+
+.warc { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.warc svg path.arc-fill { transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+
+@media (max-width: 30em) { /* 480px */
+  .wv    { font-size: 1.25rem; }
+  .wss   { gap: 0.25rem; }
+  .wdow  { gap: 0.125rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

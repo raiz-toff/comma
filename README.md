@@ -8,6 +8,10 @@
   [![PWA](https://img.shields.io/badge/PWA-Ready-blue)](#)
 </div>
 
+> [!WARNING]  
+> **Currently in Active Development**  
+> Macadam's core engine is fully functional, but currently **only Ontario (Canada) is officially added** to the market registry. Other provinces, states, and countries are not yet added. We highly encourage and thank you for any contributions to add your local region's tax rules and platforms! (See the docs below on how to add a country/province).
+
 ---
 
 ## What is Macadam?

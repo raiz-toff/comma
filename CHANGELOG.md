@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Vehicle Management**: Expense tracking, maintenance logs, and actual-cost business deduction tracking.
 - **Reports**: Shareable year-in-review generation, CSV data export, and print-ready formats.
 - **Offline Reliability**: Works identically with or without a network connection. No data leaves the device unless exported.
+- **Regions**: Currently, only **Ontario (Canada)** is officially supported in the registry. Other regions and provinces are not yet added (contributions are highly encouraged!).
 
 ### Changed
 - Initial open-source release.

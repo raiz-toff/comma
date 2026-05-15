@@ -364,10 +364,14 @@ samp {
 
 /* ── Expanded state ── */
 .platform-switcher--tabs.is-expanded {
-  max-width: 480px; /* Reduced from 100vw to eliminate max-width transition delay */
+  max-width: min(480px, 90vw); /* Responsive max-width */
   overflow-x: auto;
   -webkit-overflow-scrolling: touch; /* Native iOS feel */
   scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  /* Visual hint for scrolling: masking edges */
+  mask-image: linear-gradient(to right, transparent, black 15px, black calc(100% - 15px), transparent);
 }
 
 .platform-switcher--tabs.is-expanded::-webkit-scrollbar {
@@ -379,6 +383,7 @@ samp {
   pointer-events: auto;
   background: transparent;
   color: var(--color-text-main);
+  scroll-snap-align: start;
 }
 
 /* Maintain active coloring when expanded */

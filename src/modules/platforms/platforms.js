@@ -206,7 +206,55 @@ export function mountPlatformSwitcher(slot) {
     /* ── Sliding pill: expand / select+collapse ── */
     const tablist = slot.querySelector('.platform-switcher--tabs');
     if (tablist) {
+      let isScrolling = false;
+      let startX = 0;
+      let startY = 0;
+
+      tablist.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        isScrolling = false;
+      }, { passive: true });
+
+      tablist.addEventListener('touchmove', (e) => {
+        const dx = Math.abs(e.touches[0].clientX - startX);
+        const dy = Math.abs(e.touches[0].clientY - startY);
+        if (dx > 10 || dy > 10) {
+          isScrolling = true;
+        }
+      }, { passive: true });
+
+      tablist.addEventListener('touchend', (e) => {
+        // Swipe to cycle platforms when collapsed
+        if (!tablist.classList.contains('is-expanded')) {
+          const dx = e.changedTouches[0].clientX - startX;
+          const dy = e.changedTouches[0].clientY - startY;
+          if (Math.abs(dx) > 40 && Math.abs(dy) < 30) {
+            const allIds = ['all', ...activeRows.map((r) => String(r.id))];
+            const currentIndex = allIds.indexOf(selectedId);
+            if (currentIndex !== -1) {
+              let nextIndex = currentIndex;
+              if (dx < 0) nextIndex = (currentIndex + 1) % allIds.length;
+              else nextIndex = (currentIndex - 1 + allIds.length) % allIds.length;
+              
+              const nextId = allIds[nextIndex];
+              // Apply visual feedback
+              applySelectionVisual(nextId);
+              // Set filter (includes the 300ms delay for stability)
+              setFilter(nextId);
+              isScrolling = true; // Prevent the 'click' event from expanding it
+            }
+          }
+        }
+      });
+
       tablist.addEventListener('click', (e) => {
+        // If we just finished a scroll/swipe, don't trigger selection
+        if (isScrolling) {
+          isScrolling = false;
+          return;
+        }
+
         const tEl = /** @type {HTMLElement | null} */ (e.target && /** @type {HTMLElement} */ (e.target).closest('[data-platform-id]'));
 
         // 1. Expand on tap if currently collapsed
@@ -236,6 +284,9 @@ export function mountPlatformSwitcher(slot) {
         draggable: '.platform-tab--draggable',
         filter: '.platform-tab--fixed',
         preventOnFilter: true,
+        delay: 150,
+        delayOnTouchOnly: true,
+        touchStartThreshold: 10,
         onEnd: async () => {
           const buttons = [...sortRoot.querySelectorAll('.platform-tab[data-platform-id]')].filter(
             (el) => el.getAttribute('data-platform-id') !== 'all',

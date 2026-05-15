@@ -2,8 +2,12 @@
 
 :root {
   /* Color primitives */
-  --color-brand: #f5a623;
-  --color-brand-dark: #d4891c;
+  --color-brand: #10b981;
+  --color-brand-rgb: 16, 185, 129;
+  --color-brand-dark: color-mix(in srgb, var(--color-brand), #000 22%);
+  --color-brand-contrast: #1a1916;
+  --color-brand-muted: color-mix(in srgb, var(--color-brand) 15%, transparent);
+  --color-brand-text: color-mix(in srgb, var(--color-brand), #000 25%);
 
   /* Platform brand colors */
   --color-doordash: #ff3008;

@@ -28,12 +28,13 @@
 
 .btn-primary {
   background: var(--color-brand);
-  color: #1a1916;
+  color: var(--color-brand-contrast);
   border-color: var(--color-brand-dark);
 }
 
 .btn-primary:hover:not(:disabled) {
   background: var(--color-brand-dark);
+  filter: brightness(1.08);
 }
 
 .btn-secondary {
@@ -1481,4 +1482,142 @@ body.zen-mode .app-main {
 
 .p13-about-section {
   margin-top: var(--space-4);
+}
+/* ------------------------------------------------------------------------- */
+/* PWA Install Prompt                                                       */
+/* ------------------------------------------------------------------------- */
+
+.pwa-install-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-4) 0;
+}
+
+.pwa-install-icon-wrap {
+  margin-bottom: var(--space-6);
+}
+
+.pwa-install-icon-bg {
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--color-brand) 0%, var(--color-brand-dark) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-bg);
+  box-shadow: 0 12px 24px rgba(245, 166, 35, 0.3);
+  animation: pwa-icon-bounce 2s infinite ease-in-out;
+}
+
+.pwa-install-text {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+@keyframes pwa-icon-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.btn-block {
+  width: 100%;
+  justify-content: center;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-base);
+}
+
+/* Collapsible Sections (Accordions) */
+.collapsible {
+  padding: 0 !important;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.collapsible.is-expanded {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--platform-color, color-mix(in srgb, var(--color-brand) 30%, var(--color-border)));
+}
+
+.collapsible-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4);
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--transition-fast);
+}
+
+.collapsible-header:hover {
+  background: color-mix(in srgb, var(--color-brand) 4%, transparent);
+}
+
+.collapsible-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.collapsible-title {
+  margin: 0 !important;
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.collapsible-summary {
+  margin: 0 !important;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.collapsible-icon {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.collapsible.is-expanded .collapsible-icon {
+  transform: rotate(180deg);
+  background: var(--platform-color, var(--color-brand));
+  color: var(--color-surface);
+}
+
+/* Smooth height animation using CSS grid trick */
+.collapsible-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.collapsible-body > * {
+  overflow: hidden;
+  padding: 0 var(--space-4) 0;
+  transition: padding 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.collapsible.is-expanded .collapsible-body {
+  grid-template-rows: 1fr;
+}
+
+.collapsible.is-expanded .collapsible-body > * {
+  padding: 0 var(--space-4) var(--space-4);
 }

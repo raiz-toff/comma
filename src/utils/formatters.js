@@ -102,8 +102,7 @@ export function formatTime(timeStr, use24h) {
 export function formatPercent(value, decimals = 1) {
   const v = Number(value);
   if (!Number.isFinite(v)) return `${(0).toFixed(decimals)}%`;
-  const pct = v <= 1 && v >= 0 ? v * 100 : v;
-  return `${pct.toFixed(decimals)}%`;
+  return `${v.toFixed(decimals)}%`;
 }
 
 /**

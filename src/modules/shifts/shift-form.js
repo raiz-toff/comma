@@ -106,13 +106,6 @@ export function renderShiftForm(opts = {}) {
   wrapper.dataset.shiftFieldRegistryCount = String(ShiftFieldRegistry.getAll().length);
   wrapper.innerHTML = `
     <form class="shifts-form-inner" autocomplete="off">
-      <div class="shifts-form-header">
-        <div class="shifts-form-title">${escapeHtml(mode === 'quick' ? t('shifts.addShift') : t('shifts.addShift'))}</div>
-        <div class="shifts-form-actions">
-          <button type="button" class="btn btn-ghost" data-action="cancel">${escapeHtml(t('common.cancel'))}</button>
-          <button type="submit" class="btn btn-primary" data-action="submit">${escapeHtml(submitLabel)}</button>
-        </div>
-      </div>
 
       <div class="shifts-form-grid">
         ${
@@ -273,6 +266,11 @@ export function renderShiftForm(opts = {}) {
           <span class="shifts-livebar-label">${escapeHtml(t('shifts.deadMilesRatio'))}</span>
           <span class="shifts-livebar-value" data-live-vehicle>—</span>
         </div>
+      </div>
+
+      <div class="shifts-form-footer">
+        <button type="button" class="btn btn-ghost" data-action="cancel">${escapeHtml(t('common.cancel'))}</button>
+        <button type="submit" class="btn btn-primary" data-action="submit">${escapeHtml(submitLabel)}</button>
       </div>
     </form>
   `;

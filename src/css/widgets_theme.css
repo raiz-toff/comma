@@ -27,8 +27,8 @@
 [data-widget-id="earnings"], [data-widget-id="netIncome"], [data-widget-id="avgRate"],
 [data-widget-id="totalHours"], [data-widget-id="deliveries"], [data-widget-id="tipsTotal"],
 [data-widget-id="effectiveRate"], [data-widget-id="perDelivery"], [data-widget-id="hourlyRate"] {
-  --wa: #3b82f6;
-  --war: 59, 130, 246;
+  --wa: var(--color-brand);
+  --war: var(--color-brand-rgb);
 }
 
 /* Growth — Amber */

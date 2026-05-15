@@ -40,12 +40,12 @@
 }
 
 .onboarding-dot.is-active {
-  background: var(--color-accent, #f5a623);
+  background: var(--color-brand);
   transform: scale(1.35);
 }
 
 .onboarding-dot.is-done {
-  background: var(--color-accent-muted, #c9a227);
+  background: var(--color-brand-muted);
 }
 
 .onboarding-progress-text {
@@ -104,7 +104,7 @@
 }
 
 .onboarding-platform-card.is-selected {
-  border-color: var(--platform-color, var(--color-accent, #f5a623));
+  border-color: var(--platform-color, var(--color-brand));
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--platform-color) 35%, transparent);
 }
 
@@ -130,7 +130,7 @@
 }
 
 .onboarding-avatar-btn.is-selected {
-  border-color: var(--color-accent, #f5a623);
+  border-color: var(--color-brand);
 }
 
 .onboarding-fieldset {
@@ -167,8 +167,8 @@
 }
 
 .onboarding-choice.is-selected {
-  border-color: var(--color-accent, #f5a623);
-  background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface-raised));
+  border-color: var(--color-brand);
+  background: color-mix(in srgb, var(--color-brand) 12%, var(--color-surface-raised));
 }
 
 .onboarding-check {
@@ -204,7 +204,7 @@
 
 .onboarding-why-summary {
   cursor: pointer;
-  color: var(--color-accent-text, #8a5a00);
+  color: var(--color-brand-text);
   font-weight: 600;
 }
 
@@ -216,7 +216,7 @@
 .onboarding-motivation {
   margin: 0;
   font-weight: 600;
-  color: var(--color-accent-text, #6b4a00);
+  color: var(--color-brand-text);
 }
 
 .onboarding-completion {
@@ -247,8 +247,8 @@
     105deg,
     transparent,
     transparent 6px,
-    color-mix(in srgb, var(--color-accent) 40%, transparent) 6px,
-    color-mix(in srgb, var(--color-accent) 40%, transparent) 8px
+    color-mix(in srgb, var(--color-brand) 40%, transparent) 6px,
+    color-mix(in srgb, var(--color-brand) 40%, transparent) 8px
   );
   animation: onboarding-confetti-fall 2.2s ease-out forwards;
 }

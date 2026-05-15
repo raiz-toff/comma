@@ -32,7 +32,7 @@ samp {
 .app-shell-chrome {
   position: sticky;
   top: 0;
-  z-index: var(--z-dropdown);
+  z-index: 150; /* Above widgets (base) but below modals (200) */
   padding-top: env(safe-area-inset-top, 0);
 }
 
@@ -47,8 +47,8 @@ samp {
   font-weight: 600;
   line-height: 1.35;
   color: var(--color-text-primary);
-  background: color-mix(in srgb, var(--color-warning) 38%, var(--color-surface));
-  border-bottom: 1px solid color-mix(in srgb, var(--color-warning) 55%, var(--color-border));
+  background: color-mix(in srgb, var(--color-brand) 38%, var(--color-surface));
+  border-bottom: 1px solid color-mix(in srgb, var(--color-brand) 55%, var(--color-border));
 }
 
 .demo-mode-bar[hidden] {
@@ -309,7 +309,6 @@ samp {
   height: 36px;
   padding: 0 var(--space-3) 0 var(--space-4);
   background: color-mix(in srgb, var(--platform-color, var(--color-surface-raised)) 8%, var(--color-surface-raised));
-  border: 1.5px solid var(--platform-color, var(--color-border));
   border-radius: var(--radius-pill);
   color: var(--color-text-primary);
   font-size: 13px;

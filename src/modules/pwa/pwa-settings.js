@@ -14,6 +14,32 @@ import {
   vibrate,
   toggleFullscreen,
 } from './pwa.js';
+import { getIcon } from '../../ui/icons.js';
+
+function esc(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/"/g, '&quot;');
+}
+
+const PWA_EXPANDED_KEY = 'comma-pwa-expanded-v1';
+
+function loadPwaExpanded() {
+  try {
+    return sessionStorage.getItem(PWA_EXPANDED_KEY) !== 'false';
+  } catch {
+    return true;
+  }
+}
+
+function savePwaExpanded(on) {
+  try {
+    sessionStorage.setItem(PWA_EXPANDED_KEY, String(on));
+  } catch {
+    /* ignore */
+  }
+}
 
 function row(labelText, valueEl, description) {
   const wrap = document.createElement('div');
@@ -48,22 +74,70 @@ export function mountPwaSettings(host) {
   host.textContent = '';
   const caps = pwaCapabilities();
 
-  const section = document.createElement('section');
-  section.className = 'settings-view-section pwa-settings';
-  section.setAttribute('aria-labelledby', 'pwa-settings-title');
+  const isExpanded = loadPwaExpanded();
 
-  const heading = document.createElement('h2');
-  heading.id = 'pwa-settings-title';
-  heading.className = 'settings-section-title';
-  heading.textContent = t('pwa.sectionTitle');
-  const lead = document.createElement('p');
-  lead.className = 'settings-section-lead text-secondary';
-  lead.textContent = t('pwa.sectionLead');
-  section.appendChild(heading);
-  section.appendChild(lead);
+  const section = document.createElement('section');
+  section.className = `card card-raised settings-collapsible pwa-settings ${isExpanded ? 'is-expanded' : ''}`;
+  section.setAttribute('aria-labelledby', 'pwa-settings-title');
+  section.setAttribute('data-settings-collapsible', 'pwa');
+
+  const header = document.createElement('header');
+  header.className = 'settings-collapsible-header';
+  header.setAttribute('data-settings-toggle', 'pwa');
+  header.innerHTML = `
+    <div class="settings-collapsible-title-wrap">
+      <h2 id="pwa-settings-title" class="settings-section-title">${esc(t('pwa.sectionTitle'))}</h2>
+      <p class="settings-collapsible-summary">${esc(t('pwa.sectionLead'))}</p>
+    </div>
+    <span class="settings-collapsible-icon">${getIcon('chevron-down', 20)}</span>
+  `;
+  section.appendChild(header);
+
+  const body = document.createElement('div');
+  body.className = 'settings-collapsible-body';
 
   const list = document.createElement('div');
   list.className = 'pwa-cap-list';
+
+  /* Install App (Feature 242 - Manual Trigger) */
+  {
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      /** @type {any} */ (window.navigator).standalone === true;
+
+    if (!isStandalone) {
+      const action = document.createElement('button');
+      action.type = 'button';
+      action.className = 'btn btn-primary btn-sm';
+      action.textContent = t('pwa.install.confirm');
+
+      const checkAvailability = () => {
+        const canInstall =
+          typeof window !== 'undefined' &&
+          /** @type {any} */ (window).__comma?.canInstall &&
+          /** @type {any} */ (window).__comma.canInstall();
+        action.disabled = !canInstall;
+        if (!canInstall) {
+          action.textContent = t('pwa.unsupported');
+        } else {
+          action.textContent = t('pwa.install.confirm');
+        }
+      };
+
+      action.addEventListener('click', async () => {
+        if (typeof window !== 'undefined' && /** @type {any} */ (window).__comma?.triggerInstall) {
+          const success = await /** @type {any} */ (window).__comma.triggerInstall();
+          if (success) {
+            action.disabled = true;
+            action.textContent = t('pwa.supported');
+          }
+        }
+      });
+
+      checkAvailability();
+      list.appendChild(row(t('pwa.install.title'), action, t('pwa.install.message')));
+    }
+  }
 
   /* Background Sync (241) */
   list.appendChild(
@@ -180,6 +254,25 @@ export function mountPwaSettings(host) {
     list.appendChild(row(t('pwa.toggleFullscreen'), action, ''));
   }
 
-  section.appendChild(list);
+  body.appendChild(list);
+  section.appendChild(body);
   host.appendChild(section);
+
+  header.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    const wasOpen = section.classList.contains('is-expanded');
+
+    if (!wasOpen) {
+      // Close others in the same panel
+      const panel = section.closest('.settings-tabpanel');
+      if (panel) {
+        panel.querySelectorAll('.settings-collapsible').forEach((c) => c.classList.remove('is-expanded'));
+      }
+      section.classList.add('is-expanded');
+      savePwaExpanded(true);
+    } else {
+      section.classList.remove('is-expanded');
+      savePwaExpanded(false);
+    }
+  });
 }

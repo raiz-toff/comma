@@ -19,6 +19,7 @@ import { buildWidgetDataContext } from '../modules/analytics/widget-data.js';
 import { afterRenderWidgets } from '../registry/widgets/after-render.js';
 
 const DASHBOARD_RANGE_KEY = 'comma-dashboard-range-v1';
+const DASHBOARD_FILTER_EXPANDED_KEY = 'comma-dashboard-filter-expanded-v1';
 const MONTHLY_ROWS_PER_PAGE = 15;
 const MONTHLY_PAGE_STORAGE_KEY = 'comma-dashboard-monthly-page-v1';
 
@@ -53,6 +54,16 @@ function saveDashboardRange(s) {
   } catch {
     /* ignore */
   }
+}
+
+let _dashFilterExpanded = false;
+
+function loadDashboardFilterExpanded() {
+  return _dashFilterExpanded;
+}
+
+function saveDashboardFilterExpanded(expanded) {
+  _dashFilterExpanded = expanded;
 }
 
 /** @param {string} start @param {string} end */
@@ -254,25 +265,38 @@ async function paintDashboard(root, ctx) {
         </div>
       </header>
 
-      <div class="financial-dash-filter card" data-dashboard-filter>
-        <div class="financial-dash-filter-bar">
-          <div class="financial-dash-filter-left">
-            <span class="financial-dash-filter-label">${esc(t('views.dashboard.financial.dateRange'))}</span>
-            <div class="financial-dash-dates">
-              <input type="date" class="input financial-dash-date" id="dashboard-filter-start" value="${esc(range.start)}" aria-label="${esc(t('views.dashboard.financial.startDate'))}" />
-              <input type="date" class="input financial-dash-date" id="dashboard-filter-end" value="${esc(range.end)}" aria-label="${esc(t('views.dashboard.financial.endDate'))}" />
+      <div class="financial-dash-filter card${loadDashboardFilterExpanded() ? ' is-expanded' : ''}" data-dashboard-filter>
+        <button type="button" class="financial-dash-filter-summary" data-dashboard-toggle-filter aria-expanded="${loadDashboardFilterExpanded()}">
+          <span class="financial-dash-summary-left">
+            <span class="financial-dash-summary-icon">${getIcon('calendar', 18)}</span>
+            <span class="financial-dash-summary-text">${range.start} &ndash; ${range.end}</span>
+          </span>
+          <span class="financial-dash-summary-right">
+            <span class="financial-dash-summary-preset badge">${esc(range.preset === 'custom' ? t('views.dashboard.financial.presetCustom') : t(`views.dashboard.financial.preset${range.preset.charAt(0).toUpperCase() + range.preset.slice(1)}`))}</span>
+            <span class="financial-dash-summary-chevron">${getIcon('chevron-down', 18)}</span>
+          </span>
+        </button>
+
+        <div class="financial-dash-filter-content">
+          <div class="financial-dash-filter-bar">
+            <div class="financial-dash-filter-left">
+              <span class="financial-dash-filter-label">${esc(t('views.dashboard.financial.dateRange'))}</span>
+              <div class="financial-dash-dates">
+                <input type="date" class="input financial-dash-date" id="dashboard-filter-start" value="${esc(range.start)}" aria-label="${esc(t('views.dashboard.financial.startDate'))}" />
+                <input type="date" class="input financial-dash-date" id="dashboard-filter-end" value="${esc(range.end)}" aria-label="${esc(t('views.dashboard.financial.endDate'))}" />
+              </div>
             </div>
-          </div>
-          <div class="financial-dash-filter-right">
-            <div class="financial-dash-presets" role="group" aria-label="${esc(t('views.dashboard.financial.presetsAria'))}">
-              <button type="button" class="btn btn-ghost financial-dash-preset${presetActive('week')}" data-dashboard-preset="week">${esc(t('views.dashboard.financial.presetWeek'))}</button>
-              <button type="button" class="btn btn-ghost financial-dash-preset${presetActive('month')}" data-dashboard-preset="month">${esc(t('views.dashboard.financial.presetMonth'))}</button>
-              <button type="button" class="btn btn-ghost financial-dash-preset${presetActive('ytd')}" data-dashboard-preset="ytd">${esc(t('views.dashboard.financial.presetYtd'))}</button>
-              <button type="button" class="btn btn-ghost financial-dash-preset${presetActive('all')}" data-dashboard-preset="all">${esc(t('views.dashboard.financial.presetAll'))}</button>
+            <div class="financial-dash-filter-right">
+              <div class="financial-dash-presets" role="group" aria-label="${esc(t('views.dashboard.financial.presetsAria'))}">
+                <button type="button" class="btn btn-ghost financial-dash-preset${presetActive('week')}" data-dashboard-preset="week">${esc(t('views.dashboard.financial.presetWeek'))}</button>
+                <button type="button" class="btn btn-ghost financial-dash-preset${presetActive('month')}" data-dashboard-preset="month">${esc(t('views.dashboard.financial.presetMonth'))}</button>
+                <button type="button" class="btn btn-ghost financial-dash-preset${presetActive('ytd')}" data-dashboard-preset="ytd">${esc(t('views.dashboard.financial.presetYtd'))}</button>
+                <button type="button" class="btn btn-ghost financial-dash-preset${presetActive('all')}" data-dashboard-preset="all">${esc(t('views.dashboard.financial.presetAll'))}</button>
+              </div>
+              <button type="button" class="btn btn-primary financial-dash-apply" data-dashboard-apply>
+                ${getIcon('filter', 18, 'financial-dash-apply-icon')}${esc(t('views.dashboard.financial.apply'))}
+              </button>
             </div>
-            <button type="button" class="btn btn-primary financial-dash-apply" data-dashboard-apply>
-              ${getIcon('filter', 18, 'financial-dash-apply-icon')}${esc(t('views.dashboard.financial.apply'))}
-            </button>
           </div>
         </div>
       </div>
@@ -362,6 +386,7 @@ async function paintDashboard(root, ctx) {
     const anchorDate = store.get('demoMode') ? getDemoAnalyticsAnchorDate() : new Date();
     const r = defaultRangeForPreset(preset, anchorDate, weekStartDay);
     saveDashboardRange(r);
+    saveDashboardFilterExpanded(false);
     const sEl = /** @type {HTMLInputElement | null} */ (root.querySelector('#dashboard-filter-start'));
     const eEl = /** @type {HTMLInputElement | null} */ (root.querySelector('#dashboard-filter-end'));
     if (sEl) sEl.value = r.start;
@@ -373,10 +398,17 @@ async function paintDashboard(root, ctx) {
     const el = /** @type {HTMLElement | null} */ (
       ev.target &&
       /** @type {HTMLElement} */ (ev.target).closest(
-        '[data-dashboard-preset],[data-dashboard-apply],[data-dashboard-monthly-page],[data-dashboard-monthly-goto]',
+        '[data-dashboard-preset],[data-dashboard-apply],[data-dashboard-monthly-page],[data-dashboard-monthly-goto],[data-dashboard-toggle-filter]',
       )
     );
     if (!el || !root.contains(el)) return;
+
+    if (el.hasAttribute('data-dashboard-toggle-filter')) {
+      const isExpanded = loadDashboardFilterExpanded();
+      saveDashboardFilterExpanded(!isExpanded);
+      void paintDashboard(root, ctx);
+      return;
+    }
 
     const gotoStr = el.getAttribute('data-dashboard-monthly-goto');
     if (gotoStr != null && gotoStr !== '') {
@@ -418,6 +450,7 @@ async function paintDashboard(root, ctx) {
         if (eEl) eEl.value = e;
       }
       saveDashboardRange({ start: s, end: e, preset: 'custom' });
+      saveDashboardFilterExpanded(false);
       void paintDashboard(root, ctx);
       return;
     }
@@ -480,4 +513,6 @@ export async function render(root, ctx) {
   teardownByRoot.set(root, cleanup);
 
   await paintDashboard(root, ctx);
+
+  return cleanup;
 }

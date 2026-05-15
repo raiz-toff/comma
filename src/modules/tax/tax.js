@@ -137,7 +137,19 @@ async function loadTaxSummary(year) {
   const netIncome = Math.max(0, gross - businessExpenses);
   const taxRatePct = num(user?.taxWithholdingPct, taxProfile.defaultWithholdingPct);
   const taxSetAside = calcTaxSetAside(gross, taxRatePct);
-  const virtualJar = num(parseAppStateValue(await db.appState.get(TAX_VIRTUAL_JAR_KEY), 0), 0);
+  const jarKey = `${TAX_VIRTUAL_JAR_KEY}_${year}`;
+  let virtualJarRecord = await db.appState.get(jarKey);
+  
+  if (!virtualJarRecord) {
+    const legacyRecord = await db.appState.get(TAX_VIRTUAL_JAR_KEY);
+    if (legacyRecord) {
+      virtualJarRecord = legacyRecord;
+      await db.appState.put({ ...legacyRecord, key: jarKey });
+      await db.appState.delete(TAX_VIRTUAL_JAR_KEY);
+    }
+  }
+
+  const virtualJar = num(parseAppStateValue(virtualJarRecord, 0), 0);
   const setAsideCoveragePct = taxSetAside > 0 ? Math.min(100, (virtualJar / Math.max(1, taxSetAside)) * 100) : 0;
 
   const hstRate = taxProfile.hstRateWhenRegistered || 0;
@@ -451,6 +463,10 @@ export async function renderTaxDashboard(root, ctx = {}) {
               <button class="tax-jar-btn" type="button" data-jar-adjust="10">+10</button>
               <button class="tax-jar-btn" type="button" data-jar-adjust="25">+25</button>
             </div>
+            
+            <div style="margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--color-border); font-size: var(--text-xs); color: var(--color-text-secondary); line-height: 1.4;">
+              <strong>💡 Pro Tip:</strong> Consistently saving a fixed percentage of each payout protects you from unexpected bills at tax time. It's much safer to over-save and receive a lump-sum refund than to scramble for funds when taxes are due.
+            </div>
           </div>
         </article>
 
@@ -651,8 +667,9 @@ export async function renderTaxDashboard(root, ctx = {}) {
     btn.addEventListener('click', async () => {
       const delta = num(btn.getAttribute('data-jar-adjust'), 0);
       const next = Math.max(0, summary.virtualJar + delta);
+      const jarKey = `${TAX_VIRTUAL_JAR_KEY}_${selectedYear}`;
       await db.appState.put({
-        key: TAX_VIRTUAL_JAR_KEY,
+        key: jarKey,
         value: JSON.stringify(next),
         updatedAt: new Date().toISOString(),
       });

@@ -14,8 +14,10 @@ export async function render(root, ctx) {
 
   root.appendChild(wrap);
 
+  let teardown = null;
   try {
-    await mountSettings(settingsHost, ctx);
+    const api = await mountSettings(settingsHost, ctx);
+    if (api && typeof api.teardown === 'function') teardown = api.teardown;
   } catch (e) {
     console.error('[comma] settings mount failed', e);
     const err = document.createElement('p');
@@ -39,4 +41,6 @@ export async function render(root, ctx) {
       pwaMount.appendChild(err);
     }
   }
+
+  return teardown;
 }

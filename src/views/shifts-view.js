@@ -319,34 +319,49 @@ export async function render(root, ctx) {
       </header>
 
       <div class="shifts-view-body">
-        <div class="shifts-toolbar card">
-          <div class="shifts-toolbar-bar">
-            <div class="shifts-toolbar-left">
-              <div class="shifts-presets-group" role="group" aria-label="${escapeHtml(t('shifts.filterPresetsAria'))}">
-                <button type="button" class="btn btn-ghost btn-sm shifts-toolbar-preset" data-shifts-preset="week">${escapeHtml(t('shifts.presetWeek'))}</button>
-                <button type="button" class="btn btn-ghost btn-sm shifts-toolbar-preset" data-shifts-preset="ytd">${escapeHtml(t('shifts.presetYtd'))}</button>
-                <button type="button" class="btn btn-ghost btn-sm shifts-toolbar-preset" data-shifts-preset="all">${escapeHtml(t('shifts.presetAll'))}</button>
+        ${(() => {
+          const stored = localStorage.getItem('comma_shifts_toolbar_collapsed');
+          const isCollapsed = stored === null ? true : stored === 'true';
+          return `
+        <div class="shifts-filter card${isCollapsed ? '' : ' is-expanded'}" data-shifts-filter>
+          <button type="button" class="shifts-filter-summary" data-shifts-toggle-filter aria-expanded="${!isCollapsed}">
+            <span class="shifts-filter-summary-left">
+              <span class="shifts-filter-summary-icon">${getIcon('calendar', 18)}</span>
+              <span class="shifts-filter-summary-text" data-shifts-summary>Loading range...</span>
+            </span>
+            <span class="shifts-filter-summary-right">
+              <span class="shifts-filter-summary-preset badge" data-shifts-summary-preset>...</span>
+              <span class="shifts-filter-summary-chevron">${getIcon('chevron-down', 18)}</span>
+            </span>
+          </button>
+          <div class="shifts-filter-content">
+            <div class="shifts-filter-bar">
+              <div class="shifts-filter-left">
+                <div class="shifts-presets-group" role="group" aria-label="${escapeHtml(t('shifts.filterPresetsAria'))}">
+                  <button type="button" class="btn btn-ghost btn-sm shifts-preset-btn" data-shifts-preset="week">${escapeHtml(t('shifts.presetWeek'))}</button>
+                  <button type="button" class="btn btn-ghost btn-sm shifts-preset-btn" data-shifts-preset="ytd">${escapeHtml(t('shifts.presetYtd'))}</button>
+                  <button type="button" class="btn btn-ghost btn-sm shifts-preset-btn" data-shifts-preset="all">${escapeHtml(t('shifts.presetAll'))}</button>
+                </div>
+                <div class="shifts-filter-dates">
+                  <input type="date" class="input shifts-filter-date" id="shifts-filter-start" aria-label="${escapeHtml(t('shifts.rangeStart'))}" />
+                  <span class="shifts-filter-dates-sep" aria-hidden="true">–</span>
+                  <input type="date" class="input shifts-filter-date" id="shifts-filter-end" aria-label="${escapeHtml(t('shifts.rangeEnd'))}" />
+                  <button type="button" class="btn btn-primary btn-sm shifts-filter-apply" data-shifts-action="apply">${escapeHtml(t('shifts.rangeApply'))}</button>
+                </div>
               </div>
-              <span class="shifts-toolbar-field-label">${escapeHtml(t('shifts.rangeLabel'))}</span>
-              <div class="shifts-toolbar-dates">
-                <input type="date" class="input shifts-toolbar-date" id="shifts-filter-start" aria-label="${escapeHtml(t('shifts.rangeStart'))}" />
-                <span class="shifts-toolbar-dates-sep" aria-hidden="true">–</span>
-                <input type="date" class="input shifts-toolbar-date" id="shifts-filter-end" aria-label="${escapeHtml(t('shifts.rangeEnd'))}" />
-                <button type="button" class="btn btn-primary btn-sm shifts-toolbar-apply" data-shifts-action="apply">${escapeHtml(t('shifts.rangeApply'))}</button>
+              <div class="shifts-filter-right">
+                <label class="shifts-sort-inline">
+                  <span class="shifts-sort-inline-label">${escapeHtml(t('shifts.sortByDate'))}</span>
+                  <select class="input shifts-sort-select" data-shifts-sort aria-label="${escapeHtml(t('shifts.sortByDate'))}">
+                    <option value="desc">${escapeHtml(t('shifts.sortNewest'))}</option>
+                    <option value="asc">${escapeHtml(t('shifts.sortOldest'))}</option>
+                  </select>
+                </label>
               </div>
-            </div>
-            <div class="shifts-toolbar-right">
-              <label class="shifts-sort-inline">
-                <span class="shifts-sort-inline-label">${escapeHtml(t('shifts.sortByDate'))}</span>
-                <select class="input shifts-sort-select" data-shifts-sort aria-label="${escapeHtml(t('shifts.sortByDate'))}">
-                  <option value="desc">${escapeHtml(t('shifts.sortNewest'))}</option>
-                  <option value="asc">${escapeHtml(t('shifts.sortOldest'))}</option>
-                </select>
-              </label>
-              <button type="button" class="btn btn-primary shifts-toolbar-add" data-shifts-action="new">${escapeHtml(t('shifts.addShift'))}</button>
             </div>
           </div>
-        </div>
+        </div>`;
+        })()}
         <div class="shifts-list" data-slot="list"></div>
         <div class="shifts-pager-slot" data-slot="pager" hidden></div>
       </div>
@@ -355,6 +370,7 @@ export async function render(root, ctx) {
 
   const listSlot = /** @type {HTMLElement | null} */ (root.querySelector('[data-slot="list"]'));
   const pagerSlot = /** @type {HTMLElement | null} */ (root.querySelector('[data-slot="pager"]'));
+  const summaryEl = /** @type {HTMLElement | null} */ (root.querySelector('[data-shifts-summary]'));
 
   const paint = async () => {
     if (!listSlot || !pagerSlot) return;
@@ -362,6 +378,17 @@ export async function render(root, ctx) {
     const weekStartDay = Number(user?.locale?.weekStartDay ?? 0);
     const range = loadShiftsRange(weekStartDay);
     const sortDir = /** @type {'asc'|'desc'} */ (loadShiftsSortDir());
+
+    // Update summary text
+    if (summaryEl) {
+      summaryEl.textContent = `${range.start} – ${range.end}`;
+    }
+    const presetSummary = root.querySelector('[data-shifts-summary-preset]');
+    if (presetSummary) {
+      const p = range.preset;
+      presetSummary.textContent = p === 'week' ? 'Week' : p === 'ytd' ? 'YTD' : p === 'all' ? 'All Time' : 'Custom';
+    }
+
     const all = await loadAllShiftsForPlatform();
     const filtered = filterAndSortShifts(all, range.start, range.end, sortDir);
     const total = filtered.length;
@@ -432,6 +459,18 @@ export async function render(root, ctx) {
   };
 
   const onClick = async (e) => {
+    const toggle = e.target instanceof Element ? e.target.closest('[data-shifts-toggle-filter]') : null;
+    if (toggle) {
+      const parent = root.querySelector('[data-shifts-filter]');
+      if (parent) {
+        const wasOpen = parent.classList.contains('is-expanded');
+        parent.classList.toggle('is-expanded', !wasOpen);
+        localStorage.setItem('comma_shifts_toolbar_collapsed', wasOpen ? 'false' : 'true');
+        toggle.setAttribute('aria-expanded', String(!wasOpen));
+      }
+      return;
+    }
+
     const navEl = /** @type {HTMLElement | null} */ (
       e.target && /** @type {HTMLElement} */ (e.target).closest('[data-shifts-preset],[data-shifts-action],[data-shifts-page]')
     );
@@ -602,13 +641,15 @@ export async function render(root, ctx) {
   root.addEventListener('click', onClick);
   root.addEventListener('change', onSortChange);
 
-  teardownByRoot.set(root, () => {
+  const teardown = () => {
     offSaved();
     offDel();
     offPlatform();
     root.removeEventListener('click', onClick);
     root.removeEventListener('change', onSortChange);
-  });
+    teardownByRoot.delete(root);
+  };
+  teardownByRoot.set(root, teardown);
 
   await paint();
 
@@ -620,6 +661,8 @@ export async function render(root, ctx) {
       onSaved: async (val) => saveShift(val),
     });
   }
+
+  return teardown;
 }
 
 async function openTemplatesManager() {

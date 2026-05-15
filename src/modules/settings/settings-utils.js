@@ -45,15 +45,8 @@ function darkenBrand(hex) {
 
 /** Apply accent to CSS variables (null clears override back to stylesheet defaults). */
 export function applyAccent(hex) {
-  const el = document.documentElement;
-  const n = hex ? normalizeHex(String(hex)) : null;
-  if (n) {
-    el.style.setProperty('--color-brand', n);
-    el.style.setProperty('--color-brand-dark', darkenBrand(n));
-  } else {
-    el.style.removeProperty('--color-brand');
-    el.style.removeProperty('--color-brand-dark');
-  }
+  // We no longer manually set properties here. 
+  // adaptive-theme.js listens to the store and handles it globally and correctly.
 }
 
 const FONT_SIZES = new Set(['small', 'medium', 'large', 'xl']);

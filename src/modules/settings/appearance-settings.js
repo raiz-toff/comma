@@ -17,86 +17,99 @@ export async function mountAppearanceSettings(root) {
   const userAccentNorm = normalizeAccentHex(user.accentColor);
 
   root.innerHTML = `
-    <section class="settings-view-section card card-raised">
-      <h2 class="settings-section-title">Locale & appearance</h2>
-      <div class="settings-grid">
-        <label class="input-group">
-          <span class="input-label">${esc(t('settings.currency'))}</span>
-          <select class="input" data-setting-currency>
-            ${['USD', 'CAD', 'EUR', 'GBP', 'AUD'].map((c) => `<option value="${c}" ${user?.locale?.currency === c ? 'selected' : ''}>${c}</option>`).join('')}
-          </select>
-        </label>
-        <label class="input-group">
-          <span class="input-label">${esc(t('settings.theme'))}</span>
-          <select class="input" data-setting-theme>
-            <option value="auto" ${user.theme === 'auto' ? 'selected' : ''}>Auto</option>
-            <option value="light" ${user.theme === 'light' ? 'selected' : ''}>Light</option>
-            <option value="dark" ${user.theme === 'dark' ? 'selected' : ''}>Dark</option>
-          </select>
-        </label>
-        <label class="input-group">
-          <span class="input-label">Font size</span>
-          <select class="input" data-setting-font>
-            <option value="small" ${user.fontSize === 'small' ? 'selected' : ''}>Small</option>
-            <option value="medium" ${!user.fontSize || user.fontSize === 'medium' ? 'selected' : ''}>Medium</option>
-            <option value="large" ${user.fontSize === 'large' ? 'selected' : ''}>Large</option>
-            <option value="xl" ${user.fontSize === 'xl' ? 'selected' : ''}>XL</option>
-          </select>
-        </label>
-        <label class="input-group">
-          <span class="input-label">Layout density</span>
-          <select class="input" data-setting-density>
-            <option value="comfortable" ${!user.layoutDensity || user.layoutDensity === 'comfortable' ? 'selected' : ''}>Comfortable</option>
-            <option value="compact" ${user.layoutDensity === 'compact' ? 'selected' : ''}>Compact</option>
-          </select>
-        </label>
-        <label class="input-group">
-          <span class="input-label">${esc(t('settings.dateFormat'))}</span>
-          <select class="input" data-setting-date-format>
-            <option value="YYYY-MM-DD" ${user?.locale?.dateFormat === 'YYYY-MM-DD' ? 'selected' : ''}>YYYY-MM-DD</option>
-            <option value="MM/DD/YYYY" ${user?.locale?.dateFormat === 'MM/DD/YYYY' ? 'selected' : ''}>MM/DD/YYYY</option>
-            <option value="DD/MM/YYYY" ${user?.locale?.dateFormat === 'DD/MM/YYYY' ? 'selected' : ''}>DD/MM/YYYY</option>
-          </select>
-        </label>
-        <label class="input-group">
-          <span class="input-label">Week starts on</span>
-          <select class="input" data-setting-week-start>
-            <option value="0" ${Number(user?.locale?.weekStartDay) === 0 ? 'selected' : ''}>Sunday</option>
-            <option value="1" ${Number(user?.locale?.weekStartDay) === 1 ? 'selected' : ''}>Monday</option>
-          </select>
-        </label>
-        <label class="input-group">
-          <span class="input-label">Shift duration format</span>
-          <select class="input" data-setting-time-format>
-            <option value="12h" ${user?.locale?.timeFormat === '12h' ? 'selected' : ''}>12-hour</option>
-            <option value="24h" ${user?.locale?.timeFormat === '24h' ? 'selected' : ''}>24-hour</option>
-          </select>
-        </label>
-      </div>
-      <div class="settings-accent">
-        <p class="input-label">${esc(t('settings.accentLabel'))}</p>
-        <div class="settings-accent-row">
-          <div
-            class="settings-accent-tabs"
-            role="radiogroup"
-            aria-label="${esc(t('settings.accentPresetsAria'))}"
-            data-setting-accent-swatches
-          >
-            ${PRESET_ACCENTS.map((hex) => {
-              const sel = Boolean(userAccentNorm && userAccentNorm === normalizeAccentHex(hex));
-              return `<button type="button" role="radio" class="settings-accent-tab${sel ? ' is-selected' : ''}" data-accent="${esc(hex)}" style="--accent:${hex}" aria-checked="${sel ? 'true' : 'false'}" aria-label="${esc(`${t('settings.accentPresetUse')} ${hex}`)}"></button>`;
-            }).join('')}
-          </div>
-          <label class="settings-accent-hex-inline">
-            <span class="settings-accent-hex-label">${esc(t('settings.accentCustomHex'))}</span>
-            <input class="input" data-setting-accent-hex value="${esc(user.accentColor || '')}" placeholder="#F5A623" />
+    <div class="settings-sections-stack">
+      <section class="settings-view-section card card-raised">
+        <h2 class="settings-section-title">Interface</h2>
+        <div class="settings-grid">
+          <label class="input-group">
+            <span class="input-label">${esc(t('settings.theme'))}</span>
+            <select class="input" data-setting-theme>
+              <option value="auto" ${user.theme === 'auto' ? 'selected' : ''}>Auto</option>
+              <option value="light" ${user.theme === 'light' ? 'selected' : ''}>Light</option>
+              <option value="dark" ${user.theme === 'dark' ? 'selected' : ''}>Dark</option>
+            </select>
+          </label>
+          <label class="input-group">
+            <span class="input-label">Font size</span>
+            <select class="input" data-setting-font>
+              <option value="small" ${user.fontSize === 'small' ? 'selected' : ''}>Small</option>
+              <option value="medium" ${!user.fontSize || user.fontSize === 'medium' ? 'selected' : ''}>Medium</option>
+              <option value="large" ${user.fontSize === 'large' ? 'selected' : ''}>Large</option>
+              <option value="xl" ${user.fontSize === 'xl' ? 'selected' : ''}>XL</option>
+            </select>
+          </label>
+          <label class="input-group">
+            <span class="input-label">Layout density</span>
+            <select class="input" data-setting-density>
+              <option value="comfortable" ${!user.layoutDensity || user.layoutDensity === 'comfortable' ? 'selected' : ''}>Comfortable</option>
+              <option value="compact" ${user.layoutDensity === 'compact' ? 'selected' : ''}>Compact</option>
+            </select>
           </label>
         </div>
+      </section>
+
+      <section class="settings-view-section card card-raised">
+        <h2 class="settings-section-title">Branding</h2>
+        <div class="settings-accent">
+          <p class="input-label">${esc(t('settings.accentLabel'))}</p>
+          <div class="settings-accent-row">
+            <div
+              class="settings-accent-tabs"
+              role="radiogroup"
+              aria-label="${esc(t('settings.accentPresetsAria'))}"
+              data-setting-accent-swatches
+            >
+              ${PRESET_ACCENTS.map((hex) => {
+                const sel = Boolean(userAccentNorm && userAccentNorm === normalizeAccentHex(hex));
+                return `<button type="button" role="radio" class="settings-accent-tab${sel ? ' is-selected' : ''}" data-accent="${esc(hex)}" style="--accent:${hex}" aria-checked="${sel ? 'true' : 'false'}" aria-label="${esc(`${t('settings.accentPresetUse')} ${hex}`)}"></button>`;
+              }).join('')}
+            </div>
+            <label class="settings-accent-hex-inline">
+              <span class="settings-accent-hex-label">${esc(t('settings.accentCustomHex'))}</span>
+              <input class="input" data-setting-accent-hex value="${esc(user.accentColor || '')}" placeholder="#F5A623" />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="settings-view-section card card-raised">
+        <h2 class="settings-section-title">Regional & Locale</h2>
+        <div class="settings-grid">
+          <label class="input-group">
+            <span class="input-label">${esc(t('settings.currency'))}</span>
+            <select class="input" data-setting-currency>
+              ${['USD', 'CAD', 'EUR', 'GBP', 'AUD'].map((c) => `<option value="${c}" ${user?.locale?.currency === c ? 'selected' : ''}>${c}</option>`).join('')}
+            </select>
+          </label>
+          <label class="input-group">
+            <span class="input-label">${esc(t('settings.dateFormat'))}</span>
+            <select class="input" data-setting-date-format>
+              <option value="YYYY-MM-DD" ${user?.locale?.dateFormat === 'YYYY-MM-DD' ? 'selected' : ''}>YYYY-MM-DD</option>
+              <option value="MM/DD/YYYY" ${user?.locale?.dateFormat === 'MM/DD/YYYY' ? 'selected' : ''}>MM/DD/YYYY</option>
+              <option value="DD/MM/YYYY" ${user?.locale?.dateFormat === 'DD/MM/YYYY' ? 'selected' : ''}>DD/MM/YYYY</option>
+            </select>
+          </label>
+          <label class="input-group">
+            <span class="input-label">Week starts on</span>
+            <select class="input" data-setting-week-start>
+              <option value="0" ${Number(user?.locale?.weekStartDay) === 0 ? 'selected' : ''}>Sunday</option>
+              <option value="1" ${Number(user?.locale?.weekStartDay) === 1 ? 'selected' : ''}>Monday</option>
+            </select>
+          </label>
+          <label class="input-group">
+            <span class="input-label">Shift duration format</span>
+            <select class="input" data-setting-time-format>
+              <option value="12h" ${user?.locale?.timeFormat === '12h' ? 'selected' : ''}>12-hour</option>
+              <option value="24h" ${user?.locale?.timeFormat === '24h' ? 'selected' : ''}>24-hour</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <div class="settings-actions" style="margin-top: var(--space-2); display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-primary" style="min-width: 140px;" data-save-display>${esc(t('common.save'))}</button>
       </div>
-      <div class="settings-actions">
-        <button type="button" class="btn btn-primary btn-sm" data-save-display>${esc(t('common.save'))}</button>
-      </div>
-    </section>
+    </div>
   `;
 
   root.querySelector('[data-save-display]')?.addEventListener('click', async () => {

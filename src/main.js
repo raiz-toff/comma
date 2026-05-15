@@ -37,6 +37,7 @@ import './utils/locale.js';
 import './utils/strings.js';
 import { t } from './utils/strings.js';
 import './ui/icons.js';
+import { initAdaptiveTheme } from './core/adaptive-theme.js';
 
 /** @type {ServiceWorkerRegistration | null} */
 let commaSwRegistration = null;
@@ -160,6 +161,8 @@ window.__comma.triggerInstall = async () => {
   return choice.outcome === 'accepted';
 };
 
+window.__comma.canInstall = () => !!deferredInstallPrompt;
+
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible') return;
   if (commaSwRegistration) {
@@ -195,6 +198,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateOnboardingFocusClass(!store.get('user')?.onboardingComplete);
 
     await initPlatforms();
+    initAdaptiveTheme();
     initExpensesModule();
     initSearchModule();
     await initGoalsModule();

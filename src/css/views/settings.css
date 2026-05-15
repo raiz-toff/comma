@@ -12,6 +12,12 @@
   gap: var(--space-4);
 }
 
+.settings-sections-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
 /* ---- Tabbed settings (Option A) ---------------------------------------- */
 .settings-layout {
   display: flex;
@@ -433,6 +439,57 @@ html[data-layout-density='compact'] {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.platform-add-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.platform-add-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-2);
+  text-align: center;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.platform-add-item:hover {
+  border-color: var(--color-brand);
+  background: color-mix(in srgb, var(--color-brand) 5%, var(--color-surface-raised));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.platform-add-logo {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+}
+
+.platform-add-logo svg {
+  width: 28px;
+  height: 28px;
+}
+
+.platform-add-item:hover .platform-add-logo {
+  color: var(--color-brand);
+}
+
+.platform-add-name {
+  font-size: var(--text-xs);
+  font-weight: 500;
 }
 
 .platform-settings-card {
@@ -445,7 +502,10 @@ html[data-layout-density='compact'] {
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-3);
-  margin-bottom: var(--space-3);
+}
+
+.settings-collapsible .platform-settings-card-head {
+  margin-bottom: 0;
 }
 
 .platform-settings-card-title {
@@ -706,4 +766,223 @@ html[data-layout-density='compact'] {
 
 .zones-unallocated {
   margin-top: var(--space-3);
+}
+/* ------------------------------------------------------------------------- */
+/* Collapsible Settings Sections                                            */
+/* ------------------------------------------------------------------------- */
+
+.settings-collapsible {
+  padding: 0 !important;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.settings-collapsible.is-expanded {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--platform-color, color-mix(in srgb, var(--color-brand) 30%, var(--color-border)));
+}
+
+.settings-collapsible-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4);
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--transition-fast);
+}
+
+.settings-collapsible-header:hover {
+  background: color-mix(in srgb, var(--color-brand) 4%, transparent);
+}
+
+.settings-collapsible-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.settings-collapsible-header .settings-subsection-title,
+.settings-collapsible-header .settings-section-title {
+  margin: 0 !important;
+  font-size: var(--text-md);
+  font-weight: 700;
+}
+
+.settings-collapsible-summary {
+  margin: 0 !important;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  opacity: 0.8;
+}
+
+.settings-collapsible-icon {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, color 0.3s ease;
+}
+
+.settings-collapsible.is-expanded .settings-collapsible-icon {
+  transform: rotate(180deg);
+  background: var(--platform-color, var(--color-brand));
+  color: var(--color-surface);
+}
+
+.settings-collapsible-body {
+  padding: 0 var(--space-4) var(--space-4);
+  display: none;
+  animation: settings-slide-down 0.3s ease-out;
+}
+
+.settings-collapsible.is-expanded .settings-collapsible-body {
+  display: block;
+}
+
+@keyframes settings-slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.settings-danger-card.is-expanded {
+  border-color: var(--color-danger);
+}
+
+/* Segmented Control Component */
+.settings-segmented-control {
+  display: flex;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  gap: 4px;
+}
+
+.settings-segmented-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border-radius: calc(var(--radius-md) - 2px);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.settings-segmented-btn:hover {
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-brand) 4%, transparent);
+}
+
+.settings-segmented-btn.is-active {
+  background: var(--color-brand);
+  color: #1a1916;
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-segmented-btn svg {
+  opacity: 0.7;
+}
+
+.settings-segmented-btn.is-active svg {
+  opacity: 1;
+}
+
+/* Vault Health Grid & Cards */
+.settings-data-health-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.health-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.health-card:hover {
+  border-color: var(--color-brand);
+  transform: translateY(-2px);
+}
+
+.health-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-sm);
+  color: var(--color-brand);
+  flex-shrink: 0;
+}
+
+.health-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.health-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.health-value {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.health-recent-backups {
+  grid-column: 1 / -1;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  padding: var(--space-2) var(--space-1);
+  border-top: 1px dashed var(--color-border);
+}
+
+.settings-data-group {
+  margin-bottom: var(--space-6);
+}
+
+.settings-group-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-3);
+  opacity: 0.8;
+}
+
+.health-skeleton {
+  grid-column: 1 / -1;
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-style: italic;
 }

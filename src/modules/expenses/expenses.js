@@ -838,11 +838,17 @@ export async function renderExpensesView(root, ctx = {}) {
   };
 
   function listFilterPayload() {
+    const globalPid = String(store.get('activePlatformId') ?? 'all');
+    const localPid = controls.platformId?.value || '';
+    
+    // Use local filter if set, otherwise fallback to global
+    const platformId = localPid || (globalPid === 'all' ? '' : globalPid);
+
     return {
       startDate: controls.startDate?.value || '',
       endDate: controls.endDate?.value || '',
       category: controls.category?.value || '',
-      platformId: controls.platformId?.value || '',
+      platformId,
       minAmount: controls.minAmount?.value || null,
       maxAmount: controls.maxAmount?.value || null,
       receiptOnly: Boolean(controls.receiptOnly?.checked),

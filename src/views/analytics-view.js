@@ -346,4 +346,6 @@ export async function render(root, ctx) {
 
   teardownByRoot.set(root, cleanup);
   void paintAnalytics(root, ctx);
+
+  return cleanup;
 }

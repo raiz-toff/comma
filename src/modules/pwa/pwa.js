@@ -16,6 +16,10 @@
  */
 
 import { getAppState, setAppState } from '../../core/db.js';
+import { store } from '../../core/store.js';
+import { t } from '../../utils/strings.js';
+import { showModal } from '../../ui/components.js';
+import { getIcon } from '../../ui/icons.js';
 
 /* ------------------------------------------------------------------------- */
 /* Feature detection (single source of truth)                                */
@@ -486,4 +490,79 @@ export function initPwaModule() {
   if (pwaInitialized) return;
   pwaInitialized = true;
   /* Hook used by P6 (Reports) — page-side replay handler is registered there. */
+
+  // Feature 242 — Delayed install prompt for mobile users
+  setupInstallPrompt();
+}
+
+/**
+ * Sets up a delayed check to prompt mobile users to install the PWA.
+ * Conditions: Mobile view, Not Demo Mode, Not already installed, 15s delay.
+ */
+export function setupInstallPrompt() {
+  if (typeof window === 'undefined') return;
+
+  // Wait 15 seconds as requested
+  setTimeout(async () => {
+    const isMobile = window.innerWidth <= 768;
+    const isDemo = store.get('demoMode');
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      /** @type {any} */ (window.navigator).standalone === true;
+
+    if (!isMobile || isDemo || isStandalone) return;
+
+    // Check if dismissed recently (don't annoy the user)
+    const lastPrompt = localStorage.getItem('comma_pwa_prompt_last');
+    const now = Date.now();
+    const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+    if (lastPrompt && now - Number(lastPrompt) < SEVEN_DAYS) return;
+
+    showPwaInstallModal();
+  }, 15000);
+}
+
+/**
+ * Shows a premium bottom-sheet modal inviting the user to install the app.
+ */
+function showPwaInstallModal() {
+  const content = document.createElement('div');
+  content.className = 'pwa-install-prompt';
+  content.innerHTML = `
+    <div class="pwa-install-icon-wrap">
+      <div class="pwa-install-icon-bg">
+        ${getIcon('bolt', 32, 'pwa-install-icon')}
+      </div>
+    </div>
+    <div class="pwa-install-body">
+      <p class="pwa-install-text">${t('pwa.install.message')}</p>
+    </div>
+  `;
+
+  showModal({
+    title: t('pwa.install.title'),
+    content,
+    size: 'sm',
+    actions: [
+      {
+        label: t('pwa.install.confirm'),
+        class: 'btn btn-primary btn-block',
+        onClick: async () => {
+          if (typeof window !== 'undefined' && /** @type {any} */ (window).__comma?.triggerInstall) {
+            const success = await /** @type {any} */ (window).__comma.triggerInstall();
+            if (success) {
+              // Successfully triggered native prompt
+            }
+          }
+        },
+      },
+      {
+        label: t('pwa.install.later'),
+        class: 'btn btn-ghost btn-block',
+        onClick: () => {
+          localStorage.setItem('comma_pwa_prompt_last', String(Date.now()));
+        },
+      },
+    ],
+  });
 }

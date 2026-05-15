@@ -15,4 +15,4 @@ export const SVG_IC = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height
 
 export const SVG_AF = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect width="20" height="20" rx="4" fill="#232F3E"/><path fill="#FF9900" d="M5 14V6h2l2.5 5 2.5-5h2v8h-2V9.5L9 14H8L6 9.5V14H5z"/></svg>`;
 
-export const SVG_OT = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect width="20" height="20" rx="4" fill="#6B7280"/><text x="10" y="14" text-anchor="middle" fill="#fff" font-size="10" font-family="system-ui,sans-serif">?</text></svg>`;
+export const SVG_OT = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`;

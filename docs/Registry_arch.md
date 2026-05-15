@@ -1,4 +1,4 @@
-# MACADAM — Registry Architecture
+# COMMA — Registry Architecture
 ### Modular Platform & Country System
 #### Add a new company or country by adding ONE file. Zero engine changes.
 
@@ -698,5 +698,5 @@ if (process.env.NODE_ENV === 'development') {
 | Validate new definitions | Registry validates on startup in dev mode |
 | Retrofit cost from Phase 2 | 7 files, surgical find-and-replace of if/else chains |
 
-*Macadam Registry Architecture v1.0*
+*COMMA Registry Architecture v1.0*
 *The engine never changes. The definitions grow.*

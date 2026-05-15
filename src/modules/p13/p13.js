@@ -39,7 +39,7 @@ async function maybeShowChangelog() {
   showModal({
     title: 'What is new',
     content: `<div class="p13-modal-list">
-      <p>Macadam ${APP_VERSION} includes polish updates:</p>
+      <p>COMMA ${APP_VERSION} includes polish updates:</p>
       <ul>
         <li>Year-in-review export card</li>
         <li>Zen mode and wellbeing nudges</li>
@@ -73,7 +73,7 @@ async function maybeShowReviewNudge() {
   const dismissed = await getAppState('p13_review_dismissed');
   if (dismissed || count < 8 || count % 4 !== 0) return;
   showModal({
-    title: 'Enjoying Macadam?',
+    title: 'Enjoying COMMA?',
     content: '<p>A quick app review helps other drivers discover the app.</p>',
     actions: [
       {
@@ -177,8 +177,8 @@ export function getDidYouKnowTips() {
 }
 
 export async function initP13() {
-  window.__macadam = window.__macadam || {};
-  window.__macadam.debug = {
+  window.__comma = window.__comma || {};
+  window.__comma.debug = {
     inspectVault,
     timedQuery,
     generateSyntheticData,
@@ -205,13 +205,13 @@ export function toggleZenMode(force) {
 }
 
 export function apiSpecMarkdown() {
-  return `# MacadamAPI (Local Module Spec)
+  return `# COMMAAPI (Local Module Spec)
 
 ## Surface
-- \`window.__macadam.debug.inspectVault()\` -> full table export object
-- \`window.__macadam.debug.timedQuery(table, limit?)\` -> IndexedDB query timing payload
-- \`window.__macadam.debug.generateSyntheticData()\` -> inserts synthetic shift rows
-- \`window.__macadam.debug.schemaDump()\` -> table + primary-key schema snapshot
+- \`window.__comma.debug.inspectVault()\` -> full table export object
+- \`window.__comma.debug.timedQuery(table, limit?)\` -> IndexedDB query timing payload
+- \`window.__comma.debug.generateSyntheticData()\` -> inserts synthetic shift rows
+- \`window.__comma.debug.schemaDump()\` -> table + primary-key schema snapshot
 
 ## Notes
 - All calls are local-first and run against IndexedDB.

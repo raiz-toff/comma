@@ -203,7 +203,7 @@ export async function exportAllShiftsCsv() {
     s.notes || '',
   ]);
   const csv = [header, ...rows].map((row) => row.map(csvEscape).join(',')).join('\n');
-  downloadTextFile(`macadam-shifts-${fileSafeDate()}.csv`, csv, 'text/csv;charset=utf-8');
+  downloadTextFile(`comma-shifts-${fileSafeDate()}.csv`, csv, 'text/csv;charset=utf-8');
   return shifts.length;
 }
 
@@ -220,7 +220,7 @@ export async function exportAllExpensesCsv() {
     e.notes || '',
   ]);
   const csv = [header, ...rows].map((row) => row.map(csvEscape).join(',')).join('\n');
-  downloadTextFile(`macadam-expenses-${fileSafeDate()}.csv`, csv, 'text/csv;charset=utf-8');
+  downloadTextFile(`comma-expenses-${fileSafeDate()}.csv`, csv, 'text/csv;charset=utf-8');
   return expenses.length;
 }
 
@@ -239,7 +239,7 @@ export async function buildVaultBackup() {
 
 export async function exportVaultBackupJson() {
   const backup = await buildVaultBackup();
-  downloadTextFile(`macadam-vault-backup-${fileSafeDate()}.json`, JSON.stringify(backup, null, 2), 'application/json');
+  downloadTextFile(`comma-vault-backup-${fileSafeDate()}.json`, JSON.stringify(backup, null, 2), 'application/json');
   return Object.keys(backup.tables).length;
 }
 
@@ -292,7 +292,7 @@ export async function copySummaryToClipboard(report, user) {
   textarea.style.opacity = '0';
   document.body.appendChild(textarea);
   textarea.select();
-  document.execCommand('copy');
+  document.execCOMMAnd('copy');
   textarea.remove();
   return true;
 }
@@ -301,7 +301,7 @@ export function getWeeklyQrText(report, user) {
   const sum = report.summary;
   const currency = user?.locale?.currency || 'USD';
   return [
-    'Macadam Weekly Stats',
+    'COMMA Weekly Stats',
     `${report.startDate} to ${report.endDate}`,
     `Gross ${currency} ${sum.gross.toFixed(2)}`,
     `Net ${currency} ${sum.net.toFixed(2)}`,
@@ -331,7 +331,7 @@ export function getYearInReviewModel(year, annualReport) {
 export function exportYearInReviewPng(dataUrl, year) {
   const anchor = document.createElement('a');
   anchor.href = dataUrl;
-  anchor.download = `macadam-year-in-review-${year}.png`;
+  anchor.download = `comma-year-in-review-${year}.png`;
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
@@ -348,7 +348,7 @@ export async function exportTaxSummaryJson(year = new Date().getFullYear()) {
     distanceKm: report.summary.distanceKm,
     notes: 'Planning-grade tax export. Verify with accountant.',
   };
-  downloadTextFile(`macadam-tax-summary-${year}.json`, JSON.stringify(payload, null, 2), 'application/json');
+  downloadTextFile(`comma-tax-summary-${year}.json`, JSON.stringify(payload, null, 2), 'application/json');
 }
 
 export async function exportTaxSummaryCsv(year = new Date().getFullYear()) {
@@ -362,5 +362,5 @@ export async function exportTaxSummaryCsv(year = new Date().getFullYear()) {
     ['distance_km', report.summary.distanceKm],
   ];
   const csv = rows.map((row) => row.map(csvEscape).join(',')).join('\n');
-  downloadTextFile(`macadam-tax-summary-${year}.csv`, csv, 'text/csv;charset=utf-8');
+  downloadTextFile(`comma-tax-summary-${year}.csv`, csv, 'text/csv;charset=utf-8');
 }

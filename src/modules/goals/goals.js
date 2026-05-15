@@ -424,7 +424,7 @@ export async function initGoalsModule() {
   await ensureGoalScaffold();
   bus.on(SHIFT_SAVED, (payload) => {
     void handleShiftSaved(payload).catch((err) => {
-      console.warn('[macadam goals] shift handler failed', err);
+      console.warn('[comma goals] shift handler failed', err);
     });
   });
 }

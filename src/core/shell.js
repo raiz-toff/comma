@@ -88,7 +88,7 @@ function bindDemoModeBar(root) {
     try {
       await exitDemoToOnboardingStart();
     } catch (e) {
-      console.error('[macadam shell] exit demo failed', e);
+      console.error('[comma shell] exit demo failed', e);
       showToast({ type: 'error', message: t('errors.generic'), duration: 2800 });
     }
   });
@@ -266,7 +266,7 @@ export async function renderAppShell(root) {
           showToast({ type: 'success', message: t('shifts.savedToast'), duration: 1800 });
           drawer.close();
         } catch (err) {
-          console.warn('[macadam shifts] FAB save failed', err);
+          console.warn('[comma shifts] FAB save failed', err);
           showToast({ type: 'error', message: t('errors.generic'), duration: 2200 });
         }
       });
@@ -328,13 +328,13 @@ export async function renderAppShell(root) {
               showToast({ type: 'success', message: t('shifts.savedToast'), duration: 1800 });
               handle.close();
             } catch (err) {
-              console.warn('[macadam shifts] timer save failed', err);
+              console.warn('[comma shifts] timer save failed', err);
               showToast({ type: 'error', message: t('errors.generic'), duration: 2200 });
             }
           });
         }
       } catch (err) {
-        console.warn('[macadam shifts] FAB end shift failed', err);
+        console.warn('[comma shifts] FAB end shift failed', err);
         showToast({ type: 'error', message: t('errors.generic'), duration: 2200 });
       }
     },
@@ -401,7 +401,7 @@ async function hydrateShiftTimerBar(bar) {
           handle.close();
         });
       } catch (err) {
-        console.warn('[macadam shifts] end shift from bar failed', err);
+        console.warn('[comma shifts] end shift from bar failed', err);
         showToast({ type: 'error', message: t('errors.generic'), duration: 2200 });
       }
     });

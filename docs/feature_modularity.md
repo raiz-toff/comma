@@ -1,4 +1,4 @@
-# MACADAM — Feature Modularity Architecture
+# COMMA — Feature Modularity Architecture
 ### How modular is adding a new feature? Honest assessment + the fix.
 
 > **Note:** This document represents the original design intent for extending features. While the registries were implemented, some schemas (like widgets or metrics) may have evolved in the final codebase. Treat code snippets as illustrative rather than exact.
@@ -239,7 +239,7 @@ export default {
   id: 'REQUIRED_UNIQUE_ID',        // e.g. 'weekly-goal-hit', 'tax-deadline'
   type: 'toast',                   // 'toast' | 'card' | 'celebration'
                                    // toast = small bottom pop
-                                   // card  = full MacadamNotify card
+                                   // card  = full COMMANotify card
                                    // celebration = full-screen (badge unlock, goal hit)
 
   // The condition function. Receives app context, returns true if should fire.
@@ -951,5 +951,5 @@ Here's what to refactor. Same surgical approach as the platform/country retrofit
 | Goal type | 1 entry in goal-types/index.js | None |
 | Brand new data entity | New module + DB migration | Contained to new module |
 
-*Macadam Feature Modularity Architecture v1.0*
+*COMMA Feature Modularity Architecture v1.0*
 *The engine reads registries. Registries grow. The engine never changes.*

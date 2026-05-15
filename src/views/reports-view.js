@@ -180,7 +180,7 @@ export async function render(root, ctx) {
             </div>
             <div>
               <h3 style="margin-bottom: var(--space-1);">Import Vault Backup</h3>
-              <p style="color: var(--color-text-secondary); font-size: var(--text-sm);">Restore your data from a Macadam JSON export file.</p>
+              <p style="color: var(--color-text-secondary); font-size: var(--text-sm);">Restore your data from a COMMA JSON export file.</p>
             </div>
             <div style="display: flex; gap: var(--space-2); align-items: center;">
               <input class="input" type="file" accept="application/json" data-action="import-file" style="max-width: 240px;" />
@@ -342,7 +342,7 @@ export async function render(root, ctx) {
     }
     if (action === 'print') {
       const doc = buildPrintDocument(currentReport, template, store.get('user'));
-      sessionStorage.setItem('macadam_print_payload', JSON.stringify(doc));
+      sessionStorage.setItem('comma_print_payload', JSON.stringify(doc));
       window.open('#/print', '_blank');
     }
     if (action === 'csv-shifts') {

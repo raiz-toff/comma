@@ -13,7 +13,7 @@ import { store } from '../../core/store.js';
 import { acquireWakeLock, releaseWakeLock } from '../pwa/pwa.js';
 import { extractShiftPlatformSpecific } from '../platforms/platform-specific.js';
 
-const LS_TIMER_KEY = 'macadam_active_shift_timer';
+const LS_TIMER_KEY = 'comma_active_shift_timer';
 const APP_STATE_TIMER_KEY = 'active_shift_start';
 const APP_STATE_TEMPLATES_KEY = 'shift_templates';
 

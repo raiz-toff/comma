@@ -1,9 +1,9 @@
 /**
- * Macadam — Chart.js wrappers (F8).
+ * COMMA — Chart.js wrappers (F8).
  *
  * Chart.js v4 is loaded from `src/libs/chart.min.js` (UMD, vendored — no CDN at runtime).
  * The UMD ships all default controllers/elements/scales pre-registered, so this module
- * only needs to (a) capture the Chart constructor exactly once, (b) apply Macadam
+ * only needs to (a) capture the Chart constructor exactly once, (b) apply COMMA
  * defaults (typography, tooltips, color tokens) once, and (c) expose typed wrappers
  * that always return the Chart instance so callers can teardown via `destroyChart`.
  *
@@ -36,7 +36,7 @@ function prefersReducedMotion() {
 }
 
 /**
- * Apply Macadam design tokens to Chart.js defaults. Idempotent: safe to call
+ * Apply COMMA design tokens to Chart.js defaults. Idempotent: safe to call
  * from any wrapper before instantiation. Re-applies on first render only.
  */
 function ensureDefaults() {
@@ -109,7 +109,7 @@ function ensureDefaults() {
 const instanceByCanvas = new WeakMap();
 
 /**
- * Destroy any Macadam-managed chart attached to a canvas.
+ * Destroy any COMMA-managed chart attached to a canvas.
  * @param {HTMLCanvasElement | null | undefined} canvas
  */
 export function destroyChart(canvas) {
@@ -119,7 +119,7 @@ export function destroyChart(canvas) {
     try {
       existing.destroy();
     } catch (err) {
-      console.error('[macadam charts] destroy failed', err);
+      console.error('[comma charts] destroy failed', err);
     }
     instanceByCanvas.delete(canvas);
   }
@@ -171,7 +171,7 @@ function resolveCssPaintForCanvas(value, fallback, kind) {
   if (!lower.includes('var(') && !lower.includes('color-mix(')) return s;
 
   const probe = document.createElement('div');
-  probe.setAttribute('data-macadam-chart-color-probe', '');
+  probe.setAttribute('data-comma-chart-color-probe', '');
   probe.style.cssText =
     'position:absolute;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;overflow:hidden;';
   if (kind === 'stroke') {
@@ -238,7 +238,7 @@ function baseOptions() {
  */
 function instantiate(canvas, type, cfg) {
   if (!Chart) {
-    console.error('[macadam charts] Chart.js not available');
+    console.error('[comma charts] Chart.js not available');
     return null;
   }
   ensureDefaults();
@@ -474,13 +474,13 @@ export function renderGitHubHeatmap(container, data, opts = {}) {
 
   container.innerHTML = '';
   const wrap = document.createElement('div');
-  wrap.className = 'macadam-heatmap';
+  wrap.className = 'comma-heatmap';
   wrap.style.setProperty('--heatmap-weeks', String(weeks));
   wrap.setAttribute('role', 'img');
   wrap.setAttribute('aria-label', label);
 
   const grid = document.createElement('div');
-  grid.className = 'macadam-heatmap-grid';
+  grid.className = 'comma-heatmap-grid';
 
   for (let i = 0; i < totalCells; i += 1) {
     const ms = startMs + i * 86400000;
@@ -492,7 +492,7 @@ export function renderGitHubHeatmap(container, data, opts = {}) {
     const v = byDate.get(iso) || 0;
     const intensity = max > 0 ? Math.max(0, Math.min(1, v / max)) : 0;
     const cell = document.createElement('span');
-    cell.className = 'macadam-heatmap-cell';
+    cell.className = 'comma-heatmap-cell';
     cell.style.setProperty('--cell-intensity', intensity.toFixed(3));
     cell.title = `${iso}: ${v}`;
     cell.setAttribute('data-date', iso);

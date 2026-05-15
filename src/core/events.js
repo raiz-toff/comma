@@ -1,5 +1,5 @@
 /**
- * App-wide event bus (F5). Cross-module decoupling; debuggable via `window.__macadam.bus`.
+ * App-wide event bus (F5). Cross-module decoupling; debuggable via `window.__comma.bus`.
  */
 
 export const SHIFT_SAVED = 'shift:saved';
@@ -55,7 +55,7 @@ export class EventBus {
       try {
         fn(data);
       } catch (e) {
-        console.error(`[macadam bus] handler error for "${event}"`, e);
+        console.error(`[comma bus] handler error for "${event}"`, e);
       }
     }
   }

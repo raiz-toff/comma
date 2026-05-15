@@ -15,7 +15,7 @@ export function render(root, ctx) {
   void ctx;
   let payload = null;
   try {
-    payload = JSON.parse(sessionStorage.getItem('macadam_print_payload') || 'null');
+    payload = JSON.parse(sessionStorage.getItem('comma_print_payload') || 'null');
   } catch {
     payload = null;
   }

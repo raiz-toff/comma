@@ -54,7 +54,7 @@ export async function mountDataAndSafetySettings(root) {
       await setAppState('last_backup', new Date().toISOString());
       showToast({ type: 'success', message: t('settings.exportVaultToast'), duration: 2400 });
     } catch (e) {
-      console.error('[macadam] vault export failed', e);
+      console.error('[comma] vault export failed', e);
       showToast({ type: 'error', message: t('errors.exportFailed'), duration: 3200 });
     }
   });
@@ -64,7 +64,7 @@ export async function mountDataAndSafetySettings(root) {
       const { resetVault } = await import('../onboarding/onboarding.js');
       await resetVault();
     } catch (e) {
-      console.error('[macadam] reset vault failed', e);
+      console.error('[comma] reset vault failed', e);
       showToast({ type: 'error', message: t('errors.generic'), duration: 2400 });
     }
   });

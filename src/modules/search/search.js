@@ -3,7 +3,7 @@ import { db, getAppState, setAppState } from '../../core/db.js';
 import { showModal } from '../../ui/components.js';
 
 const SAVED_FILTERS_KEY = 'search_saved_filters';
-const GLOBAL_SHORTCUT_ATTR = 'data-macadam-search-shortcuts';
+const GLOBAL_SHORTCUT_ATTR = 'data-comma-search-shortcuts';
 
 /**
  * @typedef {'shift'|'expense'|'vehicle'|'platform'} SearchResultType

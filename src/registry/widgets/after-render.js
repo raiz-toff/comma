@@ -17,7 +17,7 @@ export function afterRenderWidgets(root, ctx) {
         // or the card itself. We'll pass the card.
         w.afterRender(card, ctx);
       } catch (err) {
-        console.warn(`[macadam] afterRender failed for widget "${id}":`, err);
+        console.warn(`[comma] afterRender failed for widget "${id}":`, err);
       }
     }
   }

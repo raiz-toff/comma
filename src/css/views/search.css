@@ -1,6 +1,6 @@
-/* Macadam — global search modal (modules/search/search.js) */
+/* COMMA — global search modal (modules/search/search.js) */
 
-.macadam-modal-body > .search-overlay {
+.comma-modal-body > .search-overlay {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;

@@ -13,7 +13,7 @@ export function render(root, ctx) {
     </header>
     <section class="p13-about-section">
       <h2>Competitor comparison</h2>
-      <p>Macadam is local-first, offline-capable, and privacy-focused. Most alternatives require account sync and cloud storage.</p>
+      <p>COMMA is local-first, offline-capable, and privacy-focused. Most alternatives require account sync and cloud storage.</p>
       <ul>
         <li>Local-first vault with export/restore support</li>
         <li>No required login to use core features</li>

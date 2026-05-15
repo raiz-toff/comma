@@ -1,6 +1,6 @@
 # Adding a platform
 
-This guide describes how to add a **new gig platform** to Macadam. Platforms are **data-only**: one definition file plus registry wiring. The shift form, terminology merge, and analytics gates read from `PlatformRegistry`—they should not need new `if (platformId === '…')` branches for a normal addition.
+This guide describes how to add a **new gig platform** to COMMA. Platforms are **data-only**: one definition file plus registry wiring. The shift form, terminology merge, and analytics gates read from `PlatformRegistry`—they should not need new `if (platformId === '…')` branches for a normal addition.
 
 For broader registry philosophy, see [`Registry_arch.md`](Registry_arch.md) in this folder.
 
@@ -136,7 +136,7 @@ For **country-level** defaults when no province row exists (e.g. many US states)
 
 ## Exports and stable ids
 
-- **Onboarding setup JSON** uses `exportKind: 'macadam_setup'`, a numeric **`version`**, and arrays of platform ids in the same **lowercase** form as the registry. **`countryId`** and **`provinceId`** (or tax region code) travel with the export for portable imports.
+- **Onboarding setup JSON** uses `exportKind: 'comma_setup'`, a numeric **`version`**, and arrays of platform ids in the same **lowercase** form as the registry. **`countryId`** and **`provinceId`** (or tax region code) travel with the export for portable imports.
 - Treat **`id`** as immutable once users have data; renaming requires a Dexie migration mapping old → new ids.
 - Full rules: [market_resolution.md](market_resolution.md) (exports and portability).
 

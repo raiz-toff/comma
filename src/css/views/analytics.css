@@ -145,7 +145,7 @@
   visibility: visible;
 }
 
-/* Premium Command Stack UI - High Visibility Manual Toggle */
+/* Premium COMMAnd Stack UI - High Visibility Manual Toggle */
 .widget-command-stack {
   position: absolute;
   top: calc(100% + 8px);

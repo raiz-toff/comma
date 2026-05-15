@@ -178,7 +178,7 @@
 }
 
 /* Fix for raw HTML rendering issue */
-.macadam-progress-ring-label {
+.comma-progress-ring-label {
   font-size: var(--text-xl) !important;
   font-weight: 800 !important;
 }

@@ -20,7 +20,7 @@ import { render as renderAbout } from '../views/about-view.js';
 import { render as renderPrint } from '../views/print-view.js';
 import { t } from '../utils/strings.js';
 
-/** @typedef {{ hash: string, name: string, context: Record<string, unknown>, render: (el: HTMLElement, ctx: Record<string, unknown>) => void | Promise<void> }} MacadamRoute */
+/** @typedef {{ hash: string, name: string, context: Record<string, unknown>, render: (el: HTMLElement, ctx: Record<string, unknown>) => void | Promise<void> }} COMMARoute */
 
 function canonicalHash() {
   const raw = window.location.hash || '';
@@ -32,7 +32,7 @@ function canonicalHash() {
 
 /**
  * @param {string} hash
- * @returns {MacadamRoute | null}
+ * @returns {COMMARoute | null}
  */
 function resolveRouteDef(hash) {
   /** @type {Array<{ hash: string; name: string; render: (el: HTMLElement, ctx: Record<string, unknown>) => void }>} */
@@ -92,7 +92,7 @@ function updateNavActive(hash) {
 }
 
 function renderErrorBoundary(root, err) {
-  console.error('[macadam] view render failed', err);
+  console.error('[comma] view render failed', err);
   root.textContent = '';
   const box = document.createElement('div');
   box.className = 'card card-raised route-error';
@@ -104,13 +104,13 @@ function renderErrorBoundary(root, err) {
 }
 
 /**
- * Full-bleed onboarding: hide global chrome (see `body.macadam-onboarding-focus` in CSS).
+ * Full-bleed onboarding: hide global chrome (see `body.comma-onboarding-focus` in CSS).
  * Derived from `!user?.onboardingComplete` so it stays correct across redirect early-returns.
  * @param {boolean} shouldFocus
  */
 export function updateOnboardingFocusClass(shouldFocus) {
   if (typeof document === 'undefined' || !document.body) return;
-  document.body.classList.toggle('macadam-onboarding-focus', Boolean(shouldFocus));
+  document.body.classList.toggle('comma-onboarding-focus', Boolean(shouldFocus));
 }
 
 function handleRoute() {
@@ -167,8 +167,8 @@ function handleRoute() {
 
   updateOnboardingFocusClass(incomplete);
 
-  window.__macadam = window.__macadam || {};
-  window.__macadam.currentRoute = def;
+  window.__comma = window.__comma || {};
+  window.__comma.currentRoute = def;
 
   updateNavActive(hash);
 

@@ -17,7 +17,7 @@ export async function render(root, ctx) {
   try {
     await mountSettings(settingsHost, ctx);
   } catch (e) {
-    console.error('[macadam] settings mount failed', e);
+    console.error('[comma] settings mount failed', e);
     const err = document.createElement('p');
     err.className = 'route-error';
     err.setAttribute('role', 'alert');
@@ -31,7 +31,7 @@ export async function render(root, ctx) {
     try {
       mountPwaSettings(pwaMount);
     } catch (e) {
-      console.error('[macadam] pwa settings mount failed', e);
+      console.error('[comma] pwa settings mount failed', e);
       const err = document.createElement('p');
       err.className = 'route-error';
       err.setAttribute('role', 'alert');

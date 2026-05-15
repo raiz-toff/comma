@@ -508,7 +508,7 @@ export function renderShiftForm(opts = {}) {
             .join(', ');
           return `<label class="field field--span2"><span class="field-label">${label}</span><input class="input" type="text" name="${escapeAttr(
             n,
-          )}" value="${escapeAttr(sv)}" placeholder="${escapeAttr(t('shifts.psCommaPlaceholder'))}" /></label>`;
+          )}" value="${escapeAttr(sv)}" placeholder="${escapeAttr(t('shifts.psCOMMAPlaceholder'))}" /></label>`;
         }
         if (row.kind === 'object') {
           let txt = '{}';

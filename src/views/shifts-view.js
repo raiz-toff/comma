@@ -29,9 +29,9 @@ import { demoSampleRangeOverlaps, getDemoAnalyticsAnchorDate } from '../modules/
 
 const Papa = /** @type {any} */ (PapaMod).default || PapaMod;
 
-const SHIFTS_RANGE_KEY = 'macadam-shifts-list-range-v1';
-const SHIFTS_PAGE_KEY = 'macadam-shifts-list-page-v1';
-const SHIFTS_SORT_KEY = 'macadam-shifts-list-sort-v1';
+const SHIFTS_RANGE_KEY = 'comma-shifts-list-range-v1';
+const SHIFTS_PAGE_KEY = 'comma-shifts-list-page-v1';
+const SHIFTS_SORT_KEY = 'comma-shifts-list-sort-v1';
 const SHIFTS_PER_PAGE = 15;
 
 function escapeAttr(v) {
@@ -225,7 +225,7 @@ async function submitShiftFromForm(formApi, onSaved) {
         await onSaved({ ...val, date: d });
         ok += 1;
       } catch (err) {
-        console.warn('[macadam shifts] weekly row save failed', err);
+        console.warn('[comma shifts] weekly row save failed', err);
         skip += 1;
       }
     }
@@ -248,7 +248,7 @@ async function submitShiftFromForm(formApi, onSaved) {
     showToast({ type: 'success', message: t('shifts.savedToast'), duration: 1800 });
     return 1;
   } catch (err) {
-    console.warn('[macadam shifts] save failed', err);
+    console.warn('[comma shifts] save failed', err);
     showToast({ type: 'error', message: t('errors.generic'), duration: 2200 });
     return null;
   }
@@ -514,7 +514,7 @@ export async function render(root, ctx) {
         await startShiftTimer(platformId);
         showToast({ type: 'success', message: t('shifts.timerStarted'), duration: 1800 });
       } catch (err) {
-        console.warn('[macadam shifts] start timer failed', err);
+        console.warn('[comma shifts] start timer failed', err);
         showToast({ type: 'error', message: t('errors.generic'), duration: 2200 });
       }
       return;
@@ -559,7 +559,7 @@ export async function render(root, ctx) {
           onSaved: async (val) => saveShift(val),
         });
       } catch (err) {
-        console.warn('[macadam shifts] duplicate failed', err);
+        console.warn('[comma shifts] duplicate failed', err);
         showToast({ type: 'error', message: t('errors.generic'), duration: 2200 });
       }
       return;
@@ -592,7 +592,7 @@ export async function render(root, ctx) {
           },
         });
       } catch (err) {
-        console.warn('[macadam shifts] delete failed', err);
+        console.warn('[comma shifts] delete failed', err);
         showToast({ type: 'error', message: t('errors.generic'), duration: 2200 });
       }
       return;
@@ -716,7 +716,7 @@ async function openTemplatesManager() {
           onSaved: async (val) => saveShift(val),
         });
       } catch (err) {
-        console.warn('[macadam shifts] apply template failed', err);
+        console.warn('[comma shifts] apply template failed', err);
         showToast({ type: 'error', message: t('errors.generic'), duration: 2200 });
       }
     }
@@ -803,7 +803,7 @@ async function openCsvImport() {
       showToast({ type: 'success', message: t('shifts.importDone').replace('{count}', String(added)), duration: 2500 });
       handle.close();
     } catch (err) {
-      console.warn('[macadam shifts] import failed', err);
+      console.warn('[comma shifts] import failed', err);
       showToast({ type: 'error', message: t('errors.generic'), duration: 2200 });
     }
   });

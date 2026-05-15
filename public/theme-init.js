@@ -1,6 +1,6 @@
-/* Sync theme before paint — reads localStorage key macadam-theme (F3). */
+/* Sync theme before paint — reads localStorage key comma-theme (F3). */
 (function () {
-  var key = 'macadam-theme';
+  var key = 'comma-theme';
   var allowed = { light: 1, dark: 1, auto: 1 };
   var raw;
   try {

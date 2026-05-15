@@ -18,9 +18,9 @@ import { getOrderedDashboardWidgetIds, renderWidgetCellsInnerHtml, WidgetRegistr
 import { buildWidgetDataContext } from '../modules/analytics/widget-data.js';
 import { afterRenderWidgets } from '../registry/widgets/after-render.js';
 
-const DASHBOARD_RANGE_KEY = 'macadam-dashboard-range-v1';
+const DASHBOARD_RANGE_KEY = 'comma-dashboard-range-v1';
 const MONTHLY_ROWS_PER_PAGE = 15;
-const MONTHLY_PAGE_STORAGE_KEY = 'macadam-dashboard-monthly-page-v1';
+const MONTHLY_PAGE_STORAGE_KEY = 'comma-dashboard-monthly-page-v1';
 
 function esc(v) {
   return String(v ?? '')

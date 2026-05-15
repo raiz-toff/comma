@@ -81,8 +81,8 @@ export function renderPlatformSwitcher(mode, opts) {
       }),
     ].join('');
     return `<div class="platform-switcher platform-switcher--dropdown">
-      <label class="platform-switcher-label" for="macadam-platform-select">${esc(t('platforms.switcher'))}</label>
-      <select id="macadam-platform-select" class="input platform-switcher-select" aria-label="${esc(t('platforms.switcher'))}">${optsHtml}</select>
+      <label class="platform-switcher-label" for="comma-platform-select">${esc(t('platforms.switcher'))}</label>
+      <select id="comma-platform-select" class="input platform-switcher-select" aria-label="${esc(t('platforms.switcher'))}">${optsHtml}</select>
     </div>`;
   }
 
@@ -244,7 +244,7 @@ export function mountPlatformSwitcher(slot) {
           try {
             await reorderPlatforms(order);
           } catch (err) {
-            console.warn('[macadam] reorderPlatforms failed', err);
+            console.warn('[comma] reorderPlatforms failed', err);
           }
           await render();
         },

@@ -1,4 +1,4 @@
-/* Macadam — app shell, bento, nav, drawer, print (F3). */
+/* COMMA — app shell, bento, nav, drawer, print (F3). */
 
 body {
   font-family: var(--font-body);
@@ -840,34 +840,34 @@ samp {
   border-color: color-mix(in srgb, var(--color-danger, #dc2626) 35%, var(--color-border));
 }
 
-/* Onboarding: full-bleed — hide global chrome (router sets `body.macadam-onboarding-focus`) */
-body.macadam-onboarding-focus .app-header,
-body.macadam-onboarding-focus .app-sidebar,
-body.macadam-onboarding-focus .bottom-nav {
+/* Onboarding: full-bleed — hide global chrome (router sets `body.comma-onboarding-focus`) */
+body.comma-onboarding-focus .app-header,
+body.comma-onboarding-focus .app-sidebar,
+body.comma-onboarding-focus .bottom-nav {
   display: none !important;
 }
 
-body.macadam-onboarding-focus .macadam-fab,
-body.macadam-onboarding-focus .macadam-fab-menu {
+body.comma-onboarding-focus .comma-fab,
+body.comma-onboarding-focus .comma-fab-menu {
   display: none !important;
 }
 
-body.macadam-onboarding-focus #shift-timer-bar {
+body.comma-onboarding-focus #shift-timer-bar {
   display: none !important;
 }
 
-body.macadam-onboarding-focus .app-shell {
+body.comma-onboarding-focus .app-shell {
   flex: 1;
   min-height: 100dvh;
   min-height: 100vh;
 }
 
-body.macadam-onboarding-focus .app-body {
+body.comma-onboarding-focus .app-body {
   flex: 1;
   min-height: 0;
 }
 
-body.macadam-onboarding-focus .app-main {
+body.comma-onboarding-focus .app-main {
   max-width: none !important;
   margin: 0 !important;
   padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0));
@@ -876,7 +876,7 @@ body.macadam-onboarding-focus .app-main {
 }
 
 @media (min-width: 1024px) {
-  body.macadam-onboarding-focus .app-main {
+  body.comma-onboarding-focus .app-main {
     padding-bottom: calc(var(--space-8) + env(safe-area-inset-bottom, 0));
   }
 }

@@ -32,9 +32,9 @@ import {
 
 /** @typedef {import('./steps.js').OnboardingDraft} OnboardingDraft */
 
-export const ONBOARDING_SESSION_KEY = 'macadam_onboarding_session_v3';
+export const ONBOARDING_SESSION_KEY = 'comma_onboarding_session_v3';
 
-const SAMPLE_NOTE = '[Macadam sample data]';
+const SAMPLE_NOTE = '[COMMA sample data]';
 
 /** Demo vault: three catalog platforms (Dexie seed always includes these ids). */
 const DEMO_SAMPLE_PLATFORM_IDS = ['doordash', 'ubereats', 'instacart'];
@@ -101,7 +101,7 @@ export function buildOnboardingSetupExport(draft, user) {
   const du = draft.distanceUnit === 'km' || draft.distanceUnit === 'mi' ? draft.distanceUnit : cfg.distanceUnit;
   const provinceId = String(draft.taxRegion || '').trim().toUpperCase();
   return {
-    exportKind: 'macadam_setup',
+    exportKind: 'comma_setup',
     version: 1,
     exportedAt: nowIso(),
     countryId: country,
@@ -752,7 +752,7 @@ export async function mountOnboarding(root) {
       exportBtn.addEventListener('click', async () => {
         readFormIntoDraft(el, draft);
         const u = await getUser();
-        downloadJson('macadam-setup.json', buildOnboardingSetupExport(draft, u));
+        downloadJson('comma-setup.json', buildOnboardingSetupExport(draft, u));
         showToast({ type: 'success', message: t('onboarding.exportDone') });
       });
     }

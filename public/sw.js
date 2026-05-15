@@ -1,5 +1,5 @@
 /**
- * Macadam service worker — static shell only.
+ * COMMA service worker — static shell only.
  * IndexedDB / app data never flows through fetch; this worker does not cache mutations,
  * cross-origin, query-string, or non-GET requests.
  */
@@ -62,12 +62,12 @@ self.addEventListener('activate', (event) => {
  * clients telling the page to replay any queued exports from Dexie appState.
  */
 self.addEventListener('sync', (event) => {
-  if (!event || event.tag !== 'macadam-deferred-exports') return;
+  if (!event || event.tag !== 'comma-deferred-exports') return;
   event.waitUntil(
     (async () => {
       const clientsList = await self.clients.matchAll({ includeUncontrolled: false, type: 'window' });
       for (const client of clientsList) {
-        client.postMessage({ type: 'macadam:replay-deferred', tag: event.tag });
+        client.postMessage({ type: 'comma:replay-deferred', tag: event.tag });
       }
     })(),
   );

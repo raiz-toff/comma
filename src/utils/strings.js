@@ -12,7 +12,7 @@
 export const strings = {
   en: {
     app: {
-      name: 'Macadam',
+      name: 'COMMA',
       tagline: 'Gig earnings, local-first',
       updateAvailable: 'App updated — reload for latest version',
       reload: 'Reload',
@@ -37,7 +37,7 @@ export const strings = {
       skipToContent: 'Skip to main content',
       demoModeBanner: 'Demo mode — 2025 sample shifts and expenses (three platforms), not your real data.',
       exitDemo: 'Exit demo',
-      exitDemoToast: 'Vault cleared — reloading so you can set up Macadam from scratch.',
+      exitDemoToast: 'Vault cleared — reloading so you can set up COMMA from scratch.',
     },
     common: {
       save: 'Save',
@@ -65,7 +65,7 @@ export const strings = {
       us: { state: 'State' },
     },
     onboarding: {
-      title: 'Welcome to Macadam',
+      title: 'Welcome to COMMA',
       subtitle: 'Track gig earnings in one place',
       continue: 'Continue',
       skip: 'Skip for now',
@@ -83,11 +83,11 @@ export const strings = {
       tryDemo: 'Try demo first',
       landing: {
         kicker: 'Local-first gig earnings',
-        heroTitle: 'Welcome to Macadam',
+        heroTitle: 'Welcome to COMMA',
         heroLead:
           'Log shifts, watch your week, and get tax-ready snapshots — built for drivers who run multiple apps. Your vault lives on this device.',
         startCta: 'Start onboarding',
-        sectionTitle: 'What Macadam does for you',
+        sectionTitle: 'What COMMA does for you',
         featVaultTitle: 'Private vault',
         featVaultBody:
           'No cloud login to get started. Your earnings history and exports stay in your browser until you choose to back them up.',
@@ -112,7 +112,7 @@ export const strings = {
       exportDone: 'Setup file downloaded.',
       resetNeedExport: 'Export a backup before resetting the vault.',
       resetTitle: 'Reset vault',
-      resetMessage: 'This deletes all local Macadam data on this device. Export a backup first.',
+      resetMessage: 'This deletes all local COMMA data on this device. Export a backup first.',
       resetConfirm: 'Reset everything',
       motivation: {
         high: 'Strong target — we will cheer you on every week.',
@@ -160,7 +160,7 @@ export const strings = {
         regionShortLabel: 'Region',
         regionOptionalLead: 'Optional — a short code is enough if you want it on exports.',
         ontarioTitle: 'Ontario, Canada',
-        ontarioLead: 'Macadam v3 is built for Ontario gig drivers first — CAD, kilometres, and provincial tax defaults.',
+        ontarioLead: 'COMMA v3 is built for Ontario gig drivers first — CAD, kilometres, and provincial tax defaults.',
         country: 'Country',
         countryCA: 'Canada',
         countryUS: 'United States',
@@ -330,7 +330,7 @@ export const strings = {
       platform: 'Platform',
       platformExtras: 'Platform details',
       psObjectHint: 'JSON object — invalid JSON keeps the previous value.',
-      psCommaPlaceholder: 'Comma-separated values',
+      psCOMMAPlaceholder: 'COMMA-separated values',
       ps: {
         peakPay: 'Peak pay',
         dashZone: 'Dash zone',
@@ -617,7 +617,7 @@ export const strings = {
       notes: 'Notes',
       helpLink: 'Help center',
       apiDisclaimer:
-        'Macadam is not connected to any delivery platform API. Figures you enter stay on this device only.',
+        'COMMA is not connected to any delivery platform API. Figures you enter stay on this device only.',
       deactivate: 'Deactivate',
       deactivateTitle: 'Deactivate platform?',
       deactivateMessage: 'Historical shifts for {name} stay in your vault. You can add this platform again later.',
@@ -839,7 +839,7 @@ export const strings = {
       fileSystemOn: 'Choose where to save reports and backups.',
       fileSystemOff: 'Falls back to download folder.',
       shareTarget: 'Share Target',
-      shareTargetOn: 'Other apps can share text into Macadam.',
+      shareTargetOn: 'Other apps can share text into COMMA.',
       shareTargetOff: 'Share Target registers when installed as a PWA.',
       shareIntentTitle: 'Shared content received',
       shareIntentBody: '{title} {text}',
@@ -1058,11 +1058,11 @@ export const strings = {
         placeholderBody: 'Settings view copy finalizes in Phase 2 (`views/settings-view.js`).',
       },
       onboarding: {
-        title: 'Set up Macadam',
+        title: 'Set up COMMA',
         placeholderBody: 'Guided setup: platforms, profile, and preferences before you enter your vault.',
       },
       about: {
-        title: 'About Macadam',
+        title: 'About COMMA',
         placeholderBody:
           'Data stays on your device. Full portability story and export links finalize in Phase 2.',
       },
@@ -1125,7 +1125,7 @@ export const strings = {
   },
   fr: {
     app: {
-      name: 'Macadam',
+      name: 'COMMA',
       tagline: 'Gains de gig, local d’abord',
       updateAvailable: 'Mise à jour disponible — rechargez pour la dernière version',
       reload: 'Recharger',
@@ -1152,7 +1152,7 @@ export const strings = {
         'Mode démo — quarts et dépenses fictifs pour 2025 (trois plateformes), pas vos vraies données.',
       exitDemo: 'Quitter la démo',
       exitDemoToast:
-        'Coffre effacé — rechargement pour recommencer la configuration de Macadam depuis le début.',
+        'Coffre effacé — rechargement pour recommencer la configuration de COMMA depuis le début.',
     },
     common: {
       save: 'Enregistrer',
@@ -1180,7 +1180,7 @@ export const strings = {
       us: { state: 'État' },
     },
     onboarding: {
-      title: 'Bienvenue sur Macadam',
+      title: 'Bienvenue sur COMMA',
       subtitle: 'Suivez vos gains dans une seule app',
       continue: 'Continuer',
       skip: 'Passer pour l’instant',
@@ -1198,11 +1198,11 @@ export const strings = {
       tryDemo: 'Essayer la démo',
       landing: {
         kicker: 'Gains de gig, local d’abord',
-        heroTitle: 'Bienvenue sur Macadam',
+        heroTitle: 'Bienvenue sur COMMA',
         heroLead:
           'Enregistrez vos quarts, suivez la semaine et préparez vos totaux fiscaux — pensé pour les chauffeurs multi-applis. Votre coffre reste sur cet appareil.',
         startCta: 'Commencer la configuration',
-        sectionTitle: 'Ce que Macadam vous apporte',
+        sectionTitle: 'Ce que COMMA vous apporte',
         featVaultTitle: 'Coffre privé',
         featVaultBody:
           'Pas de compte cloud pour démarrer. Historique et exports restent dans le navigateur jusqu’à ce que vous sauvegardiez.',
@@ -1228,7 +1228,7 @@ export const strings = {
       exportDone: 'Fichier de configuration téléchargé.',
       resetNeedExport: 'Exportez une sauvegarde avant de réinitialiser le coffre.',
       resetTitle: 'Réinitialiser le coffre',
-      resetMessage: 'Cela supprime toutes les données Macadam locales sur cet appareil.',
+      resetMessage: 'Cela supprime toutes les données COMMA locales sur cet appareil.',
       resetConfirm: 'Tout effacer',
       motivation: {
         high: 'Objectif ambitieux — on vous encourage chaque semaine.',
@@ -1275,7 +1275,7 @@ export const strings = {
         regionShortLabel: 'Région',
         regionOptionalLead: 'Facultatif — un court code suffit si vous voulez l’afficher sur les exports.',
         ontarioTitle: 'Ontario (Canada)',
-        ontarioLead: 'Macadam v3 cible d’abord les livreurs en Ontario — CAD, kilomètres et repères fiscaux provinciaux.',
+        ontarioLead: 'COMMA v3 cible d’abord les livreurs en Ontario — CAD, kilomètres et repères fiscaux provinciaux.',
         country: 'Pays',
         countryCA: 'Canada',
         countryUS: 'États-Unis',
@@ -1416,7 +1416,7 @@ export const strings = {
       net: 'Net',
       expenses: 'Dépenses',
       duration: 'Durée',
-      orders: 'Commandes',
+      orders: 'COMMAndes',
       tips: 'Pourboires',
       bonus: 'Prime',
       distance: 'Distance',
@@ -1443,7 +1443,7 @@ export const strings = {
       platform: 'Plateforme',
       platformExtras: 'Détails plateforme',
       psObjectHint: 'Objet JSON — JSON invalide conserve la valeur précédente.',
-      psCommaPlaceholder: 'Valeurs séparées par des virgules',
+      psCOMMAPlaceholder: 'Valeurs séparées par des virgules',
       ps: {
         peakPay: 'Peak pay',
         dashZone: 'Zone Dash',
@@ -1502,7 +1502,7 @@ export const strings = {
       distance: 'Distance',
       tips: 'Pourboires',
       bonus: 'Prime',
-      orders: 'Commandes',
+      orders: 'COMMAndes',
       zones: 'Zones',
       trends: 'Tendances',
       heatmap: 'Carte de chaleur',
@@ -1704,7 +1704,7 @@ export const strings = {
       notes: 'Notes',
       helpLink: 'Centre d’aide',
       apiDisclaimer:
-        'Macadam n’est relié à aucune API de plateforme. Les données saisies restent sur cet appareil.',
+        'COMMA n’est relié à aucune API de plateforme. Les données saisies restent sur cet appareil.',
       deactivate: 'Désactiver',
       deactivateTitle: 'Désactiver la plateforme ?',
       deactivateMessage: 'Les quarts passés pour {name} restent dans le coffre. Vous pourrez réactiver plus tard.',
@@ -1926,7 +1926,7 @@ export const strings = {
       fileSystemOn: 'Choisir l’emplacement de sauvegarde des rapports.',
       fileSystemOff: 'Retombe sur le dossier de téléchargement.',
       shareTarget: 'Cible de partage',
-      shareTargetOn: 'D’autres apps peuvent partager du texte vers Macadam.',
+      shareTargetOn: 'D’autres apps peuvent partager du texte vers COMMA.',
       shareTargetOff: 'La cible de partage s’active une fois installé en PWA.',
       shareIntentTitle: 'Contenu partagé reçu',
       shareIntentBody: '{title} {text}',
@@ -2136,12 +2136,12 @@ export const strings = {
         placeholderBody: 'Texte de la vue paramètres en phase 2 (`views/settings-view.js`).',
       },
       onboarding: {
-        title: 'Configurer Macadam',
+        title: 'Configurer COMMA',
         placeholderBody:
           'Configuration guidée : plateformes, profil et préférences avant d’entrer dans votre coffre.',
       },
       about: {
-        title: 'À propos de Macadam',
+        title: 'À propos de COMMA',
         placeholderBody:
           'Les données restent sur votre appareil. Récit complet et liens d’export en phase 2.',
       },

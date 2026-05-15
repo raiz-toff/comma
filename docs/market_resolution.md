@@ -115,7 +115,7 @@ Onboarding setup export ([`buildOnboardingSetupExport`](../src/modules/onboardin
 
 | Field | Purpose |
 |-------|---------|
-| `exportKind` | Always **`macadam_setup`** for this file shape. |
+| `exportKind` | Always **`comma_setup`** for this file shape. |
 | `version` | Numeric **export schema version** (currently `1`). Bump when adding/removing top-level keys. |
 | `countryId` | Same as draft country (stable market id). |
 | `provinceId` | Same as draft `taxRegion` / completed `provinceId` (subdivision or free-text code). |

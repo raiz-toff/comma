@@ -1088,7 +1088,7 @@ export async function renderExpensesView(root, ctx = {}) {
       });
       await refreshAllPanels();
     } catch (err) {
-      console.warn('[macadam expenses] quick add from FAB failed', err);
+      console.warn('[comma expenses] quick add from FAB failed', err);
     }
   }
 

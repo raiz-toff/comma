@@ -1,5 +1,5 @@
 /**
- * Macadam — core UI component library (F8).
+ * COMMA — core UI component library (F8).
  *
  * All components are plain JS functions that either return an HTML string or mount
  * a node into one of the well-known shell hosts: `#modal-overlay`, `#toast-container`,
@@ -89,7 +89,7 @@ function reducedMotionEnabled() {
 }
 
 /* ------------------------------------------------------------------------- */
-/* MacadamModal                                                              */
+/* COMMAModal                                                              */
 /* ------------------------------------------------------------------------- */
 
 /**
@@ -181,11 +181,11 @@ export function showModal(opts = {}) {
   const trigger = /** @type {HTMLElement | null} */ (document.activeElement);
 
   const backdrop = document.createElement('div');
-  backdrop.className = 'macadam-modal-backdrop';
-  backdrop.dataset.macadamModal = '';
+  backdrop.className = 'comma-modal-backdrop';
+  backdrop.dataset.commaModal = '';
 
   const dialog = document.createElement('div');
-  dialog.className = `macadam-modal macadam-modal--${size}`;
+  dialog.className = `comma-modal comma-modal--${size}`;
   dialog.setAttribute('role', role);
   dialog.setAttribute('aria-modal', 'true');
   dialog.tabIndex = -1;
@@ -194,20 +194,20 @@ export function showModal(opts = {}) {
   dialog.dataset.dismissible = dismissible ? 'true' : 'false';
 
   const headerHtml = `
-    <div class="macadam-modal-header">
-      <h2 class="macadam-modal-title">${escapeHtml(title)}</h2>
-      <button type="button" class="macadam-modal-close" aria-label="${escapeAttr(t('ui.modal.close'))}">${getIcon('x', 18, 'macadam-modal-close-icon')}</button>
+    <div class="comma-modal-header">
+      <h2 class="comma-modal-title">${escapeHtml(title)}</h2>
+      <button type="button" class="comma-modal-close" aria-label="${escapeAttr(t('ui.modal.close'))}">${getIcon('x', 18, 'comma-modal-close-icon')}</button>
     </div>`;
-  dialog.innerHTML = `${title ? headerHtml : ''}<div class="macadam-modal-body"></div><div class="macadam-modal-footer" hidden></div>`;
+  dialog.innerHTML = `${title ? headerHtml : ''}<div class="comma-modal-body"></div><div class="comma-modal-footer" hidden></div>`;
 
-  const bodyEl = /** @type {HTMLElement} */ (dialog.querySelector('.macadam-modal-body'));
+  const bodyEl = /** @type {HTMLElement} */ (dialog.querySelector('.comma-modal-body'));
   if (content instanceof Node) {
     bodyEl.appendChild(content);
   } else if (typeof content === 'string') {
     bodyEl.innerHTML = content;
   }
 
-  const footerEl = /** @type {HTMLElement} */ (dialog.querySelector('.macadam-modal-footer'));
+  const footerEl = /** @type {HTMLElement} */ (dialog.querySelector('.comma-modal-footer'));
   if (actions.length > 0) {
     footerEl.hidden = false;
     for (const action of actions) {
@@ -220,7 +220,7 @@ export function showModal(opts = {}) {
         try {
           action.onClick?.(handle);
         } catch (err) {
-          console.error('[macadam modal] action handler failed', err);
+          console.error('[comma modal] action handler failed', err);
         }
         if (action.close !== false) handle.close();
       });
@@ -236,19 +236,19 @@ export function showModal(opts = {}) {
 
   if (modalStack.length === 0) {
     document.addEventListener('keydown', handleModalKeydown, true);
-    document.body.classList.add('macadam-modal-open');
+    document.body.classList.add('comma-modal-open');
   }
 
   backdrop.addEventListener('click', (e) => {
     if (e.target === backdrop && dialog.dataset.dismissible !== 'false') handle.close();
   });
 
-  const closeBtn = dialog.querySelector('.macadam-modal-close');
+  const closeBtn = dialog.querySelector('.comma-modal-close');
   if (closeBtn) closeBtn.addEventListener('click', () => handle.close());
 
   if (!reducedMotionEnabled()) {
-    backdrop.classList.add('macadam-modal-backdrop--enter');
-    dialog.classList.add('macadam-modal--enter');
+    backdrop.classList.add('comma-modal-backdrop--enter');
+    dialog.classList.add('comma-modal--enter');
     requestAnimationFrame(() => {
       backdrop.classList.add('is-open');
       dialog.classList.add('is-open');
@@ -275,12 +275,12 @@ export function showModal(opts = {}) {
         backdrop.remove();
         if (modalStack.length === 0) {
           document.removeEventListener('keydown', handleModalKeydown, true);
-          document.body.classList.remove('macadam-modal-open');
+          document.body.classList.remove('comma-modal-open');
         }
         try {
           onClose?.();
         } catch (err) {
-          console.error('[macadam modal] onClose failed', err);
+          console.error('[comma modal] onClose failed', err);
         }
         if (trigger && typeof trigger.focus === 'function' && document.contains(trigger)) {
           try {
@@ -319,7 +319,7 @@ export function closeModal() {
 }
 
 /* ------------------------------------------------------------------------- */
-/* MacadamConfirm                                                            */
+/* COMMAConfirm                                                            */
 /* ------------------------------------------------------------------------- */
 
 /**
@@ -354,13 +354,13 @@ export function showConfirm(opts = {}) {
   } = opts;
 
   const wrap = document.createElement('div');
-  wrap.className = 'macadam-confirm';
+  wrap.className = 'comma-confirm';
   const msgId = `mc-msg-${Math.random().toString(36).slice(2, 9)}`;
 
   if (message) {
     const p = document.createElement('p');
     p.id = msgId;
-    p.className = 'macadam-confirm-message';
+    p.className = 'comma-confirm-message';
     p.textContent = message;
     wrap.appendChild(p);
   }
@@ -369,7 +369,7 @@ export function showConfirm(opts = {}) {
   let typeInput = null;
   if (typeof requireType === 'string' && requireType.length > 0) {
     const group = document.createElement('label');
-    group.className = 'macadam-confirm-type input-group';
+    group.className = 'comma-confirm-type input-group';
     const lbl = document.createElement('span');
     lbl.className = 'input-label';
     lbl.textContent = t('ui.confirm.typeToConfirm').replace('{value}', requireType);
@@ -391,7 +391,7 @@ export function showConfirm(opts = {}) {
       try {
         onCancel?.();
       } catch (err) {
-        console.error('[macadam confirm] onCancel failed', err);
+        console.error('[comma confirm] onCancel failed', err);
       }
     },
   };
@@ -405,11 +405,11 @@ export function showConfirm(opts = {}) {
         const r = onConfirm?.();
         if (r && typeof /** @type {Promise<unknown>} */ (r).then === 'function') {
           /** @type {Promise<unknown>} */ (r).catch((err) =>
-            console.error('[macadam confirm] onConfirm rejected', err),
+            console.error('[comma confirm] onConfirm rejected', err),
           );
         }
       } catch (err) {
-        console.error('[macadam confirm] onConfirm failed', err);
+        console.error('[comma confirm] onConfirm failed', err);
       }
     },
   };
@@ -430,9 +430,9 @@ export function showConfirm(opts = {}) {
 
   if (typeInput) {
     /** @type {HTMLButtonElement | null} */
-    const confirmBtn = handle.root.querySelector(`.macadam-modal-footer ${confirmClass.split(' ').map((c) => `.${c}`).join('')}`);
+    const confirmBtn = handle.root.querySelector(`.comma-modal-footer ${confirmClass.split(' ').map((c) => `.${c}`).join('')}`);
     const allBtns = /** @type {NodeListOf<HTMLButtonElement>} */ (
-      handle.root.querySelectorAll('.macadam-modal-footer button')
+      handle.root.querySelectorAll('.comma-modal-footer button')
     );
     const realConfirm = confirmBtn || allBtns[allBtns.length - 1] || null;
     if (realConfirm) {
@@ -458,7 +458,7 @@ export function showConfirm(opts = {}) {
 }
 
 /* ------------------------------------------------------------------------- */
-/* MacadamToast                                                              */
+/* COMMAToast                                                              */
 /* ------------------------------------------------------------------------- */
 
 /**
@@ -490,7 +490,7 @@ export function showToast(opts) {
   host.setAttribute('aria-atomic', 'true');
 
   const root = document.createElement('div');
-  root.className = `macadam-toast macadam-toast--${type}`;
+  root.className = `comma-toast comma-toast--${type}`;
   root.setAttribute('role', type === 'error' || type === 'warning' ? 'alert' : 'status');
   const iconName = (
     type === 'success'
@@ -506,26 +506,26 @@ export function showToast(opts) {
 
   const messageId = `mt-msg-${Math.random().toString(36).slice(2, 9)}`;
   root.innerHTML = `
-    <span class="macadam-toast-icon" aria-hidden="true">${getIcon(iconName, 18, 'macadam-toast-icon-svg')}</span>
-    <span id="${messageId}" class="macadam-toast-message"></span>
-    <span class="macadam-toast-actions"></span>
-    <button type="button" class="macadam-toast-close" aria-label="${escapeAttr(t('ui.toast.dismiss'))}">${getIcon('x', 14, 'macadam-toast-close-icon')}</button>
+    <span class="comma-toast-icon" aria-hidden="true">${getIcon(iconName, 18, 'comma-toast-icon-svg')}</span>
+    <span id="${messageId}" class="comma-toast-message"></span>
+    <span class="comma-toast-actions"></span>
+    <button type="button" class="comma-toast-close" aria-label="${escapeAttr(t('ui.toast.dismiss'))}">${getIcon('x', 14, 'comma-toast-close-icon')}</button>
   `;
-  const msgEl = root.querySelector('.macadam-toast-message');
+  const msgEl = root.querySelector('.comma-toast-message');
   if (msgEl) msgEl.textContent = String(message ?? '');
   root.setAttribute('aria-describedby', messageId);
 
-  const actionsHost = /** @type {HTMLElement} */ (root.querySelector('.macadam-toast-actions'));
+  const actionsHost = /** @type {HTMLElement} */ (root.querySelector('.comma-toast-actions'));
   if (typeof action === 'function' && actionLabel) {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'macadam-toast-action btn btn-ghost btn-sm';
+    btn.className = 'comma-toast-action btn btn-ghost btn-sm';
     btn.textContent = actionLabel;
     btn.addEventListener('click', () => {
       try {
         action();
       } catch (err) {
-        console.error('[macadam toast] action failed', err);
+        console.error('[comma toast] action failed', err);
       }
       handle.close();
     });
@@ -553,7 +553,7 @@ export function showToast(opts) {
     },
   };
 
-  root.querySelector('.macadam-toast-close')?.addEventListener('click', () => handle.close());
+  root.querySelector('.comma-toast-close')?.addEventListener('click', () => handle.close());
 
   host.appendChild(root);
   toastQueue.push(handle);
@@ -594,7 +594,7 @@ export function showToast(opts) {
  */
 
 /**
- * Show a richer "MacadamNotify" card variant of a toast — supports title, message,
+ * Show a richer "COMMANotify" card variant of a toast — supports title, message,
  * icon, and an actions row. Mounted into `#toast-container`. (Used by Phase 2
  * Features 195–207 notification triggers.)
  *
@@ -608,29 +608,29 @@ export function showNotifyCard(opts) {
   host.setAttribute('aria-atomic', 'true');
 
   const root = document.createElement('div');
-  root.className = `macadam-notify macadam-notify--${type}`;
+  root.className = `comma-notify comma-notify--${type}`;
   root.setAttribute('role', type === 'error' || type === 'warning' ? 'alert' : 'status');
   const titleId = `mn-title-${Math.random().toString(36).slice(2, 9)}`;
   root.setAttribute('aria-labelledby', titleId);
 
   root.innerHTML = `
-    <span class="macadam-notify-icon" aria-hidden="true">${getIcon(icon, 22, 'macadam-notify-icon-svg')}</span>
-    <div class="macadam-notify-body">
-      <h3 id="${titleId}" class="macadam-notify-title"></h3>
-      <p class="macadam-notify-message"></p>
-      <div class="macadam-notify-actions"></div>
+    <span class="comma-notify-icon" aria-hidden="true">${getIcon(icon, 22, 'comma-notify-icon-svg')}</span>
+    <div class="comma-notify-body">
+      <h3 id="${titleId}" class="comma-notify-title"></h3>
+      <p class="comma-notify-message"></p>
+      <div class="comma-notify-actions"></div>
     </div>
-    <button type="button" class="macadam-notify-close" aria-label="${escapeAttr(t('ui.toast.dismiss'))}">${getIcon('x', 14, 'macadam-notify-close-icon')}</button>
+    <button type="button" class="comma-notify-close" aria-label="${escapeAttr(t('ui.toast.dismiss'))}">${getIcon('x', 14, 'comma-notify-close-icon')}</button>
   `;
-  const tEl = root.querySelector('.macadam-notify-title');
+  const tEl = root.querySelector('.comma-notify-title');
   if (tEl) tEl.textContent = String(title ?? '');
-  const mEl = root.querySelector('.macadam-notify-message');
+  const mEl = root.querySelector('.comma-notify-message');
   if (mEl) {
     if (message) mEl.textContent = String(message);
     else mEl.remove();
   }
 
-  const actionsHost = /** @type {HTMLElement} */ (root.querySelector('.macadam-notify-actions'));
+  const actionsHost = /** @type {HTMLElement} */ (root.querySelector('.comma-notify-actions'));
   if (actions.length === 0) actionsHost.remove();
   else {
     for (const a of actions) {
@@ -642,7 +642,7 @@ export function showNotifyCard(opts) {
         try {
           a.onClick?.(handle.close);
         } catch (err) {
-          console.error('[macadam notify] action failed', err);
+          console.error('[comma notify] action failed', err);
         }
       });
       actionsHost.appendChild(btn);
@@ -668,7 +668,7 @@ export function showNotifyCard(opts) {
     },
   };
 
-  root.querySelector('.macadam-notify-close')?.addEventListener('click', () => handle.close());
+  root.querySelector('.comma-notify-close')?.addEventListener('click', () => handle.close());
 
   host.appendChild(root);
   if (!reducedMotionEnabled()) requestAnimationFrame(() => root.classList.add('is-open'));
@@ -770,20 +770,20 @@ function rebuildFabMenu() {
     const item = fabAddMenu[i];
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'macadam-fab-menu-item';
+    btn.className = 'comma-fab-menu-item';
     btn.dataset.fabMenuItem = item.id;
     btn.setAttribute('role', 'menuitem');
     btn.style.setProperty('--fab-i', String(i));
     const lab = item.label || (item.labelKey ? t(item.labelKey) : item.id);
     btn.setAttribute('aria-label', lab);
-    btn.innerHTML = `${getIcon(item.icon, 20, 'macadam-fab-menu-item-icon')}<span class="macadam-fab-menu-item-label">${escapeHtml(lab)}</span>`;
+    btn.innerHTML = `${getIcon(item.icon, 20, 'comma-fab-menu-item-icon')}<span class="comma-fab-menu-item-label">${escapeHtml(lab)}</span>`;
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       closeFabMenu();
       try {
         item.onSelect?.();
       } catch (err) {
-        console.error('[macadam fab] menu item failed', err);
+        console.error('[comma fab] menu item failed', err);
       }
     });
     fabMenuEl.appendChild(btn);
@@ -796,25 +796,25 @@ function applyFabMode(mode) {
   fabState = mode;
   if (mode === 'end') {
     fabEl.dataset.mode = 'end';
-    fabEl.classList.add('macadam-fab--end');
+    fabEl.classList.add('comma-fab--end');
     fabEl.setAttribute('aria-label', t('ui.fab.endShift'));
     fabEl.removeAttribute('aria-haspopup');
     fabEl.setAttribute('aria-expanded', 'false');
-    fabEl.innerHTML = getIcon('clock', 22, 'macadam-fab-icon') + `<span class="macadam-fab-label">${escapeHtml(t('ui.fab.endShift'))}</span>`;
+    fabEl.innerHTML = getIcon('clock', 22, 'comma-fab-icon') + `<span class="comma-fab-label">${escapeHtml(t('ui.fab.endShift'))}</span>`;
   } else {
     fabEl.dataset.mode = 'add';
-    fabEl.classList.remove('macadam-fab--end');
+    fabEl.classList.remove('comma-fab--end');
     fabEl.setAttribute('aria-label', fabAddMenu.length ? t('ui.fab.openQuickActions') : t('ui.fab.addShift'));
     if (fabAddMenu.length) {
       fabEl.setAttribute('aria-haspopup', 'true');
       fabEl.setAttribute('aria-expanded', 'false');
-      fabEl.setAttribute('aria-controls', 'macadam-fab-menu');
+      fabEl.setAttribute('aria-controls', 'comma-fab-menu');
     } else {
       fabEl.removeAttribute('aria-haspopup');
       fabEl.removeAttribute('aria-expanded');
       fabEl.removeAttribute('aria-controls');
     }
-    fabEl.innerHTML = getIcon('plus', 22, 'macadam-fab-icon');
+    fabEl.innerHTML = getIcon('plus', 22, 'comma-fab-icon');
   }
 }
 
@@ -830,7 +830,7 @@ function fabOnClick(ev) {
       fabHandlers.onAdd?.();
     }
   } catch (err) {
-    console.error('[macadam fab] click handler failed', err);
+    console.error('[comma fab] click handler failed', err);
   }
 }
 
@@ -844,7 +844,7 @@ function wireFabKeyboardVisibility() {
     if (!fabEl) return;
     const ratio = vv.height / window.innerHeight;
     const keyboardOpen = ratio < 0.7;
-    fabEl.classList.toggle('macadam-fab--hidden', keyboardOpen);
+    fabEl.classList.toggle('comma-fab--hidden', keyboardOpen);
     if (keyboardOpen) closeFabMenu();
   };
   vv.addEventListener('resize', onResize);
@@ -863,22 +863,22 @@ export function initFAB(opts = {}) {
   if (!fabEl) {
 
     fabBackdropEl = document.createElement('div');
-    fabBackdropEl.className = 'macadam-fab-backdrop';
+    fabBackdropEl.className = 'comma-fab-backdrop';
     fabBackdropEl.hidden = true;
     fabBackdropEl.setAttribute('aria-hidden', 'true');
     fabBackdropEl.addEventListener('click', () => closeFabMenu());
 
     fabMenuEl = document.createElement('div');
-    fabMenuEl.id = 'macadam-fab-menu';
-    fabMenuEl.className = 'macadam-fab-menu';
+    fabMenuEl.id = 'comma-fab-menu';
+    fabMenuEl.className = 'comma-fab-menu';
     fabMenuEl.setAttribute('role', 'menu');
     fabMenuEl.hidden = true;
     fabMenuEl.setAttribute('aria-label', t('ui.fab.quickActionsMenu'));
 
     fabEl = document.createElement('button');
     fabEl.type = 'button';
-    fabEl.id = 'macadam-fab';
-    fabEl.className = 'macadam-fab';
+    fabEl.id = 'comma-fab';
+    fabEl.className = 'comma-fab';
     fabEl.addEventListener('click', fabOnClick);
 
     document.body.appendChild(fabBackdropEl);
@@ -963,7 +963,7 @@ export function showDrawer(opts = {}) {
   const trigger = /** @type {HTMLElement | null} */ (document.activeElement);
 
   const root = document.createElement('div');
-  root.className = 'drawer macadam-drawer';
+  root.className = 'drawer comma-drawer';
   root.dataset.dismissible = dismissible ? 'true' : 'false';
   root.style.setProperty('--drawer-snap', String(snapPoints[0] ?? 0.5));
 
@@ -976,14 +976,14 @@ export function showDrawer(opts = {}) {
   if (title) panel.setAttribute('aria-label', title);
 
   panel.innerHTML = `
-    <div class="macadam-drawer-handle" aria-hidden="true"></div>
-    <div class="macadam-drawer-header" ${title ? '' : 'hidden'}>
-      <h2 class="macadam-drawer-title">${escapeHtml(title)}</h2>
-      <button type="button" class="macadam-drawer-close" aria-label="${escapeAttr(t('ui.drawer.close'))}">${getIcon('x', 16, 'macadam-drawer-close-icon')}</button>
+    <div class="comma-drawer-handle" aria-hidden="true"></div>
+    <div class="comma-drawer-header" ${title ? '' : 'hidden'}>
+      <h2 class="comma-drawer-title">${escapeHtml(title)}</h2>
+      <button type="button" class="comma-drawer-close" aria-label="${escapeAttr(t('ui.drawer.close'))}">${getIcon('x', 16, 'comma-drawer-close-icon')}</button>
     </div>
-    <div class="macadam-drawer-body"></div>
+    <div class="comma-drawer-body"></div>
   `;
-  const body = /** @type {HTMLElement} */ (panel.querySelector('.macadam-drawer-body'));
+  const body = /** @type {HTMLElement} */ (panel.querySelector('.comma-drawer-body'));
   if (content instanceof Node) body.appendChild(content);
   else if (typeof content === 'string') body.innerHTML = content;
 
@@ -994,7 +994,7 @@ export function showDrawer(opts = {}) {
   backdrop.addEventListener('click', () => {
     if (root.dataset.dismissible !== 'false') handle.close();
   });
-  panel.querySelector('.macadam-drawer-close')?.addEventListener('click', () => handle.close());
+  panel.querySelector('.comma-drawer-close')?.addEventListener('click', () => handle.close());
 
   if (drawerStack.length === 0) document.addEventListener('keydown', drawerKeydown, true);
 
@@ -1052,7 +1052,7 @@ export function showDrawer(opts = {}) {
         try {
           onClose?.();
         } catch (err) {
-          console.error('[macadam drawer] onClose failed', err);
+          console.error('[comma drawer] onClose failed', err);
         }
         if (trigger && typeof trigger.focus === 'function' && document.contains(trigger)) {
           try {
@@ -1130,13 +1130,13 @@ export function renderProgressRing(opts) {
   const aria = escapeAttr(ariaLabel || label || t('ui.progressRing.label'));
   const animatedClass = animated ? 'progress-ring--animated' : '';
   return `
-    <div class="macadam-progress-ring ${animatedClass}" style="--ring-color:${escapeAttr(color)};--ring-size:${size}px" role="progressbar" aria-valuenow="${escapeAttr(String(safeValue))}" aria-valuemin="0" aria-valuemax="${escapeAttr(String(safeMax))}" aria-valuetext="${escapeAttr(String(pct) + '%')}" aria-label="${aria}">
+    <div class="comma-progress-ring ${animatedClass}" style="--ring-color:${escapeAttr(color)};--ring-size:${size}px" role="progressbar" aria-valuenow="${escapeAttr(String(safeValue))}" aria-valuemin="0" aria-valuemax="${escapeAttr(String(safeMax))}" aria-valuetext="${escapeAttr(String(pct) + '%')}" aria-label="${aria}">
       <svg class="progress-ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">
         <circle class="progress-ring-bg" cx="${size / 2}" cy="${size / 2}" r="${r}" stroke-width="${strokeWidth}"></circle>
         <circle class="progress-ring-fill" cx="${size / 2}" cy="${size / 2}" r="${r}" stroke-width="${strokeWidth}"
           stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}"></circle>
       </svg>
-      <span class="macadam-progress-ring-label">${escapeHtml(label || pct + '%')}</span>
+      <span class="comma-progress-ring-label">${escapeHtml(label || pct + '%')}</span>
     </div>
   `;
 }
@@ -1154,38 +1154,38 @@ export function renderSkeleton(shape = 'card') {
   switch (shape) {
     case 'list-item':
       return `
-        <div class="macadam-skeleton macadam-skeleton--list-item" role="status" aria-label="${label}">
-          <span class="skeleton macadam-skeleton-avatar"></span>
-          <span class="macadam-skeleton-lines">
-            <span class="skeleton macadam-skeleton-line macadam-skeleton-line--lg"></span>
-            <span class="skeleton macadam-skeleton-line macadam-skeleton-line--sm"></span>
+        <div class="comma-skeleton comma-skeleton--list-item" role="status" aria-label="${label}">
+          <span class="skeleton comma-skeleton-avatar"></span>
+          <span class="comma-skeleton-lines">
+            <span class="skeleton comma-skeleton-line comma-skeleton-line--lg"></span>
+            <span class="skeleton comma-skeleton-line comma-skeleton-line--sm"></span>
           </span>
         </div>`;
     case 'stat':
       return `
-        <div class="macadam-skeleton macadam-skeleton--stat card" role="status" aria-label="${label}">
-          <span class="skeleton macadam-skeleton-line macadam-skeleton-line--sm"></span>
-          <span class="skeleton macadam-skeleton-value"></span>
+        <div class="comma-skeleton comma-skeleton--stat card" role="status" aria-label="${label}">
+          <span class="skeleton comma-skeleton-line comma-skeleton-line--sm"></span>
+          <span class="skeleton comma-skeleton-value"></span>
         </div>`;
     case 'chart':
       return `
-        <div class="macadam-skeleton macadam-skeleton--chart card" role="status" aria-label="${label}">
-          <span class="skeleton macadam-skeleton-chart-body"></span>
+        <div class="comma-skeleton comma-skeleton--chart card" role="status" aria-label="${label}">
+          <span class="skeleton comma-skeleton-chart-body"></span>
         </div>`;
     case 'text':
       return `
-        <div class="macadam-skeleton macadam-skeleton--text" role="status" aria-label="${label}">
-          <span class="skeleton macadam-skeleton-line macadam-skeleton-line--lg"></span>
-          <span class="skeleton macadam-skeleton-line macadam-skeleton-line--md"></span>
-          <span class="skeleton macadam-skeleton-line macadam-skeleton-line--sm"></span>
+        <div class="comma-skeleton comma-skeleton--text" role="status" aria-label="${label}">
+          <span class="skeleton comma-skeleton-line comma-skeleton-line--lg"></span>
+          <span class="skeleton comma-skeleton-line comma-skeleton-line--md"></span>
+          <span class="skeleton comma-skeleton-line comma-skeleton-line--sm"></span>
         </div>`;
     case 'card':
     default:
       return `
-        <div class="macadam-skeleton macadam-skeleton--card card" role="status" aria-label="${label}">
-          <span class="skeleton macadam-skeleton-line macadam-skeleton-line--lg"></span>
-          <span class="skeleton macadam-skeleton-line macadam-skeleton-line--md"></span>
-          <span class="skeleton macadam-skeleton-line macadam-skeleton-line--sm"></span>
+        <div class="comma-skeleton comma-skeleton--card card" role="status" aria-label="${label}">
+          <span class="skeleton comma-skeleton-line comma-skeleton-line--lg"></span>
+          <span class="skeleton comma-skeleton-line comma-skeleton-line--md"></span>
+          <span class="skeleton comma-skeleton-line comma-skeleton-line--sm"></span>
         </div>`;
   }
 }
@@ -1218,7 +1218,7 @@ export function renderEmptyState(opts = {}) {
     actionLabel,
     actionAttr,
   } = opts;
-  const iconHtml = getIcon(icon, 36, 'macadam-empty-state-icon');
+  const iconHtml = getIcon(icon, 36, 'comma-empty-state-icon');
   let actionHtml = '';
   if (action && actionLabel) {
     if (action.startsWith('#') || /^https?:/i.test(action)) {
@@ -1230,10 +1230,10 @@ export function renderEmptyState(opts = {}) {
     actionHtml = `<button type="button" class="btn btn-primary" ${actionAttr}>${escapeHtml(actionLabel)}</button>`;
   }
   return `
-    <div class="empty-state macadam-empty-state">
-      <span class="macadam-empty-state-icon-wrap" aria-hidden="true">${iconHtml}</span>
-      <h3 class="macadam-empty-state-title">${escapeHtml(title)}</h3>
-      ${message ? `<p class="macadam-empty-state-message">${escapeHtml(message)}</p>` : ''}
+    <div class="empty-state comma-empty-state">
+      <span class="comma-empty-state-icon-wrap" aria-hidden="true">${iconHtml}</span>
+      <h3 class="comma-empty-state-title">${escapeHtml(title)}</h3>
+      ${message ? `<p class="comma-empty-state-message">${escapeHtml(message)}</p>` : ''}
       ${actionHtml}
     </div>
   `;
@@ -1272,20 +1272,20 @@ export function showNumericKeypad(opts = {}) {
   let buffer = String(value ?? '').replace(/[^0-9.]/g, '');
 
   const wrap = document.createElement('div');
-  wrap.className = 'macadam-keypad';
+  wrap.className = 'comma-keypad';
   wrap.innerHTML = `
-    <div class="macadam-keypad-display" aria-live="polite">
-      <span class="macadam-keypad-currency" aria-hidden="true">${escapeHtml(currency)}</span>
-      <span class="macadam-keypad-value" data-keypad-value></span>
+    <div class="comma-keypad-display" aria-live="polite">
+      <span class="comma-keypad-currency" aria-hidden="true">${escapeHtml(currency)}</span>
+      <span class="comma-keypad-value" data-keypad-value></span>
     </div>
-    <div class="macadam-keypad-grid" role="group" aria-label="${escapeAttr(title)}">
+    <div class="comma-keypad-grid" role="group" aria-label="${escapeAttr(title)}">
       ${['1', '2', '3', '4', '5', '6', '7', '8', '9']
-        .map((n) => `<button type="button" class="macadam-keypad-key" data-key="${n}">${n}</button>`) 
+        .map((n) => `<button type="button" class="comma-keypad-key" data-key="${n}">${n}</button>`) 
         .join('')}
-      <button type="button" class="macadam-keypad-key macadam-keypad-key--util" data-key="clear" aria-label="${escapeAttr(t('ui.keypad.clear'))}">${getIcon('x', 18)}</button>
-      <button type="button" class="macadam-keypad-key" data-key="0">0</button>
-      <button type="button" class="macadam-keypad-key macadam-keypad-key--util" data-key="back" aria-label="${escapeAttr(t('ui.keypad.backspace'))}">${getIcon('arrow-right', 18, 'macadam-keypad-back-icon')}</button>
-      ${allowDecimal ? '<button type="button" class="macadam-keypad-key macadam-keypad-key--util" data-key=".">.</button>' : ''}
+      <button type="button" class="comma-keypad-key comma-keypad-key--util" data-key="clear" aria-label="${escapeAttr(t('ui.keypad.clear'))}">${getIcon('x', 18)}</button>
+      <button type="button" class="comma-keypad-key" data-key="0">0</button>
+      <button type="button" class="comma-keypad-key comma-keypad-key--util" data-key="back" aria-label="${escapeAttr(t('ui.keypad.backspace'))}">${getIcon('arrow-right', 18, 'comma-keypad-back-icon')}</button>
+      ${allowDecimal ? '<button type="button" class="comma-keypad-key comma-keypad-key--util" data-key=".">.</button>' : ''}
     </div>
   `;
 
@@ -1323,7 +1323,7 @@ export function showNumericKeypad(opts = {}) {
           try {
             onCancel?.();
           } catch (err) {
-            console.error('[macadam keypad] onCancel failed', err);
+            console.error('[comma keypad] onCancel failed', err);
           }
         },
       },
@@ -1335,7 +1335,7 @@ export function showNumericKeypad(opts = {}) {
           try {
             onConfirm?.(buffer);
           } catch (err) {
-            console.error('[macadam keypad] onConfirm failed', err);
+            console.error('[comma keypad] onConfirm failed', err);
           }
         },
       },

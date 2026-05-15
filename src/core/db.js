@@ -1,6 +1,6 @@
 /**
- * Macadam IndexedDB layer (Dexie). Single source of truth: export `db`.
- * Database: MacadamVault · Dexie schema v1 (+ v2 hook pattern for future IDB upgrades).
+ * COMMA IndexedDB layer (Dexie). Single source of truth: export `db`.
+ * Database: COMMAVault · Dexie schema v1 (+ v2 hook pattern for future IDB upgrades).
  */
 
 import Dexie from '../libs/dexie.min.js';
@@ -10,7 +10,7 @@ import { PlatformRegistry } from '../registry/platforms/index.js';
 /** Logical data schema version (appState.schema_version). Non-destructive migrations only. */
 export const CURRENT_LOGICAL_SCHEMA_VERSION = 3;
 
-const DB_NAME = 'MacadamVault';
+const DB_NAME = 'COMMAVault';
 
 /** IndexedDB object store definitions — plan v3 F4 (Dexie v3+). */
 const STORES_V3 = {
@@ -183,7 +183,7 @@ function migrateShiftRowV3(shift, provinceId) {
   return s;
 }
 
-class MacadamDatabase extends Dexie {
+class COMMADatabase extends Dexie {
   constructor() {
     super(DB_NAME);
     this.version(1).stores(STORES_V1);
@@ -234,7 +234,7 @@ class MacadamDatabase extends Dexie {
   }
 }
 
-export const db = new MacadamDatabase();
+export const db = new COMMADatabase();
 
 /**
  * logicalMigrations[n] runs when upgrading appState `schema_version` from n → n+1.

@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="public/icons/icon-512.svg" alt="Macadam Logo" width="128" />
-  <h1>Macadam</h1>
+  <img src="public/icons/icon-512.svg" alt="COMMA Logo" width="128" />
+  <h1>COMMA</h1>
   <p><strong>A fast, local-first earnings tracker built exclusively for gig economy delivery drivers.</strong></p>
 
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -10,15 +10,15 @@
 
 > [!WARNING]  
 > **Currently in Active Development**  
-> Macadam's core engine is fully functional, but currently **only Ontario (Canada) is officially added** to the market registry. Other provinces, states, and countries are not yet added. We highly encourage and thank you for any contributions to add your local region's tax rules and platforms! (See the docs below on how to add a country/province).
+> COMMA's core engine is fully functional, but currently **only Ontario (Canada) is officially added** to the market registry. Other provinces, states, and countries are not yet added. We highly encourage and thank you for any contributions to add your local region's tax rules and platforms! (See the docs below on how to add a country/province).
 
 ---
 
-## What is Macadam?
+## What is COMMA?
 
-Macadam is an advanced, offline-first dashboard for multi-apping delivery drivers (DoorDash, Uber Eats, Skip, Instacart, etc.). It helps you track your true net hourly rate, vehicle expenses, tax obligations, and goal streaks—all without your data ever leaving your device.
+COMMA is an advanced, offline-first dashboard for multi-apping delivery drivers (DoorDash, Uber Eats, Skip, Instacart, etc.). It helps you track your true net hourly rate, vehicle expenses, tax obligations, and goal streaks—all without your data ever leaving your device.
 
-By treating gig work like a real business, Macadam gives you the same analytics an office worker takes for granted, tailored to the realities of delivery logistics.
+By treating gig work like a real business, COMMA gives you the same analytics an office worker takes for granted, tailored to the realities of delivery logistics.
 
 ---
 
@@ -27,7 +27,7 @@ By treating gig work like a real business, Macadam gives you the same analytics 
 Experience a state-of-the-art interface designed for speed and clarity.
 
 ### Dashboard & Analytics
-The heart of Macadam. A high-fidelity Bento-style dashboard providing real-time insights into your earnings, expenses, and goal progress.
+The heart of COMMA. A high-fidelity Bento-style dashboard providing real-time insights into your earnings, expenses, and goal progress.
 
 ![Dashboard Overview](docs/images/image.png)
 
@@ -68,7 +68,7 @@ Manage your business costs with region-specific tax categories and fine-tune you
 
 ## Features
 
-* **Multi-App Intelligence**: Define which platforms you run. Macadam understands their unique terms (Peak Pay vs. Surge) and provides platform-specific form fields.
+* **Multi-App Intelligence**: Define which platforms you run. COMMA understands their unique terms (Peak Pay vs. Surge) and provides platform-specific form fields.
 * **True Net Earnings**: Auto-calculates your real hourly rate after fuel, maintenance, and vehicle depreciation.
 * **Tax Peace of Mind**: Computes suggested tax set-asides based on your region, handles Canadian HST tracking, and isolates deductible business expenses.
 * **Gamification & Goals**: Set weekly earnings targets, maintain streaks, and unlock achievement badges.
@@ -83,8 +83,8 @@ Requires [Node.js](https://nodejs.org/) (v18+) solely for the local build server
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/raiz-toff/macadam.git
-cd macadam
+git clone https://github.com/raiz-toff/comma.git
+cd comma
 
 # 2. Install dev dependencies (esbuild)
 npm install
@@ -95,13 +95,13 @@ npm run dev
 
 Open `http://localhost:3000` (or whatever port `serve` assigns) in your browser.
 
-> **Tip:** You can install Macadam as a standalone app on your phone or desktop directly from your browser (PWA).
+> **Tip:** You can install COMMA as a standalone app on your phone or desktop directly from your browser (PWA).
 
 ---
 
 ## Tech Stack
 
-Macadam is an exercise in stripping away modern web bloat:
+COMMA is an exercise in stripping away modern web bloat:
 
 * **No Frameworks**: 100% Vanilla JS (ES2022) and Vanilla CSS.
 * **Database**: `Dexie.js` wrapping IndexedDB for powerful client-side querying.
@@ -114,7 +114,7 @@ Macadam is an exercise in stripping away modern web bloat:
 
 ## Documentation
 
-Macadam is built on a highly modular **Registry Architecture** that separates core engine logic from market/platform specifics. Check out the `docs/` folder to understand how it works or how to extend it.
+COMMA is built on a highly modular **Registry Architecture** that separates core engine logic from market/platform specifics. Check out the `docs/` folder to understand how it works or how to extend it.
 
 * [**Architecture Overview**](docs/Registry_arch.md)
 * [**Feature Modularity**](docs/feature_modularity.md)
@@ -134,4 +134,4 @@ We ask all contributors to abide by our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 
-Macadam is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for more details.
+COMMA is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for more details.

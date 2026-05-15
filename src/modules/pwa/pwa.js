@@ -50,7 +50,7 @@ export function pwaCapabilities() {
 /* ------------------------------------------------------------------------- */
 
 const DEFERRED_KEY = 'pwa_deferred_exports';
-const SYNC_TAG = 'macadam-deferred-exports';
+const SYNC_TAG = 'comma-deferred-exports';
 
 /**
  * @typedef {Object} DeferredExportItem
@@ -106,7 +106,7 @@ export async function clearDeferredExports() {
 
 /**
  * Register a Background Sync tag (no-op when SyncManager is unavailable, e.g. Firefox).
- * The service worker's `sync` handler posts `{ type: 'macadam:replay-deferred' }` to clients.
+ * The service worker's `sync` handler posts `{ type: 'comma:replay-deferred' }` to clients.
  */
 export async function tryRegisterDeferredSync() {
   const caps = pwaCapabilities();
@@ -134,13 +134,13 @@ export function onDeferredReplay(handler) {
   if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return () => {};
   const fn = (event) => {
     const data = event && event.data;
-    if (!data || data.type !== 'macadam:replay-deferred') return;
+    if (!data || data.type !== 'comma:replay-deferred') return;
     getDeferredExports()
       .then((list) => {
         try {
           handler(list);
         } catch (e) {
-          console.warn('[macadam pwa] deferred replay handler failed', e);
+          console.warn('[comma pwa] deferred replay handler failed', e);
         }
       })
       .catch(() => {});

@@ -307,13 +307,13 @@ async function exportTaxSummary(summary, format) {
   const fileSafeCountry = summary.country.toLowerCase();
   if (format === 'json') {
     downloadTextFile(
-      `macadam-tax-summary-${fileSafeCountry}-${summary.year}.json`,
+      `comma-tax-summary-${fileSafeCountry}-${summary.year}.json`,
       toTaxSummaryJson(summary),
       'application/json;charset=utf-8',
     );
   } else {
     downloadTextFile(
-      `macadam-tax-summary-${fileSafeCountry}-${summary.year}.csv`,
+      `comma-tax-summary-${fileSafeCountry}-${summary.year}.csv`,
       toTaxSummaryCsv(summary),
       'text/csv;charset=utf-8',
     );

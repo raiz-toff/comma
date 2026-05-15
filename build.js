@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Macadam build script (esbuild).
+ * COMMA build script (esbuild).
  *   node build.js --dev   → watch + rebuild, sourcemaps, copy public/, concat css
  *   node build.js --prod  → minify, fingerprint bundle, no sourcemaps
  *
@@ -59,7 +59,7 @@ async function copyPublic() {
 
 async function concatCss() {
   const out = [];
-  out.push(`/* Macadam — concatenated stylesheet. Build: ${isProd ? 'prod' : 'dev'} */\n`);
+  out.push(`/* COMMA — concatenated stylesheet. Build: ${isProd ? 'prod' : 'dev'} */\n`);
 
   for (const name of CSS_ORDER) {
     const p = path.join(CSS_DIR, name);
@@ -114,10 +114,10 @@ async function postBuild() {
   await concatCss();
   if (isProd) {
     const newName = await renameBundleWithHash();
-    console.log(`[macadam] fingerprinted bundle → ${newName}`);
+    console.log(`[comma] fingerprinted bundle → ${newName}`);
   }
   runSwManifest();
-  console.log(`[macadam] build complete (${isProd ? 'prod' : 'dev'})`);
+  console.log(`[comma] build complete (${isProd ? 'prod' : 'dev'})`);
 }
 
 const baseOptions = {
@@ -144,17 +144,17 @@ async function buildWatch() {
     ...baseOptions,
     plugins: [
       {
-        name: 'macadam-post-build',
+        name: 'comma-post-build',
         setup(build) {
           build.onEnd(async (result) => {
             if (result.errors.length) {
-              console.error('[macadam] build had errors');
+              console.error('[comma] build had errors');
               return;
             }
             try {
               await postBuild();
             } catch (err) {
-              console.error('[macadam] postBuild failed:', err);
+              console.error('[comma] postBuild failed:', err);
             }
           });
         },
@@ -165,16 +165,16 @@ async function buildWatch() {
   
   fs.watch(CSS_DIR, { recursive: true }, async (eventType, filename) => {
     if (filename && filename.endsWith('.css')) {
-      console.log(`[macadam] CSS changed: ${filename}`);
+      console.log(`[comma] CSS changed: ${filename}`);
       try {
         await concatCss();
       } catch (err) {
-        console.error('[macadam] CSS concat failed:', err);
+        console.error('[comma] CSS concat failed:', err);
       }
     }
   });
 
-  console.log('[macadam] watching for changes…');
+  console.log('[comma] watching for changes…');
 }
 
 (async () => {

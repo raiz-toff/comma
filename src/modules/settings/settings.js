@@ -140,16 +140,16 @@ async function exportVaultSnapshot() {
     tables[table.name] = await table.toArray();
   }
   const payload = {
-    app: 'Macadam',
+    app: 'COMMA',
     exportedAt: new Date().toISOString(),
-    version: window.__macadam?.version || '1.0.0',
+    version: window.__comma?.version || '1.0.0',
     tables,
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `macadam-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = `comma-backup-${new Date().toISOString().slice(0, 10)}.json`;
   a.rel = 'noopener';
   document.body.appendChild(a);
   a.click();
@@ -611,13 +611,13 @@ export async function mountSettings(root, ctx = {}) {
         <div class="settings-tabpanel" id="settings-panel-about" role="tabpanel" aria-labelledby="settings-tab-about" data-settings-panel="about" ${th('about')}>
     <section class="settings-view-section card card-raised">
       <h2 class="settings-section-title">${esc(t('settings.about'))}</h2>
-      <p class="text-secondary settings-section-lead">Version ${esc(window.__macadam?.version || '1.0.0')} · local-first data vault.</p>
+      <p class="text-secondary settings-section-lead">Version ${esc(window.__comma?.version || '1.0.0')} · local-first data vault.</p>
       <div class="settings-actions settings-wrap">
-        <button type="button" class="btn btn-secondary btn-sm" data-open-install>Install Macadam</button>
+        <button type="button" class="btn btn-secondary btn-sm" data-open-install>Install COMMA</button>
         <a class="btn btn-secondary btn-sm" href="#/about">Data Portability Manifesto</a>
         <a class="btn btn-secondary btn-sm" href="https://github.com/" target="_blank" rel="noopener noreferrer">Changelog</a>
-        <a class="btn btn-secondary btn-sm" href="mailto:support@macadam.app">Support</a>
-        <button type="button" class="btn btn-secondary btn-sm" data-share-macadam>Share Macadam</button>
+        <a class="btn btn-secondary btn-sm" href="mailto:support@comma.app">Support</a>
+        <button type="button" class="btn btn-secondary btn-sm" data-share-comma>Share COMMA</button>
         <a class="btn btn-secondary btn-sm" href="https://en.wikipedia.org/wiki/Glossary_of_economics" target="_blank" rel="noopener noreferrer">Driver Financial Glossary</a>
       </div>
       <div class="settings-help-links">
@@ -994,17 +994,17 @@ export async function mountSettings(root, ctx = {}) {
   root.querySelector('[data-open-install]')?.addEventListener('click', async () => {
     const installed = document.documentElement.dataset.installed === 'true';
     if (installed) {
-      showToast({ type: 'info', message: 'Macadam is already installed.' });
+      showToast({ type: 'info', message: 'COMMA is already installed.' });
       return;
     }
-    const accepted = await window.__macadam?.triggerInstall?.();
+    const accepted = await window.__comma?.triggerInstall?.();
     if (accepted) showToast({ type: 'success', message: 'Install prompt accepted.' });
     else showToast({ type: 'info', message: 'Install prompt not available right now.' });
   });
 
-  root.querySelector('[data-share-macadam]')?.addEventListener('click', async () => {
+  root.querySelector('[data-share-comma]')?.addEventListener('click', async () => {
     const shareData = {
-      title: 'Macadam',
+      title: 'COMMA',
       text: 'Track your gig work earnings with a local-first vault.',
       url: window.location.href,
     };

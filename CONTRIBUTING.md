@@ -1,6 +1,6 @@
-# Contributing to Macadam
+# Contributing to COMMA
 
-Thanks for your interest in contributing to Macadam! This guide will help you get set up and understand the project's conventions.
+Thanks for your interest in contributing to COMMA! This guide will help you get set up and understand the project's conventions.
 
 ---
 
@@ -14,17 +14,17 @@ Thanks for your interest in contributing to Macadam! This guide will help you ge
 ### Setup
 
 ```bash
-git clone https://github.com/raiz-toff/macadam.git
-cd macadam
+git clone https://github.com/raiz-toff/comma.git
+cd comma
 npm install
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) (or use `npm run preview` after a production build).
 
-### Build Commands
+### Build COMMAnds
 
-| Command | Description |
+| COMMAnd | Description |
 |---------|-------------|
 | `npm run dev` | Watch mode — rebuilds on every file change |
 | `npm run build` | Production build (minified, fingerprinted) |
@@ -37,7 +37,7 @@ Open [http://localhost:3000](http://localhost:3000) (or use `npm run preview` af
 
 ### Architecture
 
-Macadam is a **vanilla JS** single-page app — no React, no Vue, no framework. Everything is ES2022 modules bundled by esbuild into a single IIFE.
+COMMA is a **vanilla JS** single-page app — no React, no Vue, no framework. Everything is ES2022 modules bundled by esbuild into a single IIFE.
 
 The key architectural pattern is the **Registry Pattern**: platforms, countries, provinces, widgets, and other extensible features are defined as data files that the engine reads. The engine never hardcodes specific platform or country names.
 
@@ -66,7 +66,7 @@ The key architectural pattern is the **Registry Pattern**: platforms, countries,
 
 ## How to Add Things
 
-These guides walk you through extending Macadam without modifying the engine:
+These guides walk you through extending COMMA without modifying the engine:
 
 - **[Add a platform](docs/adding-a-platform.md)** — one definition file + one import line
 - **[Add a country](docs/adding-a-country.md)** — one definition file + one import line
@@ -104,7 +104,7 @@ Open an issue with:
 3. Steps to reproduce
 4. Browser and OS info
 
-Since Macadam is local-first, no server logs exist — include screenshots or browser console output when possible.
+Since COMMA is local-first, no server logs exist — include screenshots or browser console output when possible.
 
 ---
 
@@ -116,4 +116,4 @@ This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md). Please read
 
 ## Questions?
 
-Open a [Discussion](https://github.com/raiz-toff/macadam/discussions) or an issue — happy to help.
+Open a [Discussion](https://github.com/raiz-toff/comma/discussions) or an issue — happy to help.

@@ -1,5 +1,5 @@
-/* Macadam — light / dark / auto themes + reduced motion (F3).
- * Theme attribute is set synchronously by public/theme-init.js (localStorage: macadam-theme).
+/* COMMA — light / dark / auto themes + reduced motion (F3).
+ * Theme attribute is set synchronously by public/theme-init.js (localStorage: comma-theme).
  */
 
 html[data-theme='light'] {

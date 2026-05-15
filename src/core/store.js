@@ -29,7 +29,7 @@ import { getCountryDef, resolveProvinceDef } from '../utils/locale.js';
 import { getMarketContext } from '../registry/market/resolve.js';
 import { syncPlatformTerminologyFromRows } from '../registry/platforms/terminology.js';
 
-const THEME_KEY = 'macadam-theme';
+const THEME_KEY = 'comma-theme';
 const ALLOWED_THEMES = new Set(['light', 'dark', 'auto']);
 
 /** @typedef {{ startTime: string | null, platformId: string | null } | null} ActiveShiftTimer */
@@ -86,7 +86,7 @@ function notify(key, value, old) {
     try {
       fn(value, old);
     } catch (e) {
-      console.error(`[macadam store] subscriber error for "${key}"`, e);
+      console.error(`[comma store] subscriber error for "${key}"`, e);
     }
   }
 }
@@ -232,7 +232,7 @@ function noop() {}
 export function bindText(selector, storeKey, formatter) {
   const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
   if (!el) {
-    console.warn('[macadam store] bindText:', t('errors.storeBindMissing'));
+    console.warn('[comma store] bindText:', t('errors.storeBindMissing'));
     return noop;
   }
   const fmt = typeof formatter === 'function' ? formatter : (v) => (v == null ? '' : String(v));
@@ -255,7 +255,7 @@ export function bindText(selector, storeKey, formatter) {
 export function bindClass(selector, storeKey, classMap) {
   const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
   if (!el || !classMap || typeof classMap !== 'object') {
-    if (!el) console.warn('[macadam store] bindClass:', t('errors.storeBindMissing'));
+    if (!el) console.warn('[comma store] bindClass:', t('errors.storeBindMissing'));
     return noop;
   }
   const classes = [...new Set(Object.values(classMap))];
@@ -280,7 +280,7 @@ export function bindClass(selector, storeKey, classMap) {
 export function bindVisibility(selector, storeKey, condition) {
   const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
   if (!el || typeof condition !== 'function') {
-    if (!el) console.warn('[macadam store] bindVisibility:', t('errors.storeBindMissing'));
+    if (!el) console.warn('[comma store] bindVisibility:', t('errors.storeBindMissing'));
     return noop;
   }
   const apply = (v) => {
@@ -439,7 +439,7 @@ export const store = {
           break;
       }
     } catch (e) {
-      console.warn(`[macadam store] refresh("${key}") failed`, e);
+      console.warn(`[comma store] refresh("${key}") failed`, e);
     }
   },
 

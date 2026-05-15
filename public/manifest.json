@@ -1,6 +1,6 @@
 {
-  "name": "Macadam",
-  "short_name": "Macadam",
+  "name": "COMMA",
+  "short_name": "COMMA",
   "description": "Local-first gig driver earnings tracker.",
   "start_url": "./#/dashboard",
   "scope": "./",

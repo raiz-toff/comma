@@ -1,8 +1,8 @@
-# MacadamAPI Spec (P13)
+# COMMAAPI Spec (P13)
 
 ## Debug Surface
 
-The app exposes a development helper surface under `window.__macadam.debug`:
+The app exposes a development helper surface under `window.__comma.debug`:
 
 - `inspectVault()` returns all IndexedDB tables as a plain object.
 - `timedQuery(tableName, limit?)` runs a bounded query and reports elapsed milliseconds.

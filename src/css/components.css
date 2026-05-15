@@ -1,4 +1,4 @@
-/* Macadam — reusable UI components (F3). */
+/* COMMA — reusable UI components (F3). */
 
 /* Buttons */
 .btn {
@@ -553,12 +553,12 @@
  * ============================================================ */
 
 /* Body scroll lock while a modal is open */
-.macadam-modal-open {
+.comma-modal-open {
   overflow: hidden;
 }
 
 /* Modal — backdrop + dialog */
-.macadam-modal-backdrop {
+.comma-modal-backdrop {
   position: fixed;
   inset: 0;
   z-index: var(--z-modal);
@@ -573,12 +573,12 @@
   visibility: hidden;
 }
 
-.macadam-modal-backdrop.is-open {
+.comma-modal-backdrop.is-open {
   opacity: 1;
   visibility: visible;
 }
 
-.macadam-modal {
+.comma-modal {
   position: relative;
   width: 100%;
   max-width: 520px;
@@ -598,33 +598,33 @@
   outline: none;
 }
 
-.macadam-modal.is-open {
+.comma-modal.is-open {
   opacity: 1;
   transform: translateY(0) scale(1);
 }
 
-.macadam-modal.is-closing {
+.comma-modal.is-closing {
   opacity: 0;
   transform: translateY(8px) scale(0.99);
 }
 
-.macadam-modal--sm {
+.comma-modal--sm {
   max-width: 380px;
 }
 
-.macadam-modal--md {
+.comma-modal--md {
   max-width: 520px;
 }
 
-.macadam-modal--lg {
+.comma-modal--lg {
   max-width: 720px;
 }
 
-.macadam-modal--xl {
+.comma-modal--xl {
   max-width: 920px;
 }
 
-.macadam-modal-header {
+.comma-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -634,7 +634,7 @@
   background: var(--color-surface);
 }
 
-.macadam-modal-title {
+.comma-modal-title {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-xl);
@@ -642,7 +642,7 @@
   color: var(--color-text-primary);
 }
 
-.macadam-modal-close {
+.comma-modal-close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -656,19 +656,19 @@
     color var(--transition-base);
 }
 
-.macadam-modal-close:hover {
+.comma-modal-close:hover {
   background: var(--color-surface-raised);
   color: var(--color-text-primary);
 }
 
-.macadam-modal-body {
+.comma-modal-body {
   padding: var(--space-5);
   overflow-y: auto;
   flex: 1 1 auto;
   min-height: 0;
 }
 
-.macadam-modal-footer {
+.comma-modal-footer {
   display: flex;
   justify-content: flex-end;
   gap: var(--space-2);
@@ -677,19 +677,19 @@
   background: var(--color-surface);
 }
 
-.macadam-modal-footer[hidden] {
+.comma-modal-footer[hidden] {
   display: none;
 }
 
 /* Confirm modal */
-.macadam-confirm-message {
+.comma-confirm-message {
   margin: 0 0 var(--space-4);
   color: var(--color-text-primary);
   font-size: var(--text-base);
   line-height: 1.5;
 }
 
-.macadam-confirm-type {
+.comma-confirm-type {
   margin-top: var(--space-2);
 }
 
@@ -711,7 +711,7 @@
 }
 
 /* Toast — single line */
-.macadam-toast {
+.comma-toast {
   pointer-events: auto;
   display: inline-flex;
   align-items: center;
@@ -733,17 +733,17 @@
     opacity var(--transition-base);
 }
 
-.macadam-toast.is-open {
+.comma-toast.is-open {
   transform: translateY(0);
   opacity: 1;
 }
 
-.macadam-toast.is-closing {
+.comma-toast.is-closing {
   opacity: 0;
   transform: translateY(8px);
 }
 
-.macadam-toast-icon {
+.comma-toast-icon {
   display: inline-flex;
   width: 22px;
   height: 22px;
@@ -753,22 +753,22 @@
   color: var(--color-text-secondary);
 }
 
-.macadam-toast-message {
+.comma-toast-message {
   flex: 1 1 auto;
   min-width: 0;
 }
 
-.macadam-toast-actions {
+.comma-toast-actions {
   display: inline-flex;
   gap: var(--space-1);
 }
 
-.macadam-toast-action {
+.comma-toast-action {
   font-size: var(--text-xs);
   padding: var(--space-1) var(--space-2);
 }
 
-.macadam-toast-close {
+.comma-toast-close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -782,52 +782,52 @@
     background-color var(--transition-base);
 }
 
-.macadam-toast-close:hover {
+.comma-toast-close:hover {
   color: var(--color-text-primary);
   background: var(--color-surface-raised);
 }
 
-.macadam-toast--success {
+.comma-toast--success {
   border-color: color-mix(in srgb, var(--color-success) 35%, var(--color-border));
 }
 
-.macadam-toast--success .macadam-toast-icon {
+.comma-toast--success .comma-toast-icon {
   color: var(--color-success);
 }
 
-.macadam-toast--error {
+.comma-toast--error {
   border-color: color-mix(in srgb, var(--color-danger) 45%, var(--color-border));
   background: color-mix(in srgb, var(--color-danger) 8%, var(--color-surface));
 }
 
-.macadam-toast--error .macadam-toast-icon {
+.comma-toast--error .comma-toast-icon {
   color: var(--color-danger);
 }
 
-.macadam-toast--warning {
+.comma-toast--warning {
   border-color: color-mix(in srgb, var(--color-warning) 45%, var(--color-border));
   background: color-mix(in srgb, var(--color-warning) 10%, var(--color-surface));
 }
 
-.macadam-toast--warning .macadam-toast-icon {
+.comma-toast--warning .comma-toast-icon {
   color: var(--color-warning);
 }
 
-.macadam-toast--info .macadam-toast-icon {
+.comma-toast--info .comma-toast-icon {
   color: var(--color-info);
 }
 
-.macadam-toast--celebration {
+.comma-toast--celebration {
   border-color: color-mix(in srgb, var(--color-brand) 55%, var(--color-border));
   background: color-mix(in srgb, var(--color-brand) 14%, var(--color-surface));
 }
 
-.macadam-toast--celebration .macadam-toast-icon {
+.comma-toast--celebration .comma-toast-icon {
   color: var(--color-brand-dark);
 }
 
 /* Notify card — richer card-style toast */
-.macadam-notify {
+.comma-notify {
   pointer-events: auto;
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -847,17 +847,17 @@
     opacity var(--transition-base);
 }
 
-.macadam-notify.is-open {
+.comma-notify.is-open {
   transform: translateY(0);
   opacity: 1;
 }
 
-.macadam-notify.is-closing {
+.comma-notify.is-closing {
   opacity: 0;
   transform: translateY(8px);
 }
 
-.macadam-notify-icon {
+.comma-notify-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -868,11 +868,11 @@
   color: var(--color-text-secondary);
 }
 
-.macadam-notify-body {
+.comma-notify-body {
   min-width: 0;
 }
 
-.macadam-notify-title {
+.comma-notify-title {
   margin: 0 0 var(--space-1);
   font-family: var(--font-display);
   font-size: var(--text-base);
@@ -880,20 +880,20 @@
   color: var(--color-text-primary);
 }
 
-.macadam-notify-message {
+.comma-notify-message {
   margin: 0 0 var(--space-2);
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
   line-height: 1.45;
 }
 
-.macadam-notify-actions {
+.comma-notify-actions {
   display: inline-flex;
   gap: var(--space-2);
   margin-top: var(--space-1);
 }
 
-.macadam-notify-close {
+.comma-notify-close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -905,34 +905,34 @@
   background: transparent;
 }
 
-.macadam-notify-close:hover {
+.comma-notify-close:hover {
   color: var(--color-text-primary);
   background: var(--color-surface-raised);
 }
 
-.macadam-notify--success .macadam-notify-icon {
+.comma-notify--success .comma-notify-icon {
   color: var(--color-success);
   background: color-mix(in srgb, var(--color-success) 18%, var(--color-surface-raised));
 }
 
-.macadam-notify--warning .macadam-notify-icon {
+.comma-notify--warning .comma-notify-icon {
   color: var(--color-warning);
   background: color-mix(in srgb, var(--color-warning) 18%, var(--color-surface-raised));
 }
 
-.macadam-notify--error .macadam-notify-icon {
+.comma-notify--error .comma-notify-icon {
   color: var(--color-danger);
   background: color-mix(in srgb, var(--color-danger) 18%, var(--color-surface-raised));
 }
 
-.macadam-notify--celebration .macadam-notify-icon {
+.comma-notify--celebration .comma-notify-icon {
   color: var(--color-brand-dark);
   background: color-mix(in srgb, var(--color-brand) 22%, var(--color-surface-raised));
 }
 
 /* FAB (Floating Action Button) — F8 layer */
 
-.macadam-fab-backdrop {
+.comma-fab-backdrop {
   position: fixed;
   inset: 0;
   z-index: 158;
@@ -946,7 +946,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.macadam-fab-menu {
+.comma-fab-menu {
   position: fixed;
   right: var(--space-4);
   bottom: calc(var(--space-16) + var(--space-4) + 56px + var(--space-2) + env(safe-area-inset-bottom, 0));
@@ -961,7 +961,7 @@
   pointer-events: none;
 }
 
-.macadam-fab-menu-item {
+.comma-fab-menu-item {
   display: inline-flex;
   align-items: center;
   gap: var(--space-3);
@@ -990,35 +990,35 @@
   transition-delay: calc(var(--fab-i, 0) * 55ms);
 }
 
-.macadam-fab-menu.is-open .macadam-fab-menu-item {
+.comma-fab-menu.is-open .comma-fab-menu-item {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
 
-.macadam-fab-menu-item:hover {
+.comma-fab-menu-item:hover {
   background: var(--color-surface);
   box-shadow: var(--shadow-lg);
   transform: translateY(-2px);
 }
 
-.macadam-fab-menu-item-icon {
+.comma-fab-menu-item-icon {
   flex-shrink: 0;
   display: flex;
   color: var(--color-brand);
 }
 
-.macadam-fab-menu-item-icon svg {
+.comma-fab-menu-item-icon svg {
   display: block;
   width: 22px;
   height: 22px;
 }
 
-.macadam-fab-menu-item-label {
+.comma-fab-menu-item-label {
   white-space: nowrap;
 }
 
-.macadam-fab {
+.comma-fab {
   position: fixed;
   right: var(--space-4);
   bottom: calc(var(--space-16) + var(--space-4) + env(safe-area-inset-bottom, 0));
@@ -1046,28 +1046,28 @@
     color var(--transition-base);
 }
 
-.macadam-fab:hover {
+.comma-fab:hover {
   transform: scale(1.04);
   box-shadow: var(--shadow-xl);
 }
 
-.macadam-fab--end {
+.comma-fab--end {
   background: var(--color-danger);
   color: #fff;
   padding-right: var(--space-4);
 }
 
-.macadam-fab--hidden {
+.comma-fab--hidden {
   opacity: 0;
   transform: translateY(72px);
   pointer-events: none;
 }
 
-.macadam-fab-icon {
+.comma-fab-icon {
   display: block;
 }
 
-.macadam-fab-label {
+.comma-fab-label {
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: 700;
@@ -1075,23 +1075,23 @@
 }
 
 @media (min-width: 1024px) {
-  .macadam-fab {
+  .comma-fab {
     bottom: calc(var(--space-8) + env(safe-area-inset-bottom, 0));
   }
-  .macadam-fab-menu {
+  .comma-fab-menu {
     bottom: calc(var(--space-8) + 56px + var(--space-2) + env(safe-area-inset-bottom, 0));
   }
 }
 
 /* Drawer extras (base styles live in layout.css) */
-.macadam-drawer .drawer-panel {
+.comma-drawer .drawer-panel {
   height: calc(var(--drawer-snap, 0.5) * 100dvh);
   max-height: 92dvh;
   display: flex;
   flex-direction: column;
 }
 
-.macadam-drawer-handle {
+.comma-drawer-handle {
   align-self: center;
   width: 40px;
   height: 4px;
@@ -1101,7 +1101,7 @@
   flex-shrink: 0;
 }
 
-.macadam-drawer-header {
+.comma-drawer-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1110,7 +1110,7 @@
   flex-shrink: 0;
 }
 
-.macadam-drawer-title {
+.comma-drawer-title {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-lg);
@@ -1118,7 +1118,7 @@
   color: var(--color-text-primary);
 }
 
-.macadam-drawer-close {
+.comma-drawer-close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1128,29 +1128,29 @@
   color: var(--color-text-secondary);
 }
 
-.macadam-drawer-close:hover {
+.comma-drawer-close:hover {
   color: var(--color-text-primary);
   background: var(--color-surface-raised);
 }
 
-.macadam-drawer-body {
+.comma-drawer-body {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
 }
 
-.macadam-drawer .drawer-panel.is-dragging {
+.comma-drawer .drawer-panel.is-dragging {
   transition: none;
 }
 
 /* Numeric keypad */
-.macadam-keypad {
+.comma-keypad {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
 }
 
-.macadam-keypad-display {
+.comma-keypad-display {
   display: flex;
   align-items: baseline;
   justify-content: flex-end;
@@ -1162,13 +1162,13 @@
   min-height: 64px;
 }
 
-.macadam-keypad-currency {
+.comma-keypad-currency {
   font-size: var(--text-lg);
   font-weight: 600;
   color: var(--color-text-secondary);
 }
 
-.macadam-keypad-value {
+.comma-keypad-value {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-size: var(--text-4xl);
@@ -1179,13 +1179,13 @@
   text-align: right;
 }
 
-.macadam-keypad-grid {
+.comma-keypad-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-2);
 }
 
-.macadam-keypad-key {
+.comma-keypad-key {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1203,27 +1203,27 @@
     background-color var(--transition-base);
 }
 
-.macadam-keypad-key:hover {
+.comma-keypad-key:hover {
   background: var(--color-surface);
 }
 
-.macadam-keypad-key:active {
+.comma-keypad-key:active {
   transform: scale(0.97);
   background: var(--color-border);
 }
 
-.macadam-keypad-key--util {
+.comma-keypad-key--util {
   font-size: var(--text-lg);
   background: var(--color-surface);
   color: var(--color-text-secondary);
 }
 
-.macadam-keypad-back-icon {
+.comma-keypad-back-icon {
   transform: scaleX(-1);
 }
 
 /* Progress ring wrapper */
-.macadam-progress-ring {
+.comma-progress-ring {
   position: relative;
   display: inline-grid;
   place-items: center;
@@ -1231,21 +1231,21 @@
   height: var(--ring-size, 64px);
 }
 
-.macadam-progress-ring .progress-ring {
+.comma-progress-ring .progress-ring {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
 
-.macadam-progress-ring .progress-ring-fill {
+.comma-progress-ring .progress-ring-fill {
   stroke: var(--ring-color, var(--color-brand));
   fill: none;
   stroke-linecap: round;
   transition: stroke-dashoffset var(--transition-slow);
 }
 
-.macadam-progress-ring-label {
+.comma-progress-ring-label {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-size: var(--text-xs);
@@ -1254,70 +1254,70 @@
 }
 
 /* Skeleton variants */
-.macadam-skeleton {
+.comma-skeleton {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
 
-.macadam-skeleton--list-item {
+.comma-skeleton--list-item {
   flex-direction: row;
   align-items: center;
   gap: var(--space-3);
 }
 
-.macadam-skeleton-avatar {
+.comma-skeleton-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.macadam-skeleton-lines {
+.comma-skeleton-lines {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
   flex: 1 1 auto;
 }
 
-.macadam-skeleton-line {
+.comma-skeleton-line {
   display: block;
   height: 10px;
   border-radius: var(--radius-sm);
 }
 
-.macadam-skeleton-line--lg {
+.comma-skeleton-line--lg {
   width: 80%;
 }
 
-.macadam-skeleton-line--md {
+.comma-skeleton-line--md {
   width: 60%;
 }
 
-.macadam-skeleton-line--sm {
+.comma-skeleton-line--sm {
   width: 40%;
   height: 8px;
 }
 
-.macadam-skeleton-value {
+.comma-skeleton-value {
   display: block;
   height: 28px;
   width: 60%;
   border-radius: var(--radius-sm);
 }
 
-.macadam-skeleton-chart-body {
+.comma-skeleton-chart-body {
   display: block;
   height: 160px;
   border-radius: var(--radius-md);
 }
 
 /* Empty state extras */
-.macadam-empty-state {
+.comma-empty-state {
   gap: var(--space-3);
 }
 
-.macadam-empty-state-icon-wrap {
+.comma-empty-state-icon-wrap {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1329,7 +1329,7 @@
   border: 1px solid var(--color-border);
 }
 
-.macadam-empty-state-title {
+.comma-empty-state-title {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-lg);
@@ -1337,7 +1337,7 @@
   color: var(--color-text-primary);
 }
 
-.macadam-empty-state-message {
+.comma-empty-state-message {
   margin: 0;
   max-width: 44ch;
   font-size: var(--text-sm);
@@ -1345,12 +1345,12 @@
 }
 
 /* GitHub-style heatmap */
-.macadam-heatmap {
+.comma-heatmap {
   overflow-x: auto;
   padding: var(--space-2) 0;
 }
 
-.macadam-heatmap-grid {
+.comma-heatmap-grid {
   display: grid;
   grid-template-rows: repeat(7, 12px);
   grid-auto-flow: column;
@@ -1358,7 +1358,7 @@
   gap: 3px;
 }
 
-.macadam-heatmap-cell {
+.comma-heatmap-cell {
   display: block;
   width: 12px;
   height: 12px;
@@ -1372,18 +1372,18 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .macadam-modal,
-  .macadam-modal-backdrop,
-  .macadam-toast,
-  .macadam-notify,
-  .macadam-fab,
-  .macadam-fab-menu-item,
+  .comma-modal,
+  .comma-modal-backdrop,
+  .comma-toast,
+  .comma-notify,
+  .comma-fab,
+  .comma-fab-menu-item,
   .drawer-panel {
     transition: none !important;
   }
 }
 
-.macadam-splash {
+.comma-splash {
   position: fixed;
   inset: 0;
   display: grid;
@@ -1393,12 +1393,12 @@
   transition: opacity 220ms ease;
 }
 
-.macadam-splash.is-done {
+.comma-splash.is-done {
   opacity: 0;
   pointer-events: none;
 }
 
-.macadam-splash-logo {
+.comma-splash-logo {
   width: 132px;
   height: 132px;
   border-radius: var(--radius-md);
@@ -1414,8 +1414,8 @@
 body.zen-mode .app-header,
 body.zen-mode .app-sidebar,
 body.zen-mode .bottom-nav,
-body.zen-mode .macadam-fab,
-body.zen-mode .macadam-fab-menu {
+body.zen-mode .comma-fab,
+body.zen-mode .comma-fab-menu {
   opacity: 0.08;
 }
 

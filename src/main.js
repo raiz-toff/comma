@@ -1,6 +1,6 @@
 /*
- * Macadam — entry point (F2 SW, F4 Dexie, F5 shell + router + event bus).
- * Theme: `public/theme-init.js` runs before paint (`macadam-theme`); `store.loadFromDB` syncs user.theme.
+ * COMMA — entry point (F2 SW, F4 Dexie, F5 shell + router + event bus).
+ * Theme: `public/theme-init.js` runs before paint (`comma-theme`); `store.loadFromDB` syncs user.theme.
  */
 
 import { db, initDatabase, getAppState, purgeOldDeleted } from './core/db.js';
@@ -39,11 +39,11 @@ import { t } from './utils/strings.js';
 import './ui/icons.js';
 
 /** @type {ServiceWorkerRegistration | null} */
-let macadamSwRegistration = null;
+let commaSwRegistration = null;
 
 let deferredInstallPrompt = null;
 
-window.__macadam = window.__macadam || {
+window.__comma = window.__comma || {
   version: '1.0.0',
   db: null,
   store: null,
@@ -53,7 +53,7 @@ window.__macadam = window.__macadam || {
   swRegistration: null,
 };
 
-window.__macadam.bus = bus;
+window.__comma.bus = bus;
 
 function setStandaloneDataset() {
   const standalone =
@@ -68,10 +68,10 @@ setStandaloneDataset();
 window.matchMedia('(display-mode: standalone)').addEventListener('change', setStandaloneDataset);
 
 function showSwUpdateBanner() {
-  if (document.getElementById('macadam-sw-update-banner')) return;
+  if (document.getElementById('comma-sw-update-banner')) return;
 
   const bar = document.createElement('div');
-  bar.id = 'macadam-sw-update-banner';
+  bar.id = 'comma-sw-update-banner';
   bar.setAttribute('role', 'status');
   bar.style.cssText = [
     'position:fixed',
@@ -137,13 +137,13 @@ function registerServiceWorker() {
   navigator.serviceWorker
     .register('./sw.js', { type: 'module', scope: './' })
     .then((reg) => {
-      macadamSwRegistration = reg;
-      window.__macadam.swRegistration = reg;
+      commaSwRegistration = reg;
+      window.__comma.swRegistration = reg;
       watchForWaitingWorker(reg);
       reg.update().catch(() => {});
     })
     .catch((err) => {
-      console.warn('[macadam] service worker registration failed', err);
+      console.warn('[comma] service worker registration failed', err);
     });
 }
 
@@ -152,7 +152,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   deferredInstallPrompt = e;
 });
 
-window.__macadam.triggerInstall = async () => {
+window.__comma.triggerInstall = async () => {
   if (!deferredInstallPrompt) return false;
   deferredInstallPrompt.prompt();
   const choice = await deferredInstallPrompt.userChoice;
@@ -162,8 +162,8 @@ window.__macadam.triggerInstall = async () => {
 
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible') return;
-  if (macadamSwRegistration) {
-    macadamSwRegistration.update().catch(() => {});
+  if (commaSwRegistration) {
+    commaSwRegistration.update().catch(() => {});
   }
 });
 
@@ -178,7 +178,7 @@ async function checkBackupOverdue() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const splash = document.getElementById('macadam-splash');
+  const splash = document.getElementById('comma-splash');
   registerServiceWorker();
   wireConnectivity();
 
@@ -187,10 +187,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     await initDatabase();
-    window.__macadam.db = db;
+    window.__comma.db = db;
 
     await store.loadFromDB();
-    window.__macadam.store = store;
+    window.__comma.store = store;
 
     updateOnboardingFocusClass(!store.get('user')?.onboardingComplete);
 
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await initGoalsModule();
     await renderAppShell(app);
 
-    window.__macadam.router = Router;
+    window.__comma.router = Router;
     Router.init();
 
     try {
@@ -216,17 +216,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       assertGoalTypeRegistryValid();
       assertShiftFieldRegistryValid();
       console.log(
-        `[macadam] Registry ok: ${PlatformRegistry.getAll().length} platforms, ${CountryRegistry.getAll().length} countries, ${ProvinceRegistry.getAll().length} provinces, ${WidgetRegistry.getAll().length} widgets, ${NotificationRegistry.getAll().length} notification defs, ${BadgeRegistry.getAll().length} badge defs, ${MetricRegistry.getAll().length} metrics, ${ReportRegistry.getAll().length} report sections, ${ExpenseCategoryRegistry.getAll().length} expense categories, ${GoalTypeRegistry.getAll().length} goal types (${GoalScopeRegistry.getAll().length} scopes), ${ShiftFieldRegistry.getAll().length} global shift fields`,
+        `[comma] Registry ok: ${PlatformRegistry.getAll().length} platforms, ${CountryRegistry.getAll().length} countries, ${ProvinceRegistry.getAll().length} provinces, ${WidgetRegistry.getAll().length} widgets, ${NotificationRegistry.getAll().length} notification defs, ${BadgeRegistry.getAll().length} badge defs, ${MetricRegistry.getAll().length} metrics, ${ReportRegistry.getAll().length} report sections, ${ExpenseCategoryRegistry.getAll().length} expense categories, ${GoalTypeRegistry.getAll().length} goal types (${GoalScopeRegistry.getAll().length} scopes), ${ShiftFieldRegistry.getAll().length} global shift fields`,
       );
     } catch (regErr) {
-      console.error('[macadam] registry validation failed', regErr);
+      console.error('[comma] registry validation failed', regErr);
     }
 
     store.subscribe('user', () => {
       updateOnboardingFocusClass(!store.get('user')?.onboardingComplete);
     });
   } catch (err) {
-    console.error('[macadam] boot failed', err);
+    console.error('[comma] boot failed', err);
     app.textContent = t('errors.dbOpen');
     return;
   }
@@ -234,32 +234,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     await runOnOpenNotificationCheck();
   } catch (e) {
-    console.warn('[macadam] on-open notifications skipped', e);
+    console.warn('[comma] on-open notifications skipped', e);
   }
 
   try {
     await runRecurringExpensePromptOnce();
   } catch (e) {
-    console.warn('[macadam] recurring expense prompt skipped', e);
+    console.warn('[comma] recurring expense prompt skipped', e);
   }
 
   try {
     await purgeOldDeleted('shifts', 30);
     await purgeOldDeleted('expenses', 30);
   } catch (e) {
-    console.warn('[macadam] purge old deleted skipped', e);
+    console.warn('[comma] purge old deleted skipped', e);
   }
 
   try {
     await checkBackupOverdue();
   } catch (e) {
-    console.warn('[macadam] backup overdue check skipped', e);
+    console.warn('[comma] backup overdue check skipped', e);
   }
 
   try {
     await initP13();
   } catch (e) {
-    console.warn('[macadam] p13 init skipped', e);
+    console.warn('[comma] p13 init skipped', e);
   }
 
   /* P12 — PWA deep features wiring. */
@@ -276,21 +276,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
           bus.emit('pwa:replay-deferred-export', it);
         } catch (err) {
-          console.warn('[macadam] deferred replay dispatch failed', err);
+          console.warn('[comma] deferred replay dispatch failed', err);
         }
       }
     });
     /* Feature 244: surface a share-target intent if present. */
     const intent = parseShareTargetIntent();
     if (intent) {
-      window.__macadam.shareIntent = intent;
+      window.__comma.shareIntent = intent;
       bus.emit('pwa:share-intent', intent);
     }
   } catch (e) {
-    console.warn('[macadam] p12 pwa init skipped', e);
+    console.warn('[comma] p12 pwa init skipped', e);
   }
 
-  window.__macadam.apiSpecMarkdown = apiSpecMarkdown;
+  window.__comma.apiSpecMarkdown = apiSpecMarkdown;
   if (splash) {
     splash.classList.add('is-done');
     setTimeout(() => splash.remove(), 320);

@@ -1,8 +1,8 @@
 {
-  "name": "macadam",
+  "name": "comma",
   "version": "1.0.0",
   "private": true,
-  "description": "Macadam — Local-first gig driver earnings app",
+  "description": "COMMA — Local-first gig driver earnings app",
   "scripts": {
     "dev": "node build.js --dev",
     "build": "node build.js --prod",
@@ -16,9 +16,9 @@
   "author": "raiz-toff",
   "repository": {
     "type": "git",
-    "url": "https://github.com/raiz-toff/macadam.git"
+    "url": "https://github.com/raiz-toff/comma.git"
   },
-  "homepage": "https://github.com/raiz-toff/macadam",
+  "homepage": "https://github.com/raiz-toff/comma",
   "keywords": [
     "gig-economy",
     "earnings-tracker",

@@ -422,6 +422,36 @@
   margin-inline: auto;
 }
 
+.onboarding-landing-footer {
+  margin-top: 2rem;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  border-top: 1px solid var(--color-border);
+}
+
+.onboarding-landing-footer-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.onboarding-landing-footer-link {
+  color: var(--color-brand);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.onboarding-landing-footer-link:hover {
+  text-decoration: underline;
+}
+
+.onboarding-landing-footer-sep {
+  opacity: 0.5;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .onboarding-landing-card:hover {
     transform: none;

@@ -19,6 +19,8 @@ import { getCountryTaxProfile } from '../../registry/countries/index.js';
 import { ProvinceRegistry } from '../../registry/provinces/index.js';
 import { getDefaultSamplePlatformId } from '../../registry/platforms/index.js';
 import { showConfirm, showToast } from '../../ui/components.js';
+import { requestToken, isDriveConnected } from '../backup/drive-auth.js';
+import { listAvailableBackups, runRestore } from '../backup/restore-engine.js';
 import {
   TOTAL_STEPS,
   defaultDraftFromUser,
@@ -767,6 +769,47 @@ export async function mountOnboarding(root) {
     const enter = body.querySelector('[data-enter-vault]');
     if (enter instanceof HTMLButtonElement) {
       enter.addEventListener('click', () => void finalizeOnboarding(el));
+    }
+    const connectDriveBtn = body.querySelector('[data-connect-drive]');
+    if (connectDriveBtn) {
+      connectDriveBtn.addEventListener('click', async () => {
+        if (store.get('demoMode')) {
+          await showConfirm({
+            title: t('common.warning'),
+            message: t('settings.backupDemoWarning'),
+            confirmLabel: t('common.ok') || 'OK',
+            cancelLabel: ''
+          });
+          return;
+        }
+        requestToken();
+      });
+      
+      // Listen for successful connection to offer restore
+      bus.on('drive:auth_success', async () => {
+        if (draft.step === TOTAL_STEPS - 1) {
+          const backups = await listAvailableBackups();
+          if (backups.length > 0) {
+            const latest = backups[0];
+            const confirmed = await showConfirm({
+              title: 'Found existing backup',
+              message: `We found a backup from ${new Date(latest.encryptedAt).toLocaleDateString()}. Would you like to restore your data and skip the rest of setup?`,
+              confirmText: 'Restore & Skip',
+              cancelText: 'Keep Fresh'
+            });
+            if (confirmed) {
+              const res = await runRestore(latest.id);
+              if (res.success) {
+                showToast({ type: 'success', message: 'Vault restored ✓' });
+                setTimeout(() => window.location.reload(), 1000);
+              }
+            }
+          } else {
+            showToast({ type: 'success', message: 'Drive connected. First backup will happen after you enter the vault.' });
+            render();
+          }
+        }
+      });
     }
     const exportBtn = body.querySelector('[data-export-setup]');
     if (exportBtn) {

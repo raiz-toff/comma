@@ -1,25 +1,42 @@
-# Changelog
+# COMMA — Changelog
 
-All notable changes to COMMA will be documented in this file.
+All notable changes to the COMMA project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [1.0.0] - 2026-05-14
+## [1.2.0] - 2026-05-16
 
 ### Added
-- **Core Engine**: Fully offline-first, local storage architecture via IndexedDB and Dexie.js.
-- **PWA Support**: Installable as a standalone app with a custom hand-written service worker.
-- **Registry Architecture**: Modular system for defining platforms, countries, provinces, widgets, badges, and metrics.
-- **Dashboard**: Customizable Bento grid dashboard with dynamic widgets.
-- **Analytics**: Deep analytics engine with historical tracking, day-of-week trends, and hourly rate breakdown.
-- **Shift Logging**: Advanced shift input form adapting to specific platforms (e.g. DoorDash vs Uber Eats).
-- **Gamification**: Badges, streaks, and weekly goals with canvas-confetti celebrations.
-- **Tax Tracking**: Canadian/US oriented tax set-aside calculations, including HST, CPP, and deductions.
-- **Vehicle Management**: Expense tracking, maintenance logs, and actual-cost business deduction tracking.
-- **Reports**: Shareable year-in-review generation, CSV data export, and print-ready formats.
-- **Offline Reliability**: Works identically with or without a network connection. No data leaves the device unless exported.
-- **Regions**: Currently, only **Ontario (Canada)** is officially supported in the registry. Other regions and provinces are not yet added (contributions are highly welcome!).
+
+- **Google Drive Backup Suite**: Secure, local-first cloud synchronization.
+- **Resilient Authentication**: Silent token renewal and concurrent request management for Drive API.
+- **Vault Branding**: Integrated custom "Vault" and "Google Drive" iconography across the UI.
+- **Demo Mode Safety**: Added strict guards to prevent sample data from overwriting cloud backups.
+- **Changelog System**: Automatic "What's New" prompts for version updates.
+- **Privacy Policy**: Dedicated, self-hosted privacy documentation for Google verification.
 
 ### Changed
-- Initial open-source release.
+
+- Refined Onboarding landing page with clearer purpose and footer links.
+- Updated Google OAuth Client ID to production credentials.
+- Improved Settings layout with better iconography and spacing.
+
+### Fixed
+
+- Resolved translation key mismatches in backup alerts.
+- Fixed layout "jitter" when exiting Demo Mode.
+
+## [1.1.0] - 2026-05-15
+
+### Added
+
+- **Partial Data Import**: Import shifts, expenses, and incomes separately.
+- **CSV Import Guide**: Centralized documentation for data migration.
+- **Internationalization (i18n)**: Full French translation support.
+
+### Changed
+
+- Rebranded project from "Macadam" to "COMMA".
+- Updated file extensions to `.comdb` for vault backups.
+
+---
+
+*For older changes, see the git commit history.*

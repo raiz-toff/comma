@@ -165,6 +165,9 @@
 }
 
 .settings-subsection-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   font-size: var(--text-md);
   font-weight: 700;
   margin: 0 0 var(--space-2);
@@ -796,6 +799,59 @@ html[data-layout-density='compact'] {
   background: color-mix(in srgb, var(--color-brand) 4%, transparent);
 }
 
+/* Backup Card Specifics */
+.settings-backup-card {
+  padding: var(--space-4);
+  position: relative;
+}
+
+.settings-backup-header {
+  margin-bottom: var(--space-4);
+}
+
+.backup-status-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.status-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.status-text {
+  font-weight: 700;
+  margin: 0;
+}
+
+.status-subtext {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.backup-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
 .settings-collapsible-title-wrap {
   display: flex;
   flex-direction: column;

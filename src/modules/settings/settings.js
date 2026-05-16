@@ -9,6 +9,7 @@ import { resetVault, exitDemoToOnboardingStart } from '../onboarding/onboarding.
 import { exportVaultBackupJson } from '../reports/reports.js';
 import { CountryRegistry, getCountryTaxProfile } from '../../registry/countries/index.js';
 import { ProvinceRegistry } from '../../registry/provinces/index.js';
+import { renderBackupStatus } from '../backup/backup-ui.js';
 import { mountSettingsPlatforms } from './platforms-settings.js';
 import { formatShortcutOverlayListItems } from './keyboard-shortcuts.js';
 import { normalizeAccentHex } from './settings-utils.js';
@@ -668,6 +669,7 @@ export async function mountSettings(root, ctx = {}) {
       })()}
     </div>
     <div class="settings-tabpanel" id="settings-panel-data" role="tabpanel" aria-labelledby="settings-tab-data" data-settings-panel="data" ${th('data')}>
+      <div data-backup-status-host></div>
       ${(() => {
         const expanded = loadSettingsExpanded();
         const isOpen = (id, def = false) => (expanded[id] === undefined ? def : expanded[id]);
@@ -675,7 +677,7 @@ export async function mountSettings(root, ctx = {}) {
       <section class="settings-view-section card card-raised settings-collapsible ${isOpen('vault') ? 'is-expanded' : ''}" data-settings-collapsible="vault">
         <header class="settings-collapsible-header" data-settings-toggle="vault">
           <div class="settings-collapsible-title-wrap">
-            <h2 class="settings-section-title">${esc(t('settings.dataVaultSectionTitle'))}</h2>
+            <h2 class="settings-section-title">${getIcon('vault', 20)} ${esc(t('settings.dataVaultSectionTitle'))}</h2>
             <p class="settings-collapsible-summary">Health and backups</p>
           </div>
           <span class="settings-collapsible-icon">${getIcon('chevron-down', 20)}</span>
@@ -767,6 +769,15 @@ export async function mountSettings(root, ctx = {}) {
   const shortcuts = mountKeyboardOverlay(root);
   const platformsHost = /** @type {HTMLElement | null} */ (root.querySelector('[data-platforms-host]'));
   if (platformsHost) await mountSettingsPlatforms(platformsHost);
+
+  const backupHost = /** @type {HTMLElement | null} */ (root.querySelector('[data-backup-status-host]'));
+  if (backupHost) {
+    await renderBackupStatus(backupHost);
+    bus.on('drive:auth_success', () => renderBackupStatus(backupHost));
+    bus.on('drive:disconnected', () => renderBackupStatus(backupHost));
+    bus.on('backup:success', () => renderBackupStatus(backupHost));
+    bus.on('backup:failed', () => renderBackupStatus(backupHost));
+  }
 
   const widgetSort = /** @type {HTMLElement | null} */ (root.querySelector('[data-widget-sort]'));
   if (widgetSort) {

@@ -156,7 +156,7 @@ function renderOnboardingLanding() {
         <h2 id="ob-landing-how" class="onboarding-landing-section-title">${esc(t('onboarding.landing.sectionTitle'))}</h2>
         <ul class="onboarding-landing-grid">
           <li class="onboarding-landing-card card card-raised">
-            <span class="onboarding-landing-card-icon" aria-hidden="true">${landingIcon('shield', 24)}</span>
+            <span class="onboarding-landing-card-icon" aria-hidden="true">${landingIcon('vault', 24)}</span>
             <h3 class="onboarding-landing-card-title">${esc(t('onboarding.landing.featVaultTitle'))}</h3>
             <p class="onboarding-landing-card-body">${esc(t('onboarding.landing.featVaultBody'))}</p>
           </li>
@@ -178,6 +178,13 @@ function renderOnboardingLanding() {
         </ul>
         <p class="onboarding-landing-footnote">${esc(t('onboarding.landing.footnote'))}</p>
       </section>
+      <footer class="onboarding-landing-footer">
+        <nav class="onboarding-landing-footer-nav">
+          <a href="/privacy.html" target="_blank" class="onboarding-landing-footer-link">${esc(t('onboarding.landing.privacyLink'))}</a>
+          <span class="onboarding-landing-footer-sep">&bull;</span>
+          <span class="onboarding-landing-footer-copy">&copy; 2026 COMMA</span>
+        </nav>
+      </footer>
     </div>`;
 }
 
@@ -462,7 +469,8 @@ export function renderStepInner(step, draft, platformRows) {
           <h1 class="onboarding-step-title onboarding-completion-title">${esc(t('onboarding.steps.completeTitle').replace('{name}', draft.displayName.trim() || t('onboarding.steps.completeFallbackName')))}</h1>
           <p class="onboarding-step-lead">${esc(t('onboarding.steps.completeLead'))}</p>
           <div class="onboarding-completion-actions">
-            <button type="button" class="btn btn-primary btn-lg" data-enter-vault>${esc(t('onboarding.steps.enterVault'))}</button>
+            <button type="button" class="btn btn-primary btn-lg" data-enter-vault>${getIcon('vault', 20)} ${esc(t('onboarding.steps.enterVault'))}</button>
+            <button type="button" class="btn btn-secondary" data-connect-drive>${getIcon('google-drive', 18)} ${esc(t('settings.backupConnectBtn'))}</button>
             <button type="button" class="btn btn-secondary" data-export-setup>${esc(t('onboarding.steps.exportSetup'))}</button>
             <button type="button" class="btn btn-ghost" data-load-sample>${esc(t('onboarding.sample.load'))}</button>
           </div>

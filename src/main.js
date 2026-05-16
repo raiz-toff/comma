@@ -38,6 +38,9 @@ import './utils/strings.js';
 import { t } from './utils/strings.js';
 import './ui/icons.js';
 import { initAdaptiveTheme } from './core/adaptive-theme.js';
+import { initDriveAuth } from './modules/backup/drive-auth.js';
+import { initBackupTriggers } from './modules/backup/backup-triggers.js';
+import { initChangelog, APP_VERSION } from './modules/changelog/changelog.js';
 
 /** @type {ServiceWorkerRegistration | null} */
 let commaSwRegistration = null;
@@ -45,7 +48,7 @@ let commaSwRegistration = null;
 let deferredInstallPrompt = null;
 
 window.__comma = window.__comma || {
-  version: '1.0.0',
+  version: APP_VERSION,
   db: null,
   store: null,
   bus: null,
@@ -175,7 +178,7 @@ function wireConnectivity() {
   window.addEventListener('offline', () => store.set('isOnline', false));
 }
 
-async function checkBackupOverdue() {
+async function initBackupOverdue() {
   await getAppState('last_backup');
   /* Phase 2: surface reminder UI */
 }
@@ -229,8 +232,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       await runRecurringExpensePromptOnce();
       await purgeOldDeleted('shifts', 30);
       await purgeOldDeleted('expenses', 30);
-      await checkBackupOverdue();
+      await initBackupOverdue();
       await initP13();
+      
+      // Initialize Drive Backup
+      try {
+        await initDriveAuth();
+        await initBackupTriggers();
+      } catch (driveErr) {
+        console.warn('[comma] drive backup init failed', driveErr);
+      }
     } catch (e) {
       console.warn('[comma] post-boot tasks failed', e);
     }
@@ -258,6 +269,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     window.__comma.apiSpecMarkdown = apiSpecMarkdown;
+
+    // What's New
+    initChangelog();
 
     // Finalize: Hide splash only after EVERYTHING is ready
     if (splash) {

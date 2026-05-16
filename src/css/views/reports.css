@@ -186,3 +186,52 @@
     width: 100%;
   }
 }
+
+/* Partial Data Import Section */
+.import-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-4);
+}
+
+.import-card {
+  border: 1px dashed var(--color-border) !important;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.import-card:hover {
+  border-color: var(--color-brand) !important;
+  transform: translateY(-2px);
+}
+
+.import-card h3 {
+  font-size: var(--text-md);
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.import-card p {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.import-preview-box {
+  max-height: 120px;
+  overflow: auto;
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  font-size: 10px;
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+}
+
+.import-file-input {
+  margin-bottom: var(--space-3);
+  font-size: 11px;
+}

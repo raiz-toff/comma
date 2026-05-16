@@ -202,7 +202,14 @@ async function paintAnalytics(root, _ctx) {
                             ${renderWidgetControls(id, currentWidgets)}
                           </div>
                           <div class="analytics-card-content">
-                            ${await w.render(widgetCtx)}
+                            ${await (async () => {
+                              try {
+                                return await w.render(widgetCtx);
+                              } catch (err) {
+                                console.error(`Widget ${id} failed to render:`, err);
+                                return `<div class="widget-error">${getIcon('warning', 24)}<p>Failed to load insight</p></div>`;
+                              }
+                            })()}
                           </div>
                         </article>
                       `;

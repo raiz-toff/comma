@@ -18,6 +18,7 @@ import { render as renderSettings } from '../views/settings-view.js';
 import { render as renderOnboarding } from '../views/onboarding-view.js';
 import { render as renderAbout } from '../views/about-view.js';
 import { render as renderPrint } from '../views/print-view.js';
+import { render as renderImportHelp } from '../views/import-help-view.js';
 import { t } from '../utils/strings.js';
 
 /** @typedef {{ hash: string, name: string, context: Record<string, unknown>, render: (el: HTMLElement, ctx: Record<string, unknown>) => void | Promise<void> }} COMMARoute */
@@ -53,6 +54,7 @@ function resolveRouteDef(hash) {
     { hash: '#/onboarding', name: 'onboarding', render: renderOnboarding },
     { hash: '#/about', name: 'about', render: renderAbout },
     { hash: '#/print', name: 'print', render: renderPrint },
+    { hash: '#/import-guide', name: 'reports', render: renderImportHelp },
   ];
   const row = table.find((r) => r.hash === hash);
   return row ? { hash: row.hash, name: row.name, context: buildContext(row), render: row.render } : null;

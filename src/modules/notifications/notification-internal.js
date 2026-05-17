@@ -147,6 +147,7 @@ export function getPrefForType(prefs, type) {
   return normalizeTypePref(prefs[type]);
 }
 
+let demoShownPopupCount = 0;
 let toastQueue = [];
 let queueFlushing = false;
 
@@ -194,28 +195,40 @@ export async function createNotification(type, title, message, opts = {}) {
     shownAt: null,
   });
 
-  toastQueue.push({
-    title,
-    message,
-    icon: 'bell',
-    type: opts.tone || 'info',
-    duration: 7000,
-    actions: [
-      {
-        label: 'View',
-        class: 'btn btn-primary btn-sm',
-        onClick: (close) => {
-          close();
-          window.location.hash = '#/notifications';
-        },
-      },
-    ],
-  });
-  void flushToastQueue();
+  const isDemo = store.get('demoMode');
+  let shouldShowPopup = true;
+  if (isDemo) {
+    if (demoShownPopupCount >= 2) {
+      shouldShowPopup = false;
+    } else {
+      demoShownPopupCount++;
+    }
+  }
 
-  await db.notifications.update(id, {
-    shownAt: nowIso(),
-  });
+  if (shouldShowPopup) {
+    toastQueue.push({
+      title,
+      message,
+      icon: 'bell',
+      type: opts.tone || 'info',
+      duration: 7000,
+      actions: [
+        {
+          label: 'View',
+          class: 'btn btn-primary btn-sm',
+          onClick: (close) => {
+            close();
+            window.location.hash = '#/notifications';
+          },
+        },
+      ],
+    });
+    void flushToastQueue();
+
+    await db.notifications.update(id, {
+      shownAt: nowIso(),
+    });
+  }
 
   // Write throttle keys to persist daily/weekly frequency preferences
   const weekStartDay = Math.max(0, Math.min(6, num(user?.locale?.weekStartDay, 0)));

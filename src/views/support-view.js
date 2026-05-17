@@ -78,7 +78,7 @@ export async function render(root, ctx) {
           COMMA is entirely free, local-first, and open source. If you love using this app and want to support its ongoing development, consider buying the developer a coffee!
         </p>
         <div style="margin-top: auto; padding-top: var(--space-2);">
-          <a href="https://buymeacoffee.com" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: var(--space-2); background: #FFDD00; color: #000000; border: none; font-weight: 700;">
+          <a href="https://buymeacoffee.com/raiztuffy" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: var(--space-2); background: #FFDD00; color: #000000; border: none; font-weight: 700;">
             ☕ Buy Me a Coffee
           </a>
         </div>

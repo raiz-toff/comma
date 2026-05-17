@@ -197,7 +197,8 @@ export async function initP13() {
     schemaDump: buildSchemaDump,
   };
   if (!(await isVaultActive())) return;
-  await maybeShowChangelog();
+  // Disabled to prevent duplicate/legacy modal rendering (v1.3.0 changelog is the single source of truth)
+  // await maybeShowChangelog();
   await maybeShowDidYouKnowTip();
   await maybeShowReviewNudge();
   await maybeShowWellbeingToasts();

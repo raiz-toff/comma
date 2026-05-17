@@ -24,6 +24,9 @@ export function initChangelog() {
   }
 
   if (lastSeen !== APP_VERSION) {
+    // Set seen version immediately to guarantee no duplicate popups occur on concurrent boot cycles
+    localStorage.setItem(STORAGE_KEY, APP_VERSION);
+
     // Small delay to ensure the main UI is ready
     setTimeout(() => {
       showChangelogModal(lastSeen);

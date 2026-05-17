@@ -148,7 +148,7 @@ export async function render(root, ctx) {
     const msg = fd.get('message') || '';
 
     const subject = `[COMMA Support] ${feedbackType}`;
-    const body = `Hi COMMA Support Team,\n\n${msg}\n\n` +
+    const body = `Hi raj i am mailing regarding thjis\n\n${msg}\n\n` +
       `----------------------------------------\n` +
       `SYSTEM DIAGNOSTICS:\n` +
       `App Version: ${appVersion}\n` +
@@ -163,7 +163,7 @@ export async function render(root, ctx) {
       `User Agent: ${userAgent}\n` +
       `----------------------------------------\n`;
 
-    const mailto = `mailto:support@comma.app?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const mailto = `mailto:me@rajkumarneupane.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.location.href = mailto;
   });
 

@@ -137,8 +137,10 @@ function defaultNotificationPrefs(prefs) {
 
 function applyFontSize(size) {
   if (typeof document === 'undefined') return;
-  const map = { small: '14px', medium: '15px', large: '16px', xl: '17px' };
-  document.documentElement.style.setProperty('--text-base', map[size] || map.medium);
+  const map = { small: '12px', medium: '15px', large: '18px', xl: '22px' };
+  const val = map[size] || map.medium;
+  document.documentElement.style.setProperty('--text-base', val);
+  document.documentElement.dataset.uifont = size || 'medium';
 }
 
 function applyDensity(density) {

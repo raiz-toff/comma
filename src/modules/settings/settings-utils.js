@@ -55,6 +55,8 @@ const FONT_SIZES = new Set(['small', 'medium', 'large', 'xl']);
 export function applyFontSize(size) {
   const s = FONT_SIZES.has(String(size)) ? String(size) : 'medium';
   document.documentElement.dataset.uifont = s;
+  const map = { small: '12px', medium: '15px', large: '18px', xl: '22px' };
+  document.documentElement.style.setProperty('--text-base', map[s] || map.medium);
 }
 
 const DENSITIES = new Set(['comfortable', 'compact']);

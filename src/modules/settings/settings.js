@@ -14,6 +14,7 @@ import { mountSettingsPlatforms } from './platforms-settings.js';
 import { formatShortcutOverlayListItems } from './keyboard-shortcuts.js';
 import { normalizeAccentHex } from './settings-utils.js';
 import { updateAccentColor } from '../../core/adaptive-theme.js';
+import { pwaCapabilities, toggleFullscreen } from '../pwa/pwa.js';
 import {
   getOrderedDashboardWidgetIds,
   getAllSelectableWidgetIds,
@@ -520,6 +521,12 @@ export async function mountSettings(root, ctx = {}) {
                 <option value="compact" ${user.layoutDensity === 'compact' ? 'selected' : ''}>Compact</option>
               </select>
             </label>
+            <div class="input-group">
+              <span class="input-label">${esc(t('pwa.toggleFullscreen'))}</span>
+              <button type="button" class="btn btn-secondary btn-sm" style="width: 100%; height: 38px; display: flex; align-items: center; justify-content: center; gap: 8px;" data-toggle-fullscreen-appearance>
+                ${getIcon('maximize', 16)} <span>Toggle Full Screen</span>
+              </button>
+            </div>
           </div>
 
           <div class="settings-accent" style="margin-top: var(--space-4);">
@@ -977,6 +984,24 @@ export async function mountSettings(root, ctx = {}) {
     else if (!raw) updateAccentColor();
     refreshAccentPresetSelection();
   });
+
+  const btnFullscreen = root.querySelector('[data-toggle-fullscreen-appearance]');
+  if (btnFullscreen) {
+    const caps = pwaCapabilities();
+    if (!caps.fullscreen) {
+      btnFullscreen.disabled = true;
+      btnFullscreen.innerHTML = `${getIcon('maximize', 16)} <span>${esc(t('pwa.fullscreenUnsupported'))}</span>`;
+    } else {
+      btnFullscreen.addEventListener('click', async () => {
+        const entered = await toggleFullscreen();
+        showToast({
+          type: 'info',
+          message: entered ? t('pwa.fullscreenOn') : t('pwa.fullscreenOff'),
+          duration: 1400,
+        });
+      });
+    }
+  }
 
   root.querySelector('[data-save-dashboard]')?.addEventListener('click', async () => {
     const order = [...root.querySelectorAll('[data-widget-sort] [data-widget-id]')].map((el) => ({

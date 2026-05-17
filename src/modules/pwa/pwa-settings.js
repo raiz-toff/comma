@@ -232,28 +232,6 @@ export function mountPwaSettings(host) {
     list.appendChild(row(t('pwa.testVibrate'), action, ''));
   }
 
-  /* Fullscreen (249) */
-  {
-    const action = document.createElement('button');
-    action.type = 'button';
-    action.className = 'btn btn-secondary btn-sm';
-    action.textContent = t('pwa.toggleFullscreen');
-    if (!caps.fullscreen) {
-      action.disabled = true;
-      action.textContent = t('pwa.fullscreenUnsupported');
-    } else {
-      action.addEventListener('click', async () => {
-        const entered = await toggleFullscreen();
-        showToast({
-          type: 'info',
-          message: entered ? t('pwa.fullscreenOn') : t('pwa.fullscreenOff'),
-          duration: 1400,
-        });
-      });
-    }
-    list.appendChild(row(t('pwa.toggleFullscreen'), action, ''));
-  }
-
   body.appendChild(list);
   section.appendChild(body);
   host.appendChild(section);

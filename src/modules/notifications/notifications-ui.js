@@ -196,7 +196,7 @@ export async function renderNotificationsView(root) {
         align-items: flex-start;
         gap: var(--space-4);
         transition: all 0.2s ease;
-        box-shadow: ${!item.read ? '0 4px 20px color-mix(in srgb, var(--color-brand) 10%, transparent)' : 'none'};
+        box-shadow: var(--shadow-sm);
         position: relative;
         overflow: hidden;
       `;

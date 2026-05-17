@@ -523,6 +523,97 @@ export function setupInstallPrompt() {
 }
 
 /**
+ * Triggers the premium PWA install flow. If native prompt is supported, launches it.
+ * If unsupported or unavailable (e.g. iOS or manual triggers), opens a beautiful step-by-step modal guide.
+ * @param {() => void} [onSuccess]
+ * @param {any} [parentModalHandle]
+ */
+export async function triggerPremiumInstallFlow(onSuccess, parentModalHandle = null) {
+  let success = false;
+  if (typeof window !== 'undefined' && /** @type {any} */ (window).__comma?.triggerInstall) {
+    success = await /** @type {any} */ (window).__comma.triggerInstall();
+  }
+
+  if (success) {
+    onSuccess?.();
+    return;
+  }
+
+  // Close parent modal if provided
+  if (parentModalHandle && typeof parentModalHandle.close === 'function') {
+    parentModalHandle.close();
+  }
+
+  // Detect iOS Safari or standalone
+  const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent) && !(/** @type {any} */ (window).MSStream);
+
+  const guide = document.createElement('div');
+  guide.className = 'pwa-install-guide';
+  guide.style.cssText = `
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-2) 0;
+  `;
+
+  if (isIOS) {
+    guide.innerHTML = `
+      <div style="display: flex; gap: var(--space-3); align-items: flex-start;">
+        <div style="background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 8px; font-weight:800; font-size:16px; color:var(--color-brand); width:36px; height:36px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">1</div>
+        <div style="flex:1; font-size: var(--text-sm); line-height: 1.5; color: var(--color-text-primary);">
+          Tap the <strong>Share</strong> button in Safari's bottom toolbar (the square with an arrow pointing up).
+        </div>
+      </div>
+      <div style="display: flex; gap: var(--space-3); align-items: flex-start;">
+        <div style="background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 8px; font-weight:800; font-size:16px; color:var(--color-brand); width:36px; height:36px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">2</div>
+        <div style="flex:1; font-size: var(--text-sm); line-height: 1.5; color: var(--color-text-primary);">
+          Scroll down the sharing menu options and select <strong>"Add to Home Screen"</strong>.
+        </div>
+      </div>
+      <div style="display: flex; gap: var(--space-3); align-items: flex-start;">
+        <div style="background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 8px; font-weight:800; font-size:16px; color:var(--color-brand); width:36px; height:36px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">3</div>
+        <div style="flex:1; font-size: var(--text-sm); line-height: 1.5; color: var(--color-text-primary);">
+          Tap <strong>"Add"</strong> in the top-right corner. COMMA will appear on your device's home screen!
+        </div>
+      </div>
+    `;
+  } else {
+    guide.innerHTML = `
+      <div style="display: flex; gap: var(--space-3); align-items: flex-start;">
+        <div style="background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 8px; font-weight:800; font-size:16px; color:var(--color-brand); width:36px; height:36px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">1</div>
+        <div style="flex:1; font-size: var(--text-sm); line-height: 1.5; color: var(--color-text-primary);">
+          Tap the browser's menu button (three vertical dots in the top-right corner of Chrome, Edge, or Firefox).
+        </div>
+      </div>
+      <div style="display: flex; gap: var(--space-3); align-items: flex-start;">
+        <div style="background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 8px; font-weight:800; font-size:16px; color:var(--color-brand); width:36px; height:36px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">2</div>
+        <div style="flex:1; font-size: var(--text-sm); line-height: 1.5; color: var(--color-text-primary);">
+          Select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong> from the menu options list.
+        </div>
+      </div>
+      <div style="display: flex; gap: var(--space-3); align-items: flex-start;">
+        <div style="background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 8px; font-weight:800; font-size:16px; color:var(--color-brand); width:36px; height:36px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">3</div>
+        <div style="flex:1; font-size: var(--text-sm); line-height: 1.5; color: var(--color-text-primary);">
+          Confirm the prompt. COMMA is now installed on your device for high-performance offline access!
+        </div>
+      </div>
+    `;
+  }
+
+  showModal({
+    title: 'How to Install COMMA',
+    content: guide,
+    size: 'sm',
+    actions: [
+      {
+        label: 'Got it',
+        class: 'btn btn-primary btn-block',
+      }
+    ]
+  });
+}
+
+/**
  * Shows a premium bottom-sheet modal inviting the user to install the app.
  */
 function showPwaInstallModal() {
@@ -547,13 +638,9 @@ function showPwaInstallModal() {
       {
         label: t('pwa.install.confirm'),
         class: 'btn btn-primary btn-block',
-        onClick: async () => {
-          if (typeof window !== 'undefined' && /** @type {any} */ (window).__comma?.triggerInstall) {
-            const success = await /** @type {any} */ (window).__comma.triggerInstall();
-            if (success) {
-              // Successfully triggered native prompt
-            }
-          }
+        close: false, // Handle closing manually in triggerPremiumInstallFlow
+        onClick: async (handle) => {
+          await triggerPremiumInstallFlow(null, handle);
         },
       },
       {

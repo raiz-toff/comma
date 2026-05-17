@@ -33,19 +33,19 @@ samp {
   position: sticky;
   top: 0;
   z-index: 150; /* Above widgets (base) but below modals (200) */
-  padding-top: env(safe-area-inset-top, 0);
+  padding-top: 0;
 }
 
 /* Fullscreen or Standalone PWA top space override to prevent camera cutout / notch overlap */
 @media (display-mode: fullscreen), (display-mode: standalone) {
   .app-shell-chrome {
-    padding-top: max(32px, env(safe-area-inset-top, 24px));
+    padding-top: max(16px, env(safe-area-inset-top, 16px));
   }
 }
 
 :fullscreen .app-shell-chrome,
 :-webkit-full-screen .app-shell-chrome {
-  padding-top: max(32px, env(safe-area-inset-top, 24px));
+  padding-top: max(16px, env(safe-area-inset-top, 16px));
 }
 
 .demo-mode-bar {

@@ -13,6 +13,7 @@ import {
   requestNotificationPermission,
   vibrate,
   toggleFullscreen,
+  triggerPremiumInstallFlow,
 } from './pwa.js';
 import { getIcon } from '../../ui/icons.js';
 
@@ -111,30 +112,13 @@ export function mountPwaSettings(host) {
       action.className = 'btn btn-primary btn-sm';
       action.textContent = t('pwa.install.confirm');
 
-      const checkAvailability = () => {
-        const canInstall =
-          typeof window !== 'undefined' &&
-          /** @type {any} */ (window).__comma?.canInstall &&
-          /** @type {any} */ (window).__comma.canInstall();
-        action.disabled = !canInstall;
-        if (!canInstall) {
-          action.textContent = t('pwa.unsupported');
-        } else {
-          action.textContent = t('pwa.install.confirm');
-        }
-      };
-
       action.addEventListener('click', async () => {
-        if (typeof window !== 'undefined' && /** @type {any} */ (window).__comma?.triggerInstall) {
-          const success = await /** @type {any} */ (window).__comma.triggerInstall();
-          if (success) {
-            action.disabled = true;
-            action.textContent = t('pwa.supported');
-          }
-        }
+        await triggerPremiumInstallFlow(() => {
+          action.disabled = true;
+          action.textContent = t('pwa.supported');
+        });
       });
 
-      checkAvailability();
       list.appendChild(row(t('pwa.install.title'), action, t('pwa.install.message')));
     }
   }

@@ -44,6 +44,7 @@ const ICON_INNER = {
   'chart-donut':
     '<path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>',
   check: '<polyline points="20 6 9 17 4 12"/>',
+  square: '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>',
   x: '<line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/>',
   close: '<line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/>',
   trash:

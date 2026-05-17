@@ -19,6 +19,40 @@ import { bus } from './events.js';
 let clockTimer = null;
 /** @type {ReturnType<typeof setInterval> | null} */
 let shiftTimerInterval = null;
+/** @type {ReturnType<typeof setInterval> | null} */
+let shiftNotifInterval = null;
+
+/**
+ * Posts/updates the persistent shift-in-progress notification on the device
+ * notification shade so the user can see elapsed time and platform without
+ * returning to the app — similar to a music player widget.
+ * @param {{ platformName: string, elapsed: string, isPaused: boolean }} opts
+ */
+function postShiftNotification({ platformName, elapsed, isPaused }) {
+  if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+  try {
+    // We use a stable `tag` so Android/Chrome replaces the existing
+    // notification in-place (acts as an updating live widget).
+    const n = new Notification(
+      `${isPaused ? '⏸' : '🟢'} ${platformName} — ${elapsed}`,
+      {
+        body: isPaused
+          ? 'Shift paused. Tap to resume or end.'
+          : 'Shift in progress. Tap to view your timer.',
+        icon: './favicon-96x96.png',
+        badge: './favicon.ico',
+        tag: 'comma-shift-live',          // replaces previous notification
+        renotify: false,
+        silent: true,                    // no sound on update
+        requireInteraction: false,
+      }
+    );
+    // Tapping the notification should open the app
+    n.onclick = () => { window.focus(); };
+  } catch (err) {
+    console.warn('[comma] shift notification failed', err);
+  }
+}
 
 function escapeAttr(s) {
   return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
@@ -382,6 +416,9 @@ export async function renderAppShell(root) {
 /**
  * @param {HTMLElement | null} bar
  */
+/**
+ * @param {HTMLElement | null} bar
+ */
 async function hydrateShiftTimerBar(bar) {
   if (!bar) return;
   try {
@@ -396,9 +433,14 @@ async function hydrateShiftTimerBar(bar) {
         bar.classList.add('is-collapsed');
         return;
       }
-      const start = new Date(startIso);
-      const ms = Date.now() - start.getTime();
-      const mins = Math.max(0, Math.floor(ms / 60000));
+
+      const isPaused = Boolean(timer.pausedAt);
+      let elapsedMs = timer.elapsedMs || 0;
+      if (!isPaused) {
+        elapsedMs += Date.now() - new Date(startIso).getTime();
+      }
+
+      const mins = Math.max(0, Math.floor(elapsedMs / 60000));
       const hh = Math.floor(mins / 60);
       const mm = mins % 60;
       const elapsed = hh > 0 ? `${hh}h ${mm}m` : `${mm}m`;
@@ -406,14 +448,27 @@ async function hydrateShiftTimerBar(bar) {
       bar.hidden = false;
       bar.removeAttribute('hidden');
       bar.classList.remove('is-collapsed');
+      bar.style.cursor = 'pointer';
+
+      // Resolve platform details
+      const platforms = store.get('platforms') || [];
+      const platform = platforms.find(p => p.id === timer.platformId);
+      const platformName = platform ? platform.name : (timer.platformId || 'Shift');
+      const platformColor = platform ? (platform.color || '#10b981') : '#10b981';
+
       bar.innerHTML = `
-        <div class="shift-timer-bar-inner">
-          <span class="shift-timer-dot" aria-hidden="true"></span>
-          <span class="shift-timer-label">${escapeAttr(t('shifts.shiftTimer'))}</span>
-          <span class="shift-timer-meta">${escapeAttr(elapsed)}</span>
-          <button type="button" class="btn btn-ghost shift-timer-cta" data-action="end-shift">${escapeHtml(
-            t('shifts.endShift'),
-          )}</button>
+        <div class="shift-timer-bar-inner" style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 4px 0;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="shift-timer-dot" style="width: 10px; height: 10px; border-radius: 50%; display: inline-block; background: ${escapeAttr(platformColor)}; box-shadow: 0 0 10px ${escapeAttr(platformColor)}; animation: ${isPaused ? 'none' : 'pulse 1.8s infinite'};" aria-hidden="true"></span>
+            <span class="shift-timer-label" style="font-weight: 600;">${escapeHtml(platformName)} ${isPaused ? '(Paused)' : t('shifts.shiftTimer')}</span>
+            <span class="shift-timer-meta" style="font-weight: 700; color: white; background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 4px; font-size: 13px;">${escapeHtml(elapsed)}</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 11px; color: rgba(255,255,255,0.45); font-weight: 500; display: inline-block; vertical-align: middle;">View Timer</span>
+            <button type="button" class="btn btn-ghost btn-xs shift-timer-cta" data-action="end-shift" style="color: var(--color-danger); border-color: rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.08); font-weight: 700; border-radius: 4px; padding: 4px 8px; font-size: 12px;">${escapeHtml(
+              t('shifts.endShift'),
+            )}</button>
+          </div>
         </div>
       `;
     };
@@ -421,28 +476,104 @@ async function hydrateShiftTimerBar(bar) {
     apply();
     store.subscribe('activeShiftTimer', apply);
     if (shiftTimerInterval) clearInterval(shiftTimerInterval);
-    shiftTimerInterval = setInterval(apply, 30000);
+    shiftTimerInterval = setInterval(apply, 10000);
+
+    // --- Persistent shift notification ticker ---
+    // Post an updating notification every 60 s so the user sees elapsed time
+    // in their device notification shade / status bar (like a live widget).
+    if (shiftNotifInterval) clearInterval(shiftNotifInterval);
+    const tickNotif = () => {
+      const timer = store.get('activeShiftTimer');
+      if (!timer || !timer.startTime) {
+        // Shift ended — dismiss our live notification
+        if (shiftNotifInterval) { clearInterval(shiftNotifInterval); shiftNotifInterval = null; }
+        return;
+      }
+      const isPaused = Boolean(timer.pausedAt);
+      let elapsedMs = timer.elapsedMs || 0;
+      if (!isPaused) elapsedMs += Date.now() - new Date(timer.startTime).getTime();
+      const mins = Math.max(0, Math.floor(elapsedMs / 60000));
+      const hh = Math.floor(mins / 60);
+      const mm = mins % 60;
+      const elapsed = hh > 0 ? `${hh}h ${mm}m` : `${mm}m`;
+      const platforms = store.get('platforms') || [];
+      const platform = platforms.find(p => p.id === timer.platformId);
+      const platformName = platform ? platform.name : (timer.platformId || 'Shift');
+      postShiftNotification({ platformName, elapsed, isPaused });
+    };
+    tickNotif();  // post immediately on shift start
+    shiftNotifInterval = setInterval(tickNotif, 60000);
 
     bar.addEventListener('click', async (e) => {
-      const el = /** @type {HTMLElement | null} */ (e.target && /** @type {HTMLElement} */ (e.target).closest('[data-action="end-shift"]'));
-      if (!el) return;
+      const endBtn = /** @type {HTMLElement | null} */ (e.target && /** @type {HTMLElement} */ (e.target).closest('[data-action="end-shift"]'));
+      if (endBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+          const prefill = await stopShiftTimer();
+          if (!prefill) return;
+          const formApi = renderShiftForm({ mode: 'full', initial: prefill, submitLabel: t('common.save') });
+          const handle = showModal({ title: t('shifts.endShift'), content: formApi.el, actions: [] });
+          formApi.el.querySelector('form')?.addEventListener('submit', async (evt) => {
+            evt.preventDefault();
+            await saveShift(formApi.getValue());
+            showToast({ type: 'success', message: t('shifts.savedToast'), duration: 1800 });
+            handle.close();
+          });
+        } catch (err) {
+          console.warn('[comma shifts] end shift from bar failed', err);
+          showToast({ type: 'error', message: t('errors.generic'), duration: 2200 });
+        }
+        return;
+      }
+
+      // Click on timer bar opens the full-screen Big Clock
       e.preventDefault();
-      try {
-        const prefill = await stopShiftTimer();
-        if (!prefill) return;
-        const formApi = renderShiftForm({ mode: 'full', initial: prefill, submitLabel: t('common.save') });
-        const handle = showModal({ title: t('shifts.endShift'), content: formApi.el, actions: [] });
-        formApi.el.querySelector('form')?.addEventListener('submit', async (evt) => {
-          evt.preventDefault();
-          await saveShift(formApi.getValue());
-          showToast({ type: 'success', message: t('shifts.savedToast'), duration: 1800 });
-          handle.close();
-        });
-      } catch (err) {
-        console.warn('[comma shifts] end shift from bar failed', err);
-        showToast({ type: 'error', message: t('errors.generic'), duration: 2200 });
+      const { openBigClockOverlay } = await import('../modules/shifts/big-clock.js');
+      openBigClockOverlay();
+    });
+
+    // Listen for SW notificationclick relay — opens big clock when user taps the notification
+    navigator.serviceWorker?.addEventListener('message', async (evt) => {
+      if (evt.data?.type === 'comma:shift-action') {
+        const { openBigClockOverlay: open } = await import('../modules/shifts/big-clock.js');
+        open();
       }
     });
+
+    // Register PWA target time push notification checker
+    setInterval(async () => {
+      const timer = store.get('activeShiftTimer');
+      if (timer && timer.targetTime && !timer.targetTimeNotified && !timer.pausedAt) {
+        const target = new Date(timer.targetTime).getTime();
+        if (Date.now() >= target) {
+          const updated = { ...timer, targetTimeNotified: true };
+          const { setAppState } = await import('./db.js');
+          await setAppState('active_shift_start', updated);
+          try {
+            localStorage.setItem('comma_active_shift_timer', JSON.stringify(updated));
+          } catch {}
+          bus.emit(SHIFT_TIMER_START, updated);
+
+          if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+            try {
+              new Notification('Shift Target Reached! 🏁', {
+                body: 'You have worked until your target time. Wrap up and log your shift!',
+                icon: './favicon.ico',
+                badge: './favicon.ico',
+                tag: 'comma-shift-target',
+                requireInteraction: true,
+              });
+            } catch (err) {
+              console.warn('Notification trigger failed', err);
+            }
+          }
+          showToast({ type: 'success', message: '🏁 Target shift time reached! Time to wrap up.', duration: 6000 });
+          // Clear the live shift widget and post a final "done" notification
+          if (shiftNotifInterval) { clearInterval(shiftNotifInterval); shiftNotifInterval = null; }
+        }
+      }
+    }, 5000);
   } catch {
     bar.hidden = true;
   }

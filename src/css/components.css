@@ -568,14 +568,19 @@
   padding: var(--space-4);
   background: color-mix(in srgb, #000 38%, transparent);
   opacity: 0;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
   transition:
     opacity var(--transition-base),
-    visibility var(--transition-base);
+    visibility var(--transition-base),
+    backdrop-filter var(--transition-base);
   visibility: hidden;
 }
 
 .comma-modal-backdrop.is-open {
   opacity: 1;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   visibility: visible;
 }
 

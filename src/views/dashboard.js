@@ -128,12 +128,27 @@ async function paintDashboard(root, ctx) {
     range = { ...range, start: range.end, end: t0 };
   }
 
+  const activeTimer = store.get('activeShiftTimer');
+
   root.innerHTML = `
     <section class="dashboard-view dashboard-view--financial">
-      <header class="financial-dash-header" style="margin-bottom: var(--space-6);">
+      <header class="financial-dash-header" style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-6);">
         <div class="financial-dash-header-text">
           <h1 class="financial-dash-title">${esc(t('views.dashboard.financial.title'))}</h1>
           <p class="financial-dash-subtitle">${esc(t('views.dashboard.financial.subtitle'))}</p>
+        </div>
+        <div class="financial-dash-header-actions" style="display: flex; align-items: center; gap: var(--space-3);">
+          ${activeTimer ? `
+            <button type="button" class="btn btn-sm" id="dash-active-timer-btn" style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: white; background: var(--color-danger, #ef4444); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); border: none; padding: 8px 16px; border-radius: 20px;">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: white; box-shadow: 0 0 8px white; display: inline-block;"></span>
+              <span>Active Shift</span>
+            </button>
+          ` : `
+            <button type="button" class="btn btn-primary btn-sm" id="dash-start-shift-btn" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 8px 16px; border-radius: 20px;">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;"><path d="M21.4086 9.35258C23.5305 10.5065 23.5305 13.4935 21.4086 14.6474L8.59662 21.6145C6.53435 22.736 4 21.2763 4 18.9671L4 5.0329C4 2.72368 6.53435 1.26402 8.59661 2.38548L21.4086 9.35258Z" fill="currentColor"></path></svg>
+              <span>Start Shift</span>
+            </button>
+          `}
         </div>
       </header>
       <div class="kpi-hero-strip" style="margin-bottom: var(--space-6); display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3);">
@@ -821,10 +836,23 @@ async function paintDashboard(root, ctx) {
 
   root.innerHTML = `
     <section class="dashboard-view dashboard-view--financial">
-      <header class="financial-dash-header">
+      <header class="financial-dash-header" style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-4);">
         <div class="financial-dash-header-text">
           <h1 class="financial-dash-title">${esc(t('views.dashboard.financial.title'))}</h1>
           <p class="financial-dash-subtitle">${esc(t('views.dashboard.financial.subtitle'))}</p>
+        </div>
+        <div class="financial-dash-header-actions" style="display: flex; align-items: center; gap: var(--space-3);">
+          ${activeTimer ? `
+            <button type="button" class="btn btn-sm" id="dash-active-timer-btn" style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: white; background: var(--color-danger, #ef4444); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); border: none; padding: 8px 16px; border-radius: 20px;">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: white; box-shadow: 0 0 8px white; display: inline-block;"></span>
+              <span>Active Shift</span>
+            </button>
+          ` : `
+            <button type="button" class="btn btn-primary btn-sm" id="dash-start-shift-btn" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 8px 16px; border-radius: 20px;">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;"><path d="M21.4086 9.35258C23.5305 10.5065 23.5305 13.4935 21.4086 14.6474L8.59662 21.6145C6.53435 22.736 4 21.2763 4 18.9671L4 5.0329C4 2.72368 6.53435 1.26402 8.59661 2.38548L21.4086 9.35258Z" fill="currentColor"></path></svg>
+              <span>Start Shift</span>
+            </button>
+          `}
         </div>
       </header>
 
@@ -1068,6 +1096,22 @@ async function paintDashboard(root, ctx) {
       void paintDashboard(root, ctx);
     }
   };
+
+  const startBtn = root.querySelector('#dash-start-shift-btn');
+  if (startBtn) {
+    startBtn.addEventListener('click', async () => {
+      const { openStartShiftWizard } = await import('../modules/shifts/big-clock.js');
+      openStartShiftWizard();
+    });
+  }
+
+  const activeBtn = root.querySelector('#dash-active-timer-btn');
+  if (activeBtn) {
+    activeBtn.addEventListener('click', async () => {
+      const { openBigClockOverlay } = await import('../modules/shifts/big-clock.js');
+      openBigClockOverlay();
+    });
+  }
 
   // After-render for all widgets
   afterRenderWidgets(root, widgetCtx);

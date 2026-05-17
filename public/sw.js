@@ -129,3 +129,31 @@ async function handleShellGet(request) {
     throw err;
   }
 }
+
+self.addEventListener('notificationclick', (event) => {
+  const action = event.action;
+  if (!action || action === 'open_big_clock') {
+    event.notification.close();
+  }
+
+  event.waitUntil(
+    self.clients.matchAll({ includeUncontrolled: true, type: 'window' }).then((clientList) => {
+      for (const client of clientList) {
+        if ('focus' in client) {
+          client.focus();
+          client.postMessage({ type: 'comma:shift-action', action: action || 'open_big_clock' });
+          return;
+        }
+      }
+      if (self.clients.openWindow) {
+        return self.clients.openWindow('./#/dashboard').then((client) => {
+          if (client) {
+            setTimeout(() => {
+              client.postMessage({ type: 'comma:shift-action', action: action || 'open_big_clock' });
+            }, 1000);
+          }
+        });
+      }
+    })
+  );
+});

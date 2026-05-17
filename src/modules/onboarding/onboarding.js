@@ -974,6 +974,16 @@ export async function mountOnboarding(root) {
             const fallback = filtered[0]?.id || platformRows[0]?.id || getDefaultSamplePlatformId();
             draft.selectedPlatforms = [fallback];
           }
+
+          // Explicitly prompt for notification permission on onboarding completion as it is required for shift timers & alarms
+          if ('Notification' in window) {
+            try {
+              await Notification.requestPermission();
+            } catch (err) {
+              console.warn('[onboarding] Notification permission request error', err);
+            }
+          }
+
           await applyPlatformsFromDraft(draft);
           await clearSampleData();
           await loadSampleData();
@@ -1041,6 +1051,16 @@ export async function mountOnboarding(root) {
 
   async function finalizeOnboarding(container) {
     readFormIntoDraft(container, draft);
+
+    // Request notification permission as the final step before entering the vault
+    // (only prompt if not already decided — never re-pop when denied)
+    if ('Notification' in window && Notification.permission === 'default') {
+      try {
+        await Notification.requestPermission();
+      } catch (err) {
+        console.warn('[onboarding] Notification permission request error', err);
+      }
+    }
 
     await applyPlatformsFromDraft(draft);
     await persistVehicles(draft);

@@ -524,13 +524,25 @@ export async function applyTemplate(templateId) {
 
 /**
  * Live shift timer (Feature 32).
- * Writes `{ startTime, platformId }` to `appState` and localStorage.
+ * Writes `{ startTime, initialStartTime, platformId, pausedAt, elapsedMs, targetTime, targetTimeNotified, vehicleId }` to `appState` and localStorage.
  * @param {string} platformId
+ * @param {string|null} [targetTime]
+ * @param {string|null} [vehicleId]
  */
-export async function startShiftTimer(platformId) {
+export async function startShiftTimer(platformId, targetTime = null, vehicleId = null) {
   const pid = normStr(platformId);
   if (!pid) throw new Error('shift:platform:required');
-  const payload = { startTime: nowIso(), platformId: pid };
+  const t = nowIso();
+  const payload = {
+    startTime: t,
+    initialStartTime: t,
+    platformId: pid,
+    pausedAt: null,
+    elapsedMs: 0,
+    targetTime: targetTime ? new Date(targetTime).toISOString() : null,
+    targetTimeNotified: false,
+    vehicleId: vehicleId ? String(vehicleId) : null,
+  };
   await setAppState(APP_STATE_TIMER_KEY, payload);
   try {
     localStorage.setItem(LS_TIMER_KEY, JSON.stringify(payload));
@@ -544,11 +556,56 @@ export async function startShiftTimer(platformId) {
 }
 
 /**
+ * Pauses the active shift timer.
+ */
+export async function pauseShiftTimer() {
+  const state = (await getAppState(APP_STATE_TIMER_KEY)) || null;
+  if (!state || state.pausedAt) return;
+
+  const ms = Date.now() - new Date(state.startTime).getTime();
+  const payload = {
+    ...state,
+    pausedAt: nowIso(),
+    elapsedMs: (state.elapsedMs || 0) + ms,
+  };
+
+  await setAppState(APP_STATE_TIMER_KEY, payload);
+  try {
+    localStorage.setItem(LS_TIMER_KEY, JSON.stringify(payload));
+  } catch {}
+  bus.emit(SHIFT_TIMER_START, payload);
+
+  void releaseWakeLock().catch(() => {});
+}
+
+/**
+ * Resumes the paused shift timer.
+ */
+export async function resumeShiftTimer() {
+  const state = (await getAppState(APP_STATE_TIMER_KEY)) || null;
+  if (!state || !state.pausedAt) return;
+
+  const payload = {
+    ...state,
+    startTime: nowIso(),
+    pausedAt: null,
+  };
+
+  await setAppState(APP_STATE_TIMER_KEY, payload);
+  try {
+    localStorage.setItem(LS_TIMER_KEY, JSON.stringify(payload));
+  } catch {}
+  bus.emit(SHIFT_TIMER_START, payload);
+
+  void acquireWakeLock().catch(() => {});
+}
+
+/**
  * Stop timer, clear persisted state, and return prefill payload for shift form.
  * @returns {Promise<Record<string, unknown> | null>}
  */
 export async function stopShiftTimer() {
-  /** @type {{ startTime?: unknown, platformId?: unknown } | null} */
+  /** @type {any} */
   const state = (await getAppState(APP_STATE_TIMER_KEY)) || null;
   await setAppState(APP_STATE_TIMER_KEY, null);
   try {
@@ -561,19 +618,23 @@ export async function stopShiftTimer() {
   /* Feature 248 — release the wake lock when the timer stops. */
   void releaseWakeLock().catch(() => {});
 
-  const startIso = state && typeof state.startTime === 'string' ? state.startTime : null;
-  const platformId = state && typeof state.platformId === 'string' ? state.platformId : null;
-  if (!startIso) return null;
+  if (!state || !state.startTime) return null;
 
-  const start = new Date(startIso);
+  let totalMs = state.elapsedMs || 0;
+  if (!state.pausedAt) {
+    totalMs += Date.now() - new Date(state.startTime).getTime();
+  }
+
+  const durMin = Math.max(0, Math.round(totalMs / 60000));
+  const start = new Date(state.initialStartTime || state.startTime);
   const end = new Date();
-  const durMin = Math.max(0, Math.round((end.getTime() - start.getTime()) / 60000));
   const date = ymdFromDate(start);
   const startHm = start.toTimeString().slice(0, 5);
   const endHm = end.toTimeString().slice(0, 5);
 
   return {
-    platformId,
+    platformId: state.platformId,
+    vehicleId: state.vehicleId ? Number(state.vehicleId) : undefined,
     date,
     startTime: startHm,
     endTime: endHm,
@@ -600,6 +661,6 @@ export async function restoreShiftTimerFromLocalStorage() {
   const o = /** @type {any} */ (parsed);
   if (typeof o.startTime !== 'string') return;
   if (typeof o.platformId !== 'string') return;
-  await setAppState(APP_STATE_TIMER_KEY, { startTime: o.startTime, platformId: o.platformId });
+  await setAppState(APP_STATE_TIMER_KEY, o);
 }
 

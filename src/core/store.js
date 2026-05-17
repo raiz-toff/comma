@@ -117,9 +117,18 @@ function normalizeActiveShiftTimer(raw) {
           ? o.start
           : null;
     const platformId = typeof o.platformId === 'string' ? o.platformId : null;
-    if (startTime != null || platformId != null) return { startTime, platformId };
+    return {
+      startTime,
+      platformId,
+      pausedAt: typeof o.pausedAt === 'string' ? o.pausedAt : null,
+      elapsedMs: typeof o.elapsedMs === 'number' ? o.elapsedMs : 0,
+      targetTime: typeof o.targetTime === 'string' ? o.targetTime : null,
+      targetTimeNotified: o.targetTimeNotified === true,
+    };
   }
-  if (typeof raw === 'string') return { startTime: raw, platformId: null };
+  if (typeof raw === 'string') {
+    return { startTime: raw, platformId: null, pausedAt: null, elapsedMs: 0, targetTime: null, targetTimeNotified: false };
+  }
   return null;
 }
 

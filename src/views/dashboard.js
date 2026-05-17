@@ -1000,7 +1000,9 @@ async function paintDashboard(root, ctx) {
         onChange: function(selectedDates) {
           if (selectedDates.length === 1) {
             const s = window.flatpickr.formatDate(selectedDates[0], "Y-m-d");
-            saveDashboardRange({ start: s, end: range.end, preset: 'custom' });
+            // Read live end value, not stale closed-over range.end
+            const currentEnd = endInput ? endInput.value : range.end;
+            saveDashboardRange({ start: s, end: currentEnd, preset: 'custom' });
             void paintDashboard(root, ctx);
           }
         }
@@ -1018,7 +1020,9 @@ async function paintDashboard(root, ctx) {
         onChange: function(selectedDates) {
           if (selectedDates.length === 1) {
             const e = window.flatpickr.formatDate(selectedDates[0], "Y-m-d");
-            saveDashboardRange({ start: range.start, end: e, preset: 'custom' });
+            // Read live start value, not stale closed-over range.start
+            const currentStart = startInput ? startInput.value : range.start;
+            saveDashboardRange({ start: currentStart, end: e, preset: 'custom' });
             void paintDashboard(root, ctx);
           }
         }

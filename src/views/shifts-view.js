@@ -486,8 +486,10 @@ export async function render(root, ctx) {
             onChange: function(selectedDates) {
               if (selectedDates.length === 1) {
                 const s = window.flatpickr.formatDate(selectedDates[0], "Y-m-d");
-                saveShiftsRange({ start: s, end: range.end, preset: 'custom' });
-                saveShiftsPageIdx(s, range.end, 'custom', 0);
+                // Read current end date from the live input, not from closed-over range
+                const currentEnd = endInput ? endInput.value : range.end;
+                saveShiftsRange({ start: s, end: currentEnd, preset: 'custom' });
+                saveShiftsPageIdx(s, currentEnd, 'custom', 0);
                 void paint();
               }
             }
@@ -508,8 +510,10 @@ export async function render(root, ctx) {
             onChange: function(selectedDates) {
               if (selectedDates.length === 1) {
                 const e = window.flatpickr.formatDate(selectedDates[0], "Y-m-d");
-                saveShiftsRange({ start: range.start, end: e, preset: 'custom' });
-                saveShiftsPageIdx(range.start, e, 'custom', 0);
+                // Read current start date from the live input, not from closed-over range
+                const currentStart = startInput ? startInput.value : range.start;
+                saveShiftsRange({ start: currentStart, end: e, preset: 'custom' });
+                saveShiftsPageIdx(currentStart, e, 'custom', 0);
                 void paint();
               }
             }
